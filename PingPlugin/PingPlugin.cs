@@ -8,6 +8,7 @@ namespace PingPlugin
     {
         private DalamudPluginInterface pluginInterface;
         private PingTracker pingTracker;
+        private PingUI ui;
 
         public string Name => "Ping Plugin";
 
@@ -15,6 +16,9 @@ namespace PingPlugin
         {
             this.pluginInterface = pluginInterface;
             this.pingTracker = new PingTracker();
+            this.ui = new PingUI();
+
+            this.pluginInterface.UiBuilder.OnBuildUi += this.ui.Draw;
 
             Task.Run(async () =>
             {
@@ -42,6 +46,8 @@ namespace PingPlugin
         {
             if (disposing)
             {
+                this.pluginInterface.UiBuilder.OnBuildUi -= this.ui.Draw;
+
                 this.pluginInterface.Dispose();
                 this.pingTracker.Dispose();
             }
