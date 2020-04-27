@@ -11,12 +11,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Include="..\OSBindings\Build\Release\OSBindings.dll" Link="OSBindings.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-
-  <ItemGroup>
     <Reference Include="Dalamud">
       <HintPath>..\..\Dalamud\Dalamud\bin\Debug\Dalamud.dll</HintPath>
       <Private>false</Private>
