@@ -4,6 +4,12 @@
     <TargetFramework>net472</TargetFramework>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <AppOutputBase>$(MSBuildProjectDirectory)\</AppOutputBase>
+    <PathMap>$(AppOutputBase)=K:\arashiiro\</PathMap>
+    <Deterministic>true</Deterministic>
+  </PropertyGroup>
+
   <ItemGroup>
     <None Include="..\OSBindings\Build\Release\OSBindings.dll" Link="OSBindings.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
