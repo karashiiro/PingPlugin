@@ -23,10 +23,9 @@ namespace PingPlugin
                 return;
 
             ImGui.PushStyleVar(ImGuiStyleVar.WindowBorderSize, 0);
-            ImGui.SetWindowSize(new Vector2(50, 10), ImGuiCond.FirstUseEver); // This doesn't actually work?
             ImGui.SetWindowPos(this.config.WindowPosition, ImGuiCond.FirstUseEver);
 
-            ImGui.Begin("Ping", ImGuiWindowFlags.NoBackground | ImGuiWindowFlags.NoResize | ImGuiWindowFlags.NoTitleBar);
+            ImGui.Begin("Ping", ImGuiWindowFlags.NoBackground | ImGuiWindowFlags.AlwaysAutoResize | ImGuiWindowFlags.NoTitleBar);
             ImGui.TextColored(new Vector4(1, 1, 0, 1), $"Ping: {this.pingTracker.LastRTT}ms, average {Math.Round(this.pingTracker.AverageRTT), 2}ms"); // Yellow, it's ABGR instead of RGBA for some reason.
             ImGui.End();
 

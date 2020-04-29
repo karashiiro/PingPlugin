@@ -1,4 +1,6 @@
-﻿using System.Diagnostics;
+﻿using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
 
 namespace PingPlugin
 {
@@ -6,7 +8,7 @@ namespace PingPlugin
     {
         private readonly Stopwatch timer;
 
-        private long n;
+        private Queue<long> rttTimes = new Queue<long>();
 
         // Everything we want the user to see
         public double AverageRTT { get; private set; }
@@ -23,15 +25,20 @@ namespace PingPlugin
         public void StartNextRTTCalculation()
         {
             var nextRTT = this.timer.ElapsedMilliseconds;
-            RollAverageRTT(nextRTT);
+
+            rttTimes.Enqueue(nextRTT);
+            CalcAverage();
+
+            if (rttTimes.Count > 10)
+                rttTimes.Dequeue();
+
             LastRTT = nextRTT;
             this.timer.Reset();
         }
 
-        private void RollAverageRTT(double newValue)
+        private void CalcAverage()
         {
-            AverageRTT = (n * AverageRTT + newValue) / (n - 1);
-            n++;
+            AverageRTT = rttTimes.Average();
         }
     }
 }

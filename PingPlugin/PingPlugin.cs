@@ -3,6 +3,7 @@ using System;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using Dalamud.Game.Command;
+using Dalamud.Game.Internal.Network;
 
 namespace PingPlugin
 {
@@ -21,32 +22,34 @@ namespace PingPlugin
             this.config = (PingConfiguration) this.pluginInterface.GetPluginConfig() ?? new PingConfiguration();
             this.pingTracker = new PingTracker();
             this.ui = new PingUI(this.pingTracker, this.config);
+            ui.IsVisible = true;
 
             this.pluginInterface.UiBuilder.OnBuildUi += this.ui.Draw;
 
             this.pluginInterface.CommandManager.AddHandler("/ping",
                 new CommandInfo((command, args) => this.ui.IsVisible = !this.ui.IsVisible));
 
-            Task.Run(async () =>
-            {
-                while (true)
-                {
-                    this.pluginInterface.Framework.Gui.Chat.Print($"Ping: {this.pingTracker.LastRTT}ms");
-                    await Task.Delay(3000);
-                }
-            });
+            this.pluginInterface.Framework.Network.OnNetworkMessage += OnNetworkMessage;
         }
 
-        private void OnNetworkMessage(IntPtr dataPtr)
+        private void OnNetworkMessage(IntPtr dataPtr, ushort opCode, uint targetId, NetworkMessageDirection direction)
         {
-            if (!this.pluginInterface.Data.IsDataReady)
+            if (!this.pluginInterface.Data.IsDataReady || this.pluginInterface.ClientState.LocalPlayer == null)
                 return;
 
-            var op = Marshal.ReadInt16(dataPtr);
-            if (op == this.pluginInterface.Data.ServerOpCodes["ReqSomething"])
-                this.pingTracker.StartNextRTTWait();
-            if (op == this.pluginInterface.Data.ServerOpCodes["Something"])
-                this.pingTracker.StartNextRTTCalculation();
+            if (direction == NetworkMessageDirection.ZoneUp)
+            {
+                if (opCode == 0x241)
+                    this.pingTracker.StartNextRTTWait();
+            }
+
+            if (direction == NetworkMessageDirection.ZoneDown)
+            {
+                if (opCode == 0xC4 && targetId == this.pluginInterface.ClientState.LocalPlayer.ActorId)
+                {
+                    this.pingTracker.StartNextRTTCalculation();
+                }
+            }
         }
 
         #region Logging Shortcuts
