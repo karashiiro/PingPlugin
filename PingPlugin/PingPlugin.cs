@@ -22,10 +22,9 @@ namespace PingPlugin
             this.config = (PingConfiguration) this.pluginInterface.GetPluginConfig() ?? new PingConfiguration();
             this.pingTracker = new PingTracker();
             this.ui = new PingUI(this.pingTracker, this.config);
+
             ui.IsVisible = true;
-
             this.pluginInterface.UiBuilder.OnBuildUi += this.ui.Draw;
-
             this.pluginInterface.CommandManager.AddHandler("/ping",
                 new CommandInfo((command, args) => this.ui.IsVisible = !this.ui.IsVisible));
 
@@ -38,18 +37,12 @@ namespace PingPlugin
                 return;
 
             if (direction == NetworkMessageDirection.ZoneUp)
-            {
                 if (opCode == 0x241)
                     this.pingTracker.StartNextRTTWait();
-            }
 
             if (direction == NetworkMessageDirection.ZoneDown)
-            {
                 if (opCode == 0xC4 && targetId == this.pluginInterface.ClientState.LocalPlayer.ActorId)
-                {
                     this.pingTracker.StartNextRTTCalculation();
-                }
-            }
         }
 
         #region Logging Shortcuts
