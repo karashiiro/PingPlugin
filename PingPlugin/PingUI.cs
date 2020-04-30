@@ -13,8 +13,16 @@ namespace PingPlugin
 
         private ImFontPtr CourierNew;
 
-        public bool GraphIsVisible { get; set; }
-        public bool MonitorIsVisible { get; set; }
+        public bool GraphIsVisible
+        {
+            get => this.config.GraphIsVisible;
+            set => this.config.GraphIsVisible = value;
+        }
+        public bool MonitorIsVisible
+        {
+            get => this.config.MonitorIsVisible;
+            set => this.config.MonitorIsVisible = value;
+        }
 
         public PingUI(PingTracker pingTracker, PingConfiguration config)
         {
@@ -30,16 +38,19 @@ namespace PingPlugin
 
         public void BuildUi()
         {
-            if (GraphIsVisible) DrawGraph();
-            if (MonitorIsVisible) DrawMonitor();
+            if (this.config.GraphIsVisible) DrawGraph();
+            if (this.config.MonitorIsVisible) DrawMonitor();
         }
 
         private void DrawMonitor()
         {
-            ImGui.PushStyleVar(ImGuiStyleVar.WindowBorderSize, 0);
-            ImGui.SetWindowPos(this.config.MonitorPosition, ImGuiCond.FirstUseEver);
+            var windowFlags = BuildWindowFlags(ImGuiWindowFlags.NoBackground | ImGuiWindowFlags.NoResize | ImGuiWindowFlags.NoTitleBar);
 
-            ImGui.Begin("PingMonitor", ImGuiWindowFlags.NoBackground | ImGuiWindowFlags.AlwaysAutoResize | ImGuiWindowFlags.NoTitleBar);
+            ImGui.PushStyleVar(ImGuiStyleVar.WindowBorderSize, 0);
+            ImGui.SetNextWindowPos(this.config.MonitorPosition, ImGuiCond.FirstUseEver);
+            ImGui.SetNextWindowSize(new Vector2(170, 50), ImGuiCond.Always); // Auto-resize doesn't seem to work here
+
+            ImGui.Begin("PingMonitor", windowFlags);
             ImGui.PushFont(CourierNew);
             ImGui.TextColored(new Vector4(1, 1, 0, 1), $"Ping: {this.pingTracker.LastRTT}ms\nAverage ping: {Math.Round(this.pingTracker.AverageRTT), 2}ms"); // Yellow, it's ABGR instead of RGBA for some reason.
             ImGui.PopFont();
@@ -50,15 +61,27 @@ namespace PingPlugin
 
         private void DrawGraph()
         {
-            ImGui.SetWindowPos(this.config.GraphPosition, ImGuiCond.FirstUseEver);
+            var windowFlags = BuildWindowFlags(ImGuiWindowFlags.NoResize);
 
-            ImGui.Begin("Ping Graph", ImGuiWindowFlags.AlwaysAutoResize);
+            ImGui.SetNextWindowPos(this.config.GraphPosition, ImGuiCond.FirstUseEver);
+            ImGui.SetNextWindowSize(new Vector2(316, 190), ImGuiCond.Always);
+
+            ImGui.Begin("Ping Graph", windowFlags);
             var pingArray = this.pingTracker.RTTTimes.ToArray();
             if (pingArray.Length > 0)
                 ImGui.PlotLines(string.Empty, ref pingArray[0], pingArray.Length, 0, null, float.MaxValue, float.MaxValue, new Vector2(300, 150));
             else
                 ImGui.Text("No data to display at this time.");
             ImGui.End();
+        }
+
+        private ImGuiWindowFlags BuildWindowFlags(ImGuiWindowFlags flags)
+        {
+            if (this.config.ClickThrough)
+                flags |= ImGuiWindowFlags.NoInputs;
+            if (this.config.LockWindows)
+                flags |= ImGuiWindowFlags.NoMove;
+            return flags;
         }
     }
 }

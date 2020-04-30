@@ -1,7 +1,5 @@
 ﻿using Dalamud.Plugin;
 using System;
-using System.Runtime.InteropServices;
-using System.Threading.Tasks;
 using Dalamud.Game.Command;
 using Dalamud.Game.Internal.Network;
 
@@ -23,7 +21,6 @@ namespace PingPlugin
             this.pingTracker = new PingTracker();
             this.ui = new PingUI(this.pingTracker, this.config);
 
-            ui.MonitorIsVisible = true;
             this.pluginInterface.UiBuilder.OnBuildFonts += this.ui.BuildFonts;
             this.pluginInterface.UiBuilder.OnBuildUi += this.ui.BuildUi;
             this.pluginInterface.CommandManager.AddHandler("/ping",
