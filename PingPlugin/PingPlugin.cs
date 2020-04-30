@@ -22,7 +22,6 @@ namespace PingPlugin
             this.pingTracker = new PingTracker();
             this.ui = new PingUI(this.pingTracker, this.config);
 
-            this.pluginInterface.UiBuilder.OnBuildFonts += this.ui.BuildFonts;
             this.pluginInterface.UiBuilder.OnOpenConfigUi += (sender, e) => this.ui.ConfigVisible = true;
             this.pluginInterface.UiBuilder.OnBuildUi += this.ui.BuildUi;
 
@@ -103,7 +102,6 @@ namespace PingPlugin
             {
                 RemoveCommandHandlers();
 
-                this.pluginInterface.UiBuilder.OnBuildFonts -= this.ui.BuildFonts;
                 this.pluginInterface.UiBuilder.OnOpenConfigUi -= (sender, e) => this.ui.ConfigVisible = true;
                 this.pluginInterface.UiBuilder.OnBuildUi -= this.ui.BuildUi;
 

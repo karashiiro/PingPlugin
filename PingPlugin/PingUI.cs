@@ -27,12 +27,6 @@ namespace PingPlugin
             this.pingTracker = pingTracker;
         }
 
-        public void BuildFonts()
-        {
-            // I could've stuck with the default just fine, but that's too safe.
-            this.courierNew = ImGui.GetIO().Fonts.AddFontFromFileTTF(Path.Combine(Assembly.GetCallingAssembly().Location, "cour.ttf"), 18.66f);
-        }
-
         public void BuildUi()
         {
             if (this.ConfigVisible) DrawConfigUi();
