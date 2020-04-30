@@ -9,6 +9,8 @@ namespace PingPlugin
         private readonly PingConfiguration config;
         private readonly PingTracker pingTracker;
 
+        private bool resettingGraphPos;
+        private bool resettingMonitorPos;
         private bool configVisible;
 
         public bool ConfigVisible
@@ -32,7 +34,7 @@ namespace PingPlugin
 
         private void DrawConfigUi()
         {
-            ImGui.SetNextWindowSize(new Vector2(330, 190), ImGuiCond.Always);
+            ImGui.SetNextWindowSize(new Vector2(400, 210), ImGuiCond.Always);
 
             ImGui.Begin("PingPlugin Configuration", ref this.configVisible, ImGuiWindowFlags.NoResize);
             var lockWindows = this.config.LockWindows;
@@ -63,23 +65,44 @@ namespace PingPlugin
                 this.config.Save();
             }
 
+            var monitorBgAlpha = this.config.MonitorBgAlpha;
+            if (ImGui.SliderFloat("Monitor Transparency", ref monitorBgAlpha, 0.0f, 1.0f))
+            {
+                this.config.MonitorBgAlpha = monitorBgAlpha;
+                this.config.Save();
+            }
+
             if (ImGui.Button("Defaults"))
             {
                 this.config.RestoreDefaults();
                 this.config.Save();
+            }
+
+            ImGui.SameLine();
+            if (ImGui.Button("Reset Window Positions"))
+            {
+                this.config.ResetWindowPositions();
+                this.resettingGraphPos = true;
+                this.resettingMonitorPos = true;
             }
             ImGui.End();
         }
 
         private void DrawMonitor()
         {
-            var windowFlags = BuildWindowFlags(ImGuiWindowFlags.NoBackground | ImGuiWindowFlags.NoResize | ImGuiWindowFlags.NoTitleBar);
+            var windowFlags = BuildWindowFlags(ImGuiWindowFlags.NoResize | ImGuiWindowFlags.NoTitleBar);
 
             ImGui.PushStyleVar(ImGuiStyleVar.WindowBorderSize, 0);
             ImGui.SetNextWindowPos(this.config.MonitorPosition, ImGuiCond.FirstUseEver);
             ImGui.SetNextWindowSize(new Vector2(170, 50), ImGuiCond.Always); // Auto-resize doesn't seem to work here
+            ImGui.SetNextWindowBgAlpha(this.config.MonitorBgAlpha);
 
             ImGui.Begin("PingMonitor", windowFlags);
+            if (this.resettingMonitorPos)
+            {
+                ImGui.SetWindowPos(this.config.MonitorPosition);
+                this.resettingMonitorPos = false;
+            }
             ImGui.TextColored(this.config.MonitorFontColor, $"Ping: {this.pingTracker.LastRTT}ms\nAverage ping: {Math.Round(this.pingTracker.AverageRTT), 2}ms");
             ImGui.End();
 
@@ -94,6 +117,11 @@ namespace PingPlugin
             ImGui.SetNextWindowSize(new Vector2(316, 190), ImGuiCond.Always);
 
             ImGui.Begin("Ping Graph", windowFlags);
+            if (this.resettingGraphPos)
+            {
+                ImGui.SetWindowPos(this.config.GraphPosition);
+                this.resettingGraphPos = false;
+            }
             var pingArray = this.pingTracker.RTTTimes.ToArray();
             if (pingArray.Length > 0)
                 ImGui.PlotLines(string.Empty, ref pingArray[0], pingArray.Length, 0, null, float.MaxValue, float.MaxValue, new Vector2(300, 150));

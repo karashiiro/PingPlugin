@@ -12,6 +12,7 @@ namespace PingPlugin
         public Vector2 GraphPosition { get; set; }
         public Vector2 MonitorPosition { get; set; }
 
+        public float MonitorBgAlpha { get; set; }
         public Vector4 MonitorFontColor { get; set; }
 
         public bool ClickThrough { get; set; }
@@ -23,9 +24,7 @@ namespace PingPlugin
 
         public PingConfiguration()
         {
-            GraphPosition = new Vector2(600, 150);
-            MonitorPosition = new Vector2(300, 150);
-
+            ResetWindowPositions();
             RestoreDefaults();
         }
 
@@ -37,8 +36,16 @@ namespace PingPlugin
             this.pluginInterface = pluginInterface;
         }
 
+        // Chances are the user doesn't expect the window positions to be reset with the other button, so we have a separate thingy instead.
+        public void ResetWindowPositions()
+        {
+            GraphPosition = new Vector2(600, 150);
+            MonitorPosition = new Vector2(300, 150);
+        }
+
         public void RestoreDefaults()
         {
+            MonitorBgAlpha = 0.0f;
             MonitorFontColor = new Vector4(1, 1, 0, 1); // Yellow, it's ABGR instead of RGBA for some reason.
             MonitorIsVisible = true;
             PingQueueSize = 20;
