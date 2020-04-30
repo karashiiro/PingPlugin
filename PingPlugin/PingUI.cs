@@ -1,5 +1,7 @@
 ﻿using System;
+using System.IO;
 using System.Numerics;
+using System.Reflection;
 using ImGuiNET;
 
 namespace PingPlugin
@@ -21,7 +23,7 @@ namespace PingPlugin
 
         public void BuildFonts()
         {
-            CourierNew = ImGui.GetIO().Fonts.AddFontFromFileTTF("cour.ttf", 18.66f);
+            CourierNew = ImGui.GetIO().Fonts.AddFontFromFileTTF(Path.Combine(Assembly.GetCallingAssembly().Location, "..", "cour.ttf"), 18.66f);
         }
 
         public void BuildUi()
