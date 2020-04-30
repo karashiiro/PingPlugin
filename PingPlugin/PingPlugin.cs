@@ -52,22 +52,22 @@ namespace PingPlugin
                     HelpMessage = "Show/hide the ping graph.",
                     ShowInHelp = true,
                 });
-            #if DEBUG
             this.pluginInterface.CommandManager.AddHandler("/pingconfig",
                 new CommandInfo((command, args) =>
                 {
                     this.ui.ConfigVisible = true;
-                }));
-            #endif
+                })
+                {
+                    HelpMessage = "Show/hide PingPlugin's configuration.",
+                    ShowInHelp = true,
+                });
         }
 
         private void RemoveCommandHandlers()
         {
             this.pluginInterface.CommandManager.RemoveHandler("/ping");
             this.pluginInterface.CommandManager.RemoveHandler("/pinggraph");
-            #if DEBUG
             this.pluginInterface.CommandManager.RemoveHandler("/pingconfig");
-            #endif
         }
 
         private void OnNetworkMessage(IntPtr dataPtr, ushort opCode, uint targetId, NetworkMessageDirection direction)
@@ -76,7 +76,7 @@ namespace PingPlugin
                 return;
             
             if (direction == NetworkMessageDirection.ZoneUp)
-                if (opCode == 378) // ReqActorCast: 0x241
+                if (opCode == 378) // ReqActorCast: 0x241 for future reference, seems to give weird values quite often
                     this.pingTracker.StartNextRTTWait();
 
             if (direction == NetworkMessageDirection.ZoneDown)

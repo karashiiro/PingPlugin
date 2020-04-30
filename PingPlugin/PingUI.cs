@@ -32,7 +32,7 @@ namespace PingPlugin
 
         private void DrawConfigUi()
         {
-            ImGui.SetNextWindowSize(new Vector2(300, 120), ImGuiCond.Always);
+            ImGui.SetNextWindowSize(new Vector2(330, 190), ImGuiCond.Always);
 
             ImGui.Begin("PingPlugin Configuration", ref this.configVisible, ImGuiWindowFlags.NoResize);
             var lockWindows = this.config.LockWindows;
@@ -41,16 +41,31 @@ namespace PingPlugin
                 this.config.LockWindows = lockWindows;
                 this.config.Save();
             }
+
             var clickThrough = this.config.ClickThrough;
             if (ImGui.Checkbox("Click through plugin windows", ref clickThrough))
             {
                 this.config.ClickThrough = clickThrough;
                 this.config.Save();
             }
+
             var queueSize = this.config.PingQueueSize;
             if (ImGui.InputInt("Ping queue size", ref queueSize))
             {
                 this.config.PingQueueSize = queueSize;
+                this.config.Save();
+            }
+
+            var monitorColor = this.config.MonitorFontColor;
+            if (ImGui.ColorEdit4("Monitor Color", ref monitorColor))
+            {
+                this.config.MonitorFontColor = monitorColor;
+                this.config.Save();
+            }
+
+            if (ImGui.Button("Defaults"))
+            {
+                this.config.RestoreDefaults();
                 this.config.Save();
             }
             ImGui.End();
@@ -65,7 +80,7 @@ namespace PingPlugin
             ImGui.SetNextWindowSize(new Vector2(170, 50), ImGuiCond.Always); // Auto-resize doesn't seem to work here
 
             ImGui.Begin("PingMonitor", windowFlags);
-            ImGui.TextColored(new Vector4(1, 1, 0, 1), $"Ping: {this.pingTracker.LastRTT}ms\nAverage ping: {Math.Round(this.pingTracker.AverageRTT), 2}ms"); // Yellow, it's ABGR instead of RGBA for some reason.
+            ImGui.TextColored(this.config.MonitorFontColor, $"Ping: {this.pingTracker.LastRTT}ms\nAverage ping: {Math.Round(this.pingTracker.AverageRTT), 2}ms");
             ImGui.End();
 
             ImGui.PopStyleVar(1);
