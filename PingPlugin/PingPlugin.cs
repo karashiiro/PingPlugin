@@ -24,7 +24,8 @@ namespace PingPlugin
             this.ui = new PingUI(this.pingTracker, this.config);
 
             ui.IsVisible = true;
-            this.pluginInterface.UiBuilder.OnBuildUi += this.ui.Draw;
+            this.pluginInterface.UiBuilder.OnBuildFonts += this.ui.BuildFonts;
+            this.pluginInterface.UiBuilder.OnBuildUi += this.ui.BuildUi;
             this.pluginInterface.CommandManager.AddHandler("/ping",
                 new CommandInfo((command, args) => this.ui.IsVisible = !this.ui.IsVisible));
 
@@ -35,7 +36,7 @@ namespace PingPlugin
         {
             if (!this.pluginInterface.Data.IsDataReady || this.pluginInterface.ClientState.LocalPlayer == null)
                 return;
-
+            
             if (direction == NetworkMessageDirection.ZoneUp)
                 if (opCode == 0x241)
                     this.pingTracker.StartNextRTTWait();
@@ -63,7 +64,8 @@ namespace PingPlugin
             {
                 this.pluginInterface.CommandManager.RemoveHandler("/ping");
 
-                this.pluginInterface.UiBuilder.OnBuildUi -= this.ui.Draw;
+                this.pluginInterface.UiBuilder.OnBuildFonts -= this.ui.BuildFonts;
+                this.pluginInterface.UiBuilder.OnBuildUi -= this.ui.BuildUi;
 
                 this.pluginInterface.SavePluginConfig(this.config);
 
