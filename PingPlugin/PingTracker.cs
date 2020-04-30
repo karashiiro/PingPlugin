@@ -6,6 +6,7 @@ namespace PingPlugin
 {
     public class PingTracker
     {
+        private readonly PingConfiguration config;
         private readonly Stopwatch timer;
 
         // Everything we want the user to see
@@ -13,8 +14,9 @@ namespace PingPlugin
         public long LastRTT { get; private set; }
         public Queue<float> RTTTimes { get; set; }
 
-        public PingTracker()
+        public PingTracker(PingConfiguration config)
         {
+            this.config = config;
             this.timer = new Stopwatch();
 
             RTTTimes = new Queue<float>();
@@ -30,7 +32,7 @@ namespace PingPlugin
             RTTTimes.Enqueue(nextRTT);
             CalcAverage();
 
-            if (RTTTimes.Count > 20)
+            while (RTTTimes.Count > this.config.PingQueueSize)
                 RTTTimes.Dequeue();
 
             LastRTT = nextRTT;

@@ -19,7 +19,7 @@ namespace PingPlugin
             this.pluginInterface = pluginInterface;
             this.config = (PingConfiguration) this.pluginInterface.GetPluginConfig() ?? new PingConfiguration();
             this.config.Initialize(this.pluginInterface);
-            this.pingTracker = new PingTracker();
+            this.pingTracker = new PingTracker(this.config);
             this.ui = new PingUI(this.pingTracker, this.config);
 
             this.pluginInterface.UiBuilder.OnOpenConfigUi += (sender, e) => this.ui.ConfigVisible = true;
@@ -76,11 +76,11 @@ namespace PingPlugin
                 return;
             
             if (direction == NetworkMessageDirection.ZoneUp)
-                if (opCode == 0x241)
+                if (opCode == 378) // ReqActorCast: 0x241
                     this.pingTracker.StartNextRTTWait();
 
             if (direction == NetworkMessageDirection.ZoneDown)
-                if (opCode == 0xC4 && targetId == this.pluginInterface.ClientState.LocalPlayer.ActorId)
+                if (opCode == 378 && targetId == this.pluginInterface.ClientState.LocalPlayer.ActorId) // ActorCast: 0xC4
                     this.pingTracker.StartNextRTTCalculation();
         }
 

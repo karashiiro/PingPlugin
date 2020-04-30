@@ -17,12 +17,16 @@ namespace PingPlugin
         public bool MonitorIsVisible { get; set; }
         public bool LockWindows { get; set; }
 
+        public int PingQueueSize { get; set; }
+
         public PingConfiguration()
         {
             GraphPosition = new Vector2(600, 150);
             MonitorPosition = new Vector2(300, 150);
 
             MonitorIsVisible = true;
+
+            PingQueueSize = 20;
         }
 
         [NonSerialized]

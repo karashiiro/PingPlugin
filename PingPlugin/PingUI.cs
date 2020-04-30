@@ -1,8 +1,5 @@
 ﻿using System;
-using System.IO;
 using System.Numerics;
-using System.Reflection;
-using Dalamud.Plugin;
 using ImGuiNET;
 
 namespace PingPlugin
@@ -13,7 +10,6 @@ namespace PingPlugin
         private readonly PingTracker pingTracker;
 
         private bool configVisible;
-        private ImFontPtr courierNew;
 
         public bool ConfigVisible
         {
@@ -36,7 +32,7 @@ namespace PingPlugin
 
         private void DrawConfigUi()
         {
-            ImGui.SetNextWindowSize(new Vector2(250, 120), ImGuiCond.Always);
+            ImGui.SetNextWindowSize(new Vector2(300, 120), ImGuiCond.Always);
 
             ImGui.Begin("PingPlugin Configuration", ref this.configVisible, ImGuiWindowFlags.NoResize);
             var lockWindows = this.config.LockWindows;
@@ -51,6 +47,12 @@ namespace PingPlugin
                 this.config.ClickThrough = clickThrough;
                 this.config.Save();
             }
+            var queueSize = this.config.PingQueueSize;
+            if (ImGui.InputInt("Ping queue size", ref queueSize))
+            {
+                this.config.PingQueueSize = queueSize;
+                this.config.Save();
+            }
             ImGui.End();
         }
 
@@ -63,9 +65,7 @@ namespace PingPlugin
             ImGui.SetNextWindowSize(new Vector2(170, 50), ImGuiCond.Always); // Auto-resize doesn't seem to work here
 
             ImGui.Begin("PingMonitor", windowFlags);
-            ImGui.PushFont(this.courierNew);
             ImGui.TextColored(new Vector4(1, 1, 0, 1), $"Ping: {this.pingTracker.LastRTT}ms\nAverage ping: {Math.Round(this.pingTracker.AverageRTT), 2}ms"); // Yellow, it's ABGR instead of RGBA for some reason.
-            ImGui.PopFont();
             ImGui.End();
 
             ImGui.PopStyleVar(1);
