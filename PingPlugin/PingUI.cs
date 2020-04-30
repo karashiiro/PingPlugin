@@ -133,13 +133,9 @@ namespace PingPlugin
         private ImGuiWindowFlags BuildWindowFlags(ImGuiWindowFlags flags)
         {
             if (this.config.ClickThrough)
-            {
                 flags |= ImGuiWindowFlags.NoInputs;
-            }
             if (this.config.LockWindows)
-            {
                 flags |= ImGuiWindowFlags.NoMove;
-            }
             return flags;
         }
     }
