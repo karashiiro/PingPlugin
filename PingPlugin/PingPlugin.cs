@@ -18,10 +18,12 @@ namespace PingPlugin
         {
             this.pluginInterface = pluginInterface;
             this.config = (PingConfiguration) this.pluginInterface.GetPluginConfig() ?? new PingConfiguration();
+            this.config.Initialize(this.pluginInterface);
             this.pingTracker = new PingTracker();
             this.ui = new PingUI(this.pingTracker, this.config);
 
             this.pluginInterface.UiBuilder.OnBuildFonts += this.ui.BuildFonts;
+            this.pluginInterface.UiBuilder.OnOpenConfigUi += (sender, e) => this.ui.ConfigVisible = true;
             this.pluginInterface.UiBuilder.OnBuildUi += this.ui.BuildUi;
 
             AddCommandHandlers();
@@ -34,8 +36,8 @@ namespace PingPlugin
             this.pluginInterface.CommandManager.AddHandler("/ping",
                 new CommandInfo((command, args) =>
                 {
-                    this.ui.MonitorIsVisible = !this.ui.MonitorIsVisible;
-                    this.pluginInterface.SavePluginConfig(this.config); // If you kill the game, nothing is disposed. So, we save changes after they're made.
+                    this.config.MonitorIsVisible = !this.config.MonitorIsVisible;
+                    this.config.Save(); // If you kill the game, nothing is disposed. So, we save changes after they're made.
                 })
                 {
                     HelpMessage = "Show/hide the ping monitor.",
@@ -44,19 +46,29 @@ namespace PingPlugin
             this.pluginInterface.CommandManager.AddHandler("/pinggraph",
                 new CommandInfo((command, args) =>
                 {
-                    this.ui.GraphIsVisible = !this.ui.GraphIsVisible;
-                    this.pluginInterface.SavePluginConfig(this.config);
+                    this.config.GraphIsVisible = !this.config.GraphIsVisible;
+                    this.config.Save();
                 })
                 {
                     HelpMessage = "Show/hide the ping graph.",
                     ShowInHelp = true,
                 });
+            #if DEBUG
+            this.pluginInterface.CommandManager.AddHandler("/pingconfig",
+                new CommandInfo((command, args) =>
+                {
+                    this.ui.ConfigVisible = true;
+                }));
+            #endif
         }
 
         private void RemoveCommandHandlers()
         {
             this.pluginInterface.CommandManager.RemoveHandler("/ping");
             this.pluginInterface.CommandManager.RemoveHandler("/pinggraph");
+            #if DEBUG
+            this.pluginInterface.CommandManager.RemoveHandler("/pingconfig");
+            #endif
         }
 
         private void OnNetworkMessage(IntPtr dataPtr, ushort opCode, uint targetId, NetworkMessageDirection direction)
@@ -92,9 +104,10 @@ namespace PingPlugin
                 RemoveCommandHandlers();
 
                 this.pluginInterface.UiBuilder.OnBuildFonts -= this.ui.BuildFonts;
+                this.pluginInterface.UiBuilder.OnOpenConfigUi -= (sender, e) => this.ui.ConfigVisible = true;
                 this.pluginInterface.UiBuilder.OnBuildUi -= this.ui.BuildUi;
 
-                this.pluginInterface.SavePluginConfig(this.config);
+                this.config.Save();
 
                 this.pluginInterface.Dispose();
             }

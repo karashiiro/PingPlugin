@@ -2,6 +2,7 @@
 using System.IO;
 using System.Numerics;
 using System.Reflection;
+using Dalamud.Plugin;
 using ImGuiNET;
 
 namespace PingPlugin
@@ -11,17 +12,13 @@ namespace PingPlugin
         private readonly PingConfiguration config;
         private readonly PingTracker pingTracker;
 
-        private ImFontPtr CourierNew;
+        private bool configVisible;
+        private ImFontPtr courierNew;
 
-        public bool GraphIsVisible
+        public bool ConfigVisible
         {
-            get => this.config.GraphIsVisible;
-            set => this.config.GraphIsVisible = value;
-        }
-        public bool MonitorIsVisible
-        {
-            get => this.config.MonitorIsVisible;
-            set => this.config.MonitorIsVisible = value;
+            get => this.configVisible;
+            set => this.configVisible = value;
         }
 
         public PingUI(PingTracker pingTracker, PingConfiguration config)
@@ -33,13 +30,34 @@ namespace PingPlugin
         public void BuildFonts()
         {
             // I could've stuck with the default just fine, but that's too safe.
-            CourierNew = ImGui.GetIO().Fonts.AddFontFromFileTTF(Path.Combine(Assembly.GetCallingAssembly().Location, "..", "cour.ttf"), 18.66f);
+            this.courierNew = ImGui.GetIO().Fonts.AddFontFromFileTTF(Path.Combine(Assembly.GetCallingAssembly().Location, "cour.ttf"), 18.66f);
         }
 
         public void BuildUi()
         {
+            if (this.ConfigVisible) DrawConfigUi();
             if (this.config.GraphIsVisible) DrawGraph();
             if (this.config.MonitorIsVisible) DrawMonitor();
+        }
+
+        private void DrawConfigUi()
+        {
+            ImGui.SetNextWindowSize(new Vector2(250, 120), ImGuiCond.Always);
+
+            ImGui.Begin("PingPlugin Configuration", ref this.configVisible, ImGuiWindowFlags.NoResize);
+            var lockWindows = this.config.LockWindows;
+            if (ImGui.Checkbox("Lock plugin windows", ref lockWindows))
+            {
+                this.config.LockWindows = lockWindows;
+                this.config.Save();
+            }
+            var clickThrough = this.config.ClickThrough;
+            if (ImGui.Checkbox("Click through plugin windows", ref clickThrough))
+            {
+                this.config.ClickThrough = clickThrough;
+                this.config.Save();
+            }
+            ImGui.End();
         }
 
         private void DrawMonitor()
@@ -51,7 +69,7 @@ namespace PingPlugin
             ImGui.SetNextWindowSize(new Vector2(170, 50), ImGuiCond.Always); // Auto-resize doesn't seem to work here
 
             ImGui.Begin("PingMonitor", windowFlags);
-            ImGui.PushFont(CourierNew);
+            ImGui.PushFont(this.courierNew);
             ImGui.TextColored(new Vector4(1, 1, 0, 1), $"Ping: {this.pingTracker.LastRTT}ms\nAverage ping: {Math.Round(this.pingTracker.AverageRTT), 2}ms"); // Yellow, it's ABGR instead of RGBA for some reason.
             ImGui.PopFont();
             ImGui.End();
@@ -78,9 +96,13 @@ namespace PingPlugin
         private ImGuiWindowFlags BuildWindowFlags(ImGuiWindowFlags flags)
         {
             if (this.config.ClickThrough)
+            {
                 flags |= ImGuiWindowFlags.NoInputs;
+            }
             if (this.config.LockWindows)
+            {
                 flags |= ImGuiWindowFlags.NoMove;
+            }
             return flags;
         }
     }

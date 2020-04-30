@@ -1,5 +1,7 @@
-﻿using System.Numerics;
+﻿using System;
+using System.Numerics;
 using Dalamud.Configuration;
+using Dalamud.Plugin;
 
 namespace PingPlugin
 {
@@ -21,6 +23,19 @@ namespace PingPlugin
             MonitorPosition = new Vector2(300, 150);
 
             MonitorIsVisible = true;
+        }
+
+        [NonSerialized]
+        private DalamudPluginInterface pluginInterface;
+
+        public void Initialize(DalamudPluginInterface pluginInterface)
+        {
+            this.pluginInterface = pluginInterface;
+        }
+
+        public void Save()
+        {
+            this.pluginInterface.SavePluginConfig(this);
         }
     }
 }
