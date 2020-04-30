@@ -8,15 +8,16 @@ namespace PingPlugin
     {
         private readonly Stopwatch timer;
 
-        private Queue<long> rttTimes = new Queue<long>();
-
         // Everything we want the user to see
         public double AverageRTT { get; private set; }
         public long LastRTT { get; private set; }
+        public Queue<float> RTTTimes { get; set; }
 
         public PingTracker()
         {
             this.timer = new Stopwatch();
+
+            RTTTimes = new Queue<float>();
         }
 
         public void StartNextRTTWait()
@@ -26,11 +27,11 @@ namespace PingPlugin
         {
             var nextRTT = this.timer.ElapsedMilliseconds;
 
-            rttTimes.Enqueue(nextRTT);
+            RTTTimes.Enqueue(nextRTT);
             CalcAverage();
 
-            if (rttTimes.Count > 10)
-                rttTimes.Dequeue();
+            if (RTTTimes.Count > 20)
+                RTTTimes.Dequeue();
 
             LastRTT = nextRTT;
             this.timer.Reset();
@@ -38,7 +39,7 @@ namespace PingPlugin
 
         private void CalcAverage()
         {
-            AverageRTT = rttTimes.Average();
+            AverageRTT = RTTTimes.Average();
         }
     }
 }

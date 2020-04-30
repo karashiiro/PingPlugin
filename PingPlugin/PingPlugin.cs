@@ -23,11 +23,13 @@ namespace PingPlugin
             this.pingTracker = new PingTracker();
             this.ui = new PingUI(this.pingTracker, this.config);
 
-            ui.IsVisible = true;
+            ui.MonitorIsVisible = true;
             this.pluginInterface.UiBuilder.OnBuildFonts += this.ui.BuildFonts;
             this.pluginInterface.UiBuilder.OnBuildUi += this.ui.BuildUi;
             this.pluginInterface.CommandManager.AddHandler("/ping",
-                new CommandInfo((command, args) => this.ui.IsVisible = !this.ui.IsVisible));
+                new CommandInfo((command, args) => this.ui.MonitorIsVisible = !this.ui.MonitorIsVisible));
+            this.pluginInterface.CommandManager.AddHandler("/pinggraph",
+                new CommandInfo((command, args) => this.ui.GraphIsVisible = !this.ui.GraphIsVisible));
 
             this.pluginInterface.Framework.Network.OnNetworkMessage += OnNetworkMessage;
         }
@@ -63,6 +65,7 @@ namespace PingPlugin
             if (disposing)
             {
                 this.pluginInterface.CommandManager.RemoveHandler("/ping");
+                this.pluginInterface.CommandManager.RemoveHandler("/pinggraph");
 
                 this.pluginInterface.UiBuilder.OnBuildFonts -= this.ui.BuildFonts;
                 this.pluginInterface.UiBuilder.OnBuildUi -= this.ui.BuildUi;
@@ -77,11 +80,6 @@ namespace PingPlugin
         {
             Dispose(true);
             GC.SuppressFinalize(this);
-        }
-
-        ~PingPlugin()
-        {
-            Dispose(false);
         }
         #endregion
     }
