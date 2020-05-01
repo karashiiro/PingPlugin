@@ -126,7 +126,7 @@ namespace PingPlugin
             var windowFlags = BuildWindowFlags(ImGuiWindowFlags.NoResize);
 
             ImGui.SetNextWindowPos(this.config.GraphPosition, ImGuiCond.FirstUseEver);
-            ImGui.SetNextWindowSize(new Vector2(346, 210), ImGuiCond.Always);
+            ImGui.SetNextWindowSize(new Vector2(356, 210), ImGuiCond.Always);
 
             ImGui.Begin("Ping Graph", windowFlags);
             if (this.resettingGraphPos)
@@ -153,18 +153,18 @@ namespace PingPlugin
                 var lowLineStart = new Vector2(16, lowY);
                 var lowLineEnd = new Vector2(16 + graphSize.X, lowY);
                 ImGui.GetForegroundDrawList().AddLine(lowLineStart, lowLineEnd, ImGui.GetColorU32(ImGuiCol.PlotLines));
-                ImGui.GetForegroundDrawList().AddText(lowLineEnd - new Vector2(0, 5), ImGui.GetColorU32(ImGuiCol.Text), min.ToString(CultureInfo.CurrentUICulture));
+                ImGui.GetForegroundDrawList().AddText(lowLineEnd - new Vector2(0, 5), ImGui.GetColorU32(ImGuiCol.Text), min.ToString(CultureInfo.CurrentUICulture) + "ms");
 
                 var avgLineStart = new Vector2(16, avgY);
                 var avgLineEnd = new Vector2(16 + graphSize.X, avgY);
                 ImGui.GetForegroundDrawList().AddLine(avgLineStart, avgLineEnd, ImGui.GetColorU32(ImGuiCol.PlotLines));
-                ImGui.GetForegroundDrawList().AddText(avgLineEnd - new Vector2(0, 5), ImGui.GetColorU32(ImGuiCol.Text), Math.Round(this.pingTracker.AverageRTT, 2).ToString(CultureInfo.CurrentUICulture));
+                ImGui.GetForegroundDrawList().AddText(avgLineEnd - new Vector2(0, 5), ImGui.GetColorU32(ImGuiCol.Text), Math.Round(this.pingTracker.AverageRTT, 2).ToString(CultureInfo.CurrentUICulture) + "ms");
 
                 var highLineStart = new Vector2(16, highY);
                 var highLineEnd = new Vector2(16 + graphSize.X, highY);
                 ImGui.GetForegroundDrawList()
                     .AddLine(highLineStart, highLineEnd, ImGui.GetColorU32(ImGuiCol.PlotLines));
-                ImGui.GetForegroundDrawList().AddText(highLineEnd - new Vector2(0, 5), ImGui.GetColorU32(ImGuiCol.Text), max.ToString(CultureInfo.CurrentUICulture));
+                ImGui.GetForegroundDrawList().AddText(highLineEnd - new Vector2(0, 5), ImGui.GetColorU32(ImGuiCol.Text), max.ToString(CultureInfo.CurrentUICulture) + "ms");
 
             }
             else
