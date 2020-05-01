@@ -104,7 +104,7 @@ namespace PingPlugin
 
             ImGui.PushStyleVar(ImGuiStyleVar.WindowBorderSize, 0);
             ImGui.SetNextWindowPos(this.config.MonitorPosition, ImGuiCond.FirstUseEver);
-            ImGui.SetNextWindowSize(new Vector2(170, 100), ImGuiCond.Always); // Auto-resize doesn't seem to work here
+            ImGui.SetNextWindowSize(new Vector2(186, 100), ImGuiCond.Always); // Auto-resize doesn't seem to work here
             ImGui.SetNextWindowBgAlpha(this.config.MonitorBgAlpha);
 
             ImGui.Begin("PingMonitor", windowFlags);
@@ -150,23 +150,25 @@ namespace PingPlugin
                 ImGui.PlotLines(string.Empty, ref pingArray[0], pingArray.Length, 0, null,
                     float.MaxValue, float.MaxValue, graphSize);
 
-                var lowLineStart = new Vector2(16, lowY);
-                var lowLineEnd = new Vector2(16 + graphSize.X, lowY);
-                ImGui.GetForegroundDrawList().AddLine(lowLineStart, lowLineEnd, ImGui.GetColorU32(ImGuiCol.PlotLines));
-                ImGui.GetForegroundDrawList().AddText(lowLineEnd - new Vector2(0, 5), ImGui.GetColorU32(ImGuiCol.Text), min.ToString(CultureInfo.CurrentUICulture) + "ms");
+                if (!ImGui.IsWindowCollapsed())
+                {
+                    var lowLineStart = new Vector2(16, lowY);
+                    var lowLineEnd = new Vector2(16 + graphSize.X, lowY);
+                    ImGui.GetForegroundDrawList().AddLine(lowLineStart, lowLineEnd, ImGui.GetColorU32(ImGuiCol.PlotLines));
+                    ImGui.GetForegroundDrawList().AddText(lowLineEnd - new Vector2(0, 5), ImGui.GetColorU32(ImGuiCol.Text), min.ToString(CultureInfo.CurrentUICulture) + "ms");
 
-                var avgLineStart = new Vector2(16, avgY);
-                var avgLineEnd = new Vector2(16 + graphSize.X, avgY);
-                ImGui.GetForegroundDrawList().AddLine(avgLineStart, avgLineEnd, ImGui.GetColorU32(ImGuiCol.PlotLines));
-                ImGui.GetForegroundDrawList().AddText(avgLineEnd - new Vector2(0, 5), ImGui.GetColorU32(ImGuiCol.Text), Math.Round(this.pingTracker.AverageRTT, 2).ToString(CultureInfo.CurrentUICulture) + "ms");
-                ImGui.GetForegroundDrawList().AddText(avgLineEnd - new Vector2(270, 18), ImGui.GetColorU32(ImGuiCol.Text), "Average");
+                    var avgLineStart = new Vector2(16, avgY);
+                    var avgLineEnd = new Vector2(16 + graphSize.X, avgY);
+                    ImGui.GetForegroundDrawList().AddLine(avgLineStart, avgLineEnd, ImGui.GetColorU32(ImGuiCol.PlotLines));
+                    ImGui.GetForegroundDrawList().AddText(avgLineEnd - new Vector2(0, 5), ImGui.GetColorU32(ImGuiCol.Text), Math.Round(this.pingTracker.AverageRTT, 2).ToString(CultureInfo.CurrentUICulture) + "ms");
+                    ImGui.GetForegroundDrawList().AddText(avgLineEnd - new Vector2(270, 18), ImGui.GetColorU32(ImGuiCol.Text), "Average");
 
-                var highLineStart = new Vector2(16, highY);
-                var highLineEnd = new Vector2(16 + graphSize.X, highY);
-                ImGui.GetForegroundDrawList()
-                    .AddLine(highLineStart, highLineEnd, ImGui.GetColorU32(ImGuiCol.PlotLines));
-                ImGui.GetForegroundDrawList().AddText(highLineEnd - new Vector2(0, 5), ImGui.GetColorU32(ImGuiCol.Text), max.ToString(CultureInfo.CurrentUICulture) + "ms");
-
+                    var highLineStart = new Vector2(16, highY);
+                    var highLineEnd = new Vector2(16 + graphSize.X, highY);
+                    ImGui.GetForegroundDrawList()
+                        .AddLine(highLineStart, highLineEnd, ImGui.GetColorU32(ImGuiCol.PlotLines));
+                    ImGui.GetForegroundDrawList().AddText(highLineEnd - new Vector2(0, 5), ImGui.GetColorU32(ImGuiCol.Text), max.ToString(CultureInfo.CurrentUICulture) + "ms");
+                }
             }
             else
                 ImGui.Text("No data to display at this time.");
