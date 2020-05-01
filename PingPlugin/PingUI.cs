@@ -37,7 +37,7 @@ namespace PingPlugin
 
         private void DrawConfigUi()
         {
-            ImGui.SetNextWindowSize(new Vector2(400, 230), ImGuiCond.Always);
+            ImGui.SetNextWindowSize(new Vector2(400, 255), ImGuiCond.Always);
 
             ImGui.Begin("PingPlugin Configuration", ref this.configVisible, ImGuiWindowFlags.NoResize);
             var lockWindows = this.config.LockWindows;
@@ -51,6 +51,13 @@ namespace PingPlugin
             if (ImGui.Checkbox("Click through plugin windows", ref clickThrough))
             {
                 this.config.ClickThrough = clickThrough;
+                this.config.Save();
+            }
+			
+            var minimalDisplay = this.config.MinimalDisplay;
+            if (ImGui.Checkbox("Minimal display", ref minimalDisplay))
+            {
+                this.config.MinimalDisplay = minimalDisplay;
                 this.config.Save();
             }
 
@@ -113,7 +120,7 @@ namespace PingPlugin
                 ImGui.SetWindowPos(this.config.MonitorPosition);
                 this.resettingMonitorPos = false;
             }
-            ImGui.TextColored(this.config.MonitorFontColor, $"Connected to: {this.pingTracker.SeAddress}\nPing: {this.pingTracker.LastRTT}ms\nAverage ping: {Math.Round(this.pingTracker.AverageRTT), 2}ms");
+            ImGui.TextColored(this.config.MonitorFontColor, this.config.MinimalDisplay?$"Ping: {this.pingTracker.LastRTT}ms / Average: {Math.Round(this.pingTracker.AverageRTT), 2}ms":$"Connected to: {this.pingTracker.SeAddress}\nPing: {this.pingTracker.LastRTT}ms\nAverage ping: {Math.Round(this.pingTracker.AverageRTT), 2}ms");
             if (this.pingTracker.LastStatus != IPStatus.Success)
                 ImGui.TextColored(this.config.MonitorErrorFontColor, $"Error: {this.pingTracker.LastStatus}");
             ImGui.End();
