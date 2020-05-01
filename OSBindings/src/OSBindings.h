@@ -14,7 +14,7 @@ inline bool isLittleEndian() {
 }
 
 inline unsigned long littleEndian(unsigned long val) {
-    if (isLittleEndian())
-        return _byteswap_ulong(val);
-    return val;
+	if (isLittleEndian())
+		return _byteswap_ulong(val);
+	return val;
 }
