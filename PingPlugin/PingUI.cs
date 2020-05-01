@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Net.NetworkInformation;
 using System.Numerics;
 using ImGuiNET;
 
@@ -34,7 +35,7 @@ namespace PingPlugin
 
         private void DrawConfigUi()
         {
-            ImGui.SetNextWindowSize(new Vector2(400, 210), ImGuiCond.Always);
+            ImGui.SetNextWindowSize(new Vector2(400, 230), ImGuiCond.Always);
 
             ImGui.Begin("PingPlugin Configuration", ref this.configVisible, ImGuiWindowFlags.NoResize);
             var lockWindows = this.config.LockWindows;
@@ -62,6 +63,13 @@ namespace PingPlugin
             if (ImGui.ColorEdit4("Monitor Color", ref monitorColor))
             {
                 this.config.MonitorFontColor = monitorColor;
+                this.config.Save();
+            }
+
+            var monitorErrorColor = this.config.MonitorErrorFontColor;
+            if (ImGui.ColorEdit4("Monitor Error Color", ref monitorErrorColor))
+            {
+                this.config.MonitorErrorFontColor = monitorErrorColor;
                 this.config.Save();
             }
 
@@ -94,7 +102,7 @@ namespace PingPlugin
 
             ImGui.PushStyleVar(ImGuiStyleVar.WindowBorderSize, 0);
             ImGui.SetNextWindowPos(this.config.MonitorPosition, ImGuiCond.FirstUseEver);
-            ImGui.SetNextWindowSize(new Vector2(170, 50), ImGuiCond.Always); // Auto-resize doesn't seem to work here
+            ImGui.SetNextWindowSize(new Vector2(170, 100), ImGuiCond.Always); // Auto-resize doesn't seem to work here (used to be 170)
             ImGui.SetNextWindowBgAlpha(this.config.MonitorBgAlpha);
 
             ImGui.Begin("PingMonitor", windowFlags);
@@ -103,7 +111,9 @@ namespace PingPlugin
                 ImGui.SetWindowPos(this.config.MonitorPosition);
                 this.resettingMonitorPos = false;
             }
-            ImGui.TextColored(this.config.MonitorFontColor, $"Ping: {this.pingTracker.LastRTT}ms\nAverage ping: {Math.Round(this.pingTracker.AverageRTT), 2}ms");
+            ImGui.TextColored(this.config.MonitorFontColor, $"Connected to: {this.pingTracker.SeAddress}\nPing: {this.pingTracker.LastRTT}ms\nAverage ping: {Math.Round(this.pingTracker.AverageRTT), 2}ms");
+            if (this.pingTracker.LastStatus != IPStatus.Success)
+                ImGui.TextColored(this.config.MonitorErrorFontColor, $"Error: {this.pingTracker.LastStatus}");
             ImGui.End();
 
             ImGui.PopStyleVar(1);

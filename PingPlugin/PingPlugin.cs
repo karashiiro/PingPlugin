@@ -1,7 +1,6 @@
 ﻿using Dalamud.Plugin;
 using System;
 using Dalamud.Game.Command;
-using Dalamud.Game.Internal.Network;
 
 namespace PingPlugin
 {
@@ -26,8 +25,6 @@ namespace PingPlugin
             this.pluginInterface.UiBuilder.OnBuildUi += this.ui.BuildUi;
 
             AddCommandHandlers();
-
-            this.pluginInterface.Framework.Network.OnNetworkMessage += OnNetworkMessage;
         }
 
         private void AddCommandHandlers()
@@ -70,20 +67,6 @@ namespace PingPlugin
             this.pluginInterface.CommandManager.RemoveHandler("/pingconfig");
         }
 
-        private void OnNetworkMessage(IntPtr dataPtr, ushort opCode, uint targetId, NetworkMessageDirection direction)
-        {
-            if (!this.pluginInterface.Data.IsDataReady || this.pluginInterface.ClientState.LocalPlayer == null)
-                return;
-            
-            if (direction == NetworkMessageDirection.ZoneUp)
-                if (opCode == 378) // ReqActorCast: 0x241 for future reference, seems to give weird values quite often
-                    this.pingTracker.StartNextRTTWait();
-
-            if (direction == NetworkMessageDirection.ZoneDown)
-                if (opCode == 378 && targetId == this.pluginInterface.ClientState.LocalPlayer.ActorId) // ActorCast: 0xC4
-                    this.pingTracker.StartNextRTTCalculation();
-        }
-
         #region Logging Shortcuts
         private void Log(string messageTemplate, params object[] values)
             => this.pluginInterface.Log(messageTemplate, values);
@@ -107,6 +90,7 @@ namespace PingPlugin
 
                 this.config.Save();
 
+                this.pingTracker.Dispose();
                 this.pluginInterface.Dispose();
             }
         }

@@ -14,6 +14,7 @@ namespace PingPlugin
 
         public float MonitorBgAlpha { get; set; }
         public Vector4 MonitorFontColor { get; set; }
+        public Vector4 MonitorErrorFontColor { get; set; }
 
         public bool ClickThrough { get; set; }
         public bool GraphIsVisible { get; set; }
@@ -47,6 +48,7 @@ namespace PingPlugin
         {
             MonitorBgAlpha = 0.0f;
             MonitorFontColor = new Vector4(1, 1, 0, 1); // Yellow, it's ABGR instead of RGBA for some reason.
+            MonitorErrorFontColor = new Vector4(1, 0, 0, 1);
             MonitorIsVisible = true;
             PingQueueSize = 20;
         }
