@@ -17,7 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="..\pingplugin.json" Link="pingplugin.json" />
+    <Content Include="..\PingPlugin.json" Link="pingplugin.json" />
   </ItemGroup>
 
   <ItemGroup>
