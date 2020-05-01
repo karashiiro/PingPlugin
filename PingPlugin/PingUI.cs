@@ -126,7 +126,7 @@ namespace PingPlugin
             var windowFlags = BuildWindowFlags(ImGuiWindowFlags.NoResize);
 
             ImGui.SetNextWindowPos(this.config.GraphPosition, ImGuiCond.FirstUseEver);
-            ImGui.SetNextWindowSize(new Vector2(356, 210), ImGuiCond.Always);
+            ImGui.SetNextWindowSize(new Vector2(362, 210), ImGuiCond.Always);
 
             ImGui.Begin("Ping Graph", windowFlags);
             if (this.resettingGraphPos)
