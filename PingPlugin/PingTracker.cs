@@ -33,20 +33,25 @@ namespace PingPlugin
             this.config = config;
 
             UpdateSeAddress();
-
-            RTTTimes = new Queue<float>();
-
+            
+            RTTTimes = new Queue<float>(this.config.PingQueueSize);
+            for (var i = 0; i < this.config.PingQueueSize; i++)
+                RTTTimes.Enqueue(0);
+            
             Task.Run(() => PingLoop(this.tokenSource.Token));
             Task.Run(() => CheckAddressLoop(this.tokenSource.Token));
         }
 
         private void NextRTTCalculation(long nextRTT)
         {
-            RTTTimes.Enqueue(nextRTT);
+            lock (RTTTimes) // Not a huge fan of forcing the UI thread to wait for this, but ultimately it doesn't seem to have a notable effect on perf, so it's probably fine.
+            {
+                RTTTimes.Enqueue(nextRTT);
+                
+                while (RTTTimes.Count > this.config.PingQueueSize)
+                    RTTTimes.Dequeue();
+            }
             CalcAverage();
-
-            while (RTTTimes.Count > this.config.PingQueueSize)
-                RTTTimes.Dequeue();
 
             LastRTT = nextRTT;
         }

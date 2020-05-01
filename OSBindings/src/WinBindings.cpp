@@ -22,20 +22,17 @@ DllExport unsigned long GetFFXIVRemoteAddress(int pid) {
 	DWORD finalAddr = 0;
 	DWORD maxPort = 0;
     for (DWORD i = 0; i < tcpTable->dwNumEntries; i++) {
+    	const DWORD state = tcpTable->table[i].dwState;
         const DWORD tcpPid = tcpTable->table[i].dwOwningPid;
         const DWORD tcpRemoteAddr = tcpTable->table[i].dwRemoteAddr;
     	const DWORD tcpRemotePort = littleEndian(tcpTable->table[i].dwRemotePort);
-    	const DWORD tcpLocalAddr = tcpTable->table[i].dwLocalAddr;
-    	const DWORD tcpLocalPort = littleEndian(tcpTable->table[i].dwLocalPort);
+
+    	if (state == MIB_TCP_STATE_LISTEN)
+            continue;
         
-        if (tcpPid == pid) { // This is specific to FFXIV, but oh well, it performs best
-        	if (tcpRemotePort > maxPort) {
-        		maxPort = tcpRemotePort;
-        		finalAddr = tcpRemoteAddr;
-        	} else if (tcpLocalPort > maxPort) {
-        		maxPort = tcpLocalPort;
-        		finalAddr = tcpLocalAddr;
-        	}
+        if (tcpPid == pid && tcpRemotePort > maxPort) { // This is specific to FFXIV, but oh well, it performs best
+        	maxPort = tcpRemotePort;
+        	finalAddr = tcpRemoteAddr;
         }
     }
 

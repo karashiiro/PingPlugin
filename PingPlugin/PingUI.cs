@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Globalization;
+using System.Linq;
 using System.Net.NetworkInformation;
 using System.Numerics;
 using ImGuiNET;
@@ -102,7 +104,7 @@ namespace PingPlugin
 
             ImGui.PushStyleVar(ImGuiStyleVar.WindowBorderSize, 0);
             ImGui.SetNextWindowPos(this.config.MonitorPosition, ImGuiCond.FirstUseEver);
-            ImGui.SetNextWindowSize(new Vector2(170, 100), ImGuiCond.Always); // Auto-resize doesn't seem to work here (used to be 170)
+            ImGui.SetNextWindowSize(new Vector2(170, 100), ImGuiCond.Always); // Auto-resize doesn't seem to work here
             ImGui.SetNextWindowBgAlpha(this.config.MonitorBgAlpha);
 
             ImGui.Begin("PingMonitor", windowFlags);
@@ -124,7 +126,7 @@ namespace PingPlugin
             var windowFlags = BuildWindowFlags(ImGuiWindowFlags.NoResize);
 
             ImGui.SetNextWindowPos(this.config.GraphPosition, ImGuiCond.FirstUseEver);
-            ImGui.SetNextWindowSize(new Vector2(316, 190), ImGuiCond.Always);
+            ImGui.SetNextWindowSize(new Vector2(346, 210), ImGuiCond.Always);
 
             ImGui.Begin("Ping Graph", windowFlags);
             if (this.resettingGraphPos)
@@ -135,8 +137,35 @@ namespace PingPlugin
             var pingArray = this.pingTracker.RTTTimes.ToArray();
             if (pingArray.Length > 0)
             {
-                ImGui.PlotLines(string.Empty, ref pingArray[0], pingArray.Length, 0, "Network Latency (ms) vs Pings",
-                    float.MaxValue, float.MaxValue, new Vector2(300, 150));
+                var graphSize = new Vector2(300, 150);
+
+                var max = this.pingTracker.RTTTimes.Max();
+                var min = this.pingTracker.RTTTimes.Min();
+
+                const int lowY = 383;
+                const int highY = 239;
+                var avgY = lowY - Rescale((float) this.pingTracker.AverageRTT, max, min, graphSize.Y);
+
+                ImGui.Text("                      Network Latency (ms) vs Pings");
+                ImGui.PlotLines(string.Empty, ref pingArray[0], pingArray.Length, 0, null,
+                    float.MaxValue, float.MaxValue, graphSize);
+
+                var lowLineStart = new Vector2(16, lowY);
+                var lowLineEnd = new Vector2(16 + graphSize.X, lowY);
+                ImGui.GetForegroundDrawList().AddLine(lowLineStart, lowLineEnd, ImGui.GetColorU32(ImGuiCol.PlotLines));
+                ImGui.GetForegroundDrawList().AddText(lowLineEnd - new Vector2(0, 5), ImGui.GetColorU32(ImGuiCol.Text), min.ToString(CultureInfo.CurrentUICulture));
+
+                var avgLineStart = new Vector2(16, avgY);
+                var avgLineEnd = new Vector2(16 + graphSize.X, avgY);
+                ImGui.GetForegroundDrawList().AddLine(avgLineStart, avgLineEnd, ImGui.GetColorU32(ImGuiCol.PlotLines));
+                ImGui.GetForegroundDrawList().AddText(avgLineEnd - new Vector2(0, 5), ImGui.GetColorU32(ImGuiCol.Text), Math.Round(this.pingTracker.AverageRTT, 2).ToString(CultureInfo.CurrentUICulture));
+
+                var highLineStart = new Vector2(16, highY);
+                var highLineEnd = new Vector2(16 + graphSize.X, highY);
+                ImGui.GetForegroundDrawList()
+                    .AddLine(highLineStart, highLineEnd, ImGui.GetColorU32(ImGuiCol.PlotLines));
+                ImGui.GetForegroundDrawList().AddText(highLineEnd - new Vector2(0, 5), ImGui.GetColorU32(ImGuiCol.Text), max.ToString(CultureInfo.CurrentUICulture));
+
             }
             else
                 ImGui.Text("No data to display at this time.");
@@ -151,5 +180,8 @@ namespace PingPlugin
                 flags |= ImGuiWindowFlags.NoMove;
             return flags;
         }
+
+        private static float Rescale(float input, float max, float min, float scaleFactor)
+            => (input - min) / (max - min) * scaleFactor;
     }
 }
