@@ -12,6 +12,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove=".gitattributes" />
+    <None Remove=".gitignore" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Include="..\OSBindings\Build\Release\OSBindings.dll" Link="OSBindings.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
