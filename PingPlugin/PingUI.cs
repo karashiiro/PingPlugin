@@ -134,7 +134,10 @@ namespace PingPlugin
             }
             var pingArray = this.pingTracker.RTTTimes.ToArray();
             if (pingArray.Length > 0)
-                ImGui.PlotLines(string.Empty, ref pingArray[0], pingArray.Length, 0, null, float.MaxValue, float.MaxValue, new Vector2(300, 150));
+            {
+                ImGui.PlotLines(string.Empty, ref pingArray[0], pingArray.Length, 0, "Network Latency (ms) vs Pings",
+                    float.MaxValue, float.MaxValue, new Vector2(300, 150));
+            }
             else
                 ImGui.Text("No data to display at this time.");
             ImGui.End();
