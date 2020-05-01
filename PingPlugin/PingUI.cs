@@ -55,7 +55,7 @@ namespace PingPlugin
             }
 
             var queueSize = this.config.PingQueueSize;
-            if (ImGui.InputInt("Ping queue size", ref queueSize))
+            if (ImGui.InputInt("Recorded pings", ref queueSize))
             {
                 this.config.PingQueueSize = queueSize;
                 this.config.Save();
