@@ -20,6 +20,7 @@ namespace PingPlugin
         public bool GraphIsVisible { get; set; }
         public bool MonitorIsVisible { get; set; }
         public bool LockWindows { get; set; }
+        public bool MinimalDisplay { get; set; }
 
         public int PingQueueSize { get; set; }
 
