@@ -159,6 +159,7 @@ namespace PingPlugin
                 var avgLineEnd = new Vector2(16 + graphSize.X, avgY);
                 ImGui.GetForegroundDrawList().AddLine(avgLineStart, avgLineEnd, ImGui.GetColorU32(ImGuiCol.PlotLines));
                 ImGui.GetForegroundDrawList().AddText(avgLineEnd - new Vector2(0, 5), ImGui.GetColorU32(ImGuiCol.Text), Math.Round(this.pingTracker.AverageRTT, 2).ToString(CultureInfo.CurrentUICulture) + "ms");
+                ImGui.GetForegroundDrawList().AddText(avgLineEnd - new Vector2(270, 18), ImGui.GetColorU32(ImGuiCol.Text), "Average");
 
                 var highLineStart = new Vector2(16, highY);
                 var highLineEnd = new Vector2(16 + graphSize.X, highY);
