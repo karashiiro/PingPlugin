@@ -23,7 +23,7 @@ namespace PingPlugin
         public long SeAddressRaw { get; private set; }
         public IPStatus LastStatus { get; private set; }
         public long LastRTT { get; private set; }
-        public Queue<float> RTTTimes { get; }
+        public Queue<float> RTTTimes { get; private set; }
 
         public PingTracker(PingConfiguration config)
         {
@@ -35,8 +35,6 @@ namespace PingPlugin
             UpdateSeAddress();
             
             RTTTimes = new Queue<float>(this.config.PingQueueSize);
-            for (var i = 0; i < this.config.PingQueueSize; i++)
-                RTTTimes.Enqueue(0);
             
             Task.Run(() => PingLoop(this.tokenSource.Token));
             Task.Run(() => CheckAddressLoop(this.tokenSource.Token));
@@ -59,6 +57,11 @@ namespace PingPlugin
         private void CalcAverage()
         {
             AverageRTT = RTTTimes.Average();
+        }
+
+        private void ResetRTT()
+        {
+            RTTTimes = new Queue<float>();
         }
 
         /*
@@ -93,7 +96,10 @@ namespace PingPlugin
             {
                 if (token.IsCancellationRequested)
                     token.ThrowIfCancellationRequested();
+                var lastAddress = SeAddress;
                 UpdateSeAddress();
+                if (!lastAddress.Equals(SeAddress))
+                    ResetRTT();
                 await Task.Delay(10000, token); // It's probably not that expensive, but it's not like the address is constantly changing, either.
             }
         }
