@@ -54,7 +54,7 @@ namespace PingPlugin
                 this.config.Save();
             }
 			
-			var minimalDisplay = this.config.MinimalDisplay;
+            var minimalDisplay = this.config.MinimalDisplay;
             if (ImGui.Checkbox("Minimal display", ref minimalDisplay))
             {
                 this.config.MinimalDisplay = minimalDisplay;
