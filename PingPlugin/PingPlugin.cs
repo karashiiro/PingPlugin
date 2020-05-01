@@ -67,17 +67,6 @@ namespace PingPlugin
             this.pluginInterface.CommandManager.RemoveHandler("/pingconfig");
         }
 
-        #region Logging Shortcuts
-        private void Log(string messageTemplate, params object[] values)
-            => this.pluginInterface.Log(messageTemplate, values);
-
-        private void LogError(string messageTemplate, params object[] values)
-            => this.pluginInterface.LogError(messageTemplate, values);
-
-        private void LogError(Exception exception, string messageTemplate, params object[] values)
-            => this.pluginInterface.LogError(exception, messageTemplate, values);
-        #endregion
-
         #region IDisposable Support
         protected virtual void Dispose(bool disposing)
         {

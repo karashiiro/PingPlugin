@@ -17,6 +17,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Include="..\pingplugin.json" Link="pingplugin.json" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Include="..\OSBindings\Build\Release\OSBindings.dll" Link="OSBindings.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
