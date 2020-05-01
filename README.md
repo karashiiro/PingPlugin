@@ -5,6 +5,7 @@ This plugin provides a ping monitor and graph that show your latest ping and you
 
 ## Screenshots
 ![Screenshot](https://raw.githubusercontent.com/karashiiro/PingPlugin/master/Assets/0.png)
+![Screenshot](https://raw.githubusercontent.com/karashiiro/PingPlugin/master/Assets/1.png)
 
 ## Usage
 * `/ping` - Show/hide the ping monitor.
