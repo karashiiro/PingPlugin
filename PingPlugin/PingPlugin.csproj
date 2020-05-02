@@ -48,11 +48,4 @@
       <Private>false</Private>
     </Reference>
   </ItemGroup>
-
-  <ItemGroup>
-    <None Update="cour.ttf">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-
 </Project>
