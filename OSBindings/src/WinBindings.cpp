@@ -27,7 +27,7 @@ DllExport unsigned long GetFFXIVRemoteAddress(int pid) {
 		const DWORD tcpRemoteAddr = tcpTable->table[i].dwRemoteAddr;
 		const DWORD tcpRemotePort = littleEndian(tcpTable->table[i].dwRemotePort);
 
-		if (state == MIB_TCP_STATE_LISTEN)
+		if (state == MIB_TCP_STATE_LISTEN || tcpRemoteAddr == 16777343)
 			continue;
 		
 		if (tcpPid == pid && tcpRemotePort > maxPort) { // This is specific to FFXIV, but oh well, it performs best
