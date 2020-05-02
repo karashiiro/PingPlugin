@@ -83,7 +83,7 @@ namespace PingPlugin
             }
 
             var monitorBgAlpha = this.config.MonitorBgAlpha;
-            if (ImGui.SliderFloat("Monitor Transparency", ref monitorBgAlpha, 0.0f, 1.0f))
+            if (ImGui.SliderFloat("Monitor Opacity", ref monitorBgAlpha, 0.0f, 1.0f))
             {
                 this.config.MonitorBgAlpha = monitorBgAlpha;
                 this.config.Save();
