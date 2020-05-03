@@ -3,6 +3,8 @@
   <PropertyGroup>
     <TargetFramework>net472</TargetFramework>
     <LangVersion>8.0</LangVersion>
+    <AssemblyVersion>1.1.2.0</AssemblyVersion>
+    <FileVersion>1.1.2.0</FileVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)'=='Release'">
@@ -17,7 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="..\PingPlugin.json" Link="pingplugin.json" />
+    <Content Include="..\PingPlugin.json" Link="PingPlugin.json" />
   </ItemGroup>
 
   <ItemGroup>
