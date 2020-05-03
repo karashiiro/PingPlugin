@@ -1,9 +1,9 @@
-﻿using System;
+﻿using ImGuiNET;
+using System;
 using System.Globalization;
 using System.Linq;
 using System.Net.NetworkInformation;
 using System.Numerics;
-using ImGuiNET;
 
 namespace PingPlugin
 {
@@ -53,7 +53,7 @@ namespace PingPlugin
                 this.config.ClickThrough = clickThrough;
                 this.config.Save();
             }
-			
+
             var minimalDisplay = this.config.MinimalDisplay;
             if (ImGui.Checkbox("Minimal display", ref minimalDisplay))
             {
@@ -120,8 +120,10 @@ namespace PingPlugin
                 ImGui.SetWindowPos(this.config.MonitorPosition);
                 this.resettingMonitorPos = false;
             }
-            ImGui.TextColored(this.config.MonitorFontColor, this.config.MinimalDisplay?$"Ping: {this.pingTracker.LastRTT}ms / Average: {Math.Round(this.pingTracker.AverageRTT), 2}ms":$"Connected to: {this.pingTracker.SeAddress}\nPing: {this.pingTracker.LastRTT}ms\nAverage ping: {Math.Round(this.pingTracker.AverageRTT), 2}ms");
-            if (this.pingTracker.LastStatus != IPStatus.Success)
+            ImGui.TextColored(this.config.MonitorFontColor, this.config.MinimalDisplay
+                ? $"Ping: {this.pingTracker.LastRTT}ms / Average: {Math.Round(this.pingTracker.AverageRTT, 2)}ms"
+                : $"Connected to: {this.pingTracker.SeAddress}\nPing: {this.pingTracker.LastRTT}ms\nAverage ping: {Math.Round(this.pingTracker.AverageRTT, 2)}ms");
+            if (this.pingTracker.LastStatus != IPStatus.Success.ToString())
                 ImGui.TextColored(this.config.MonitorErrorFontColor, $"Error: {this.pingTracker.LastStatus}");
             ImGui.End();
 
@@ -151,7 +153,7 @@ namespace PingPlugin
 
                 const int lowY = 383;
                 const int highY = 239;
-                var avgY = lowY - Rescale((float) this.pingTracker.AverageRTT, max, min, graphSize.Y);
+                var avgY = lowY - Rescale((float)this.pingTracker.AverageRTT, max, min, graphSize.Y);
 
                 ImGui.Text("                      Network Latency (ms) vs Pings");
                 ImGui.PlotLines(string.Empty, ref pingArray[0], pingArray.Length, 0, null,

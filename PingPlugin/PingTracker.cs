@@ -21,7 +21,7 @@ namespace PingPlugin
         public double AverageRTT { get; private set; }
         public IPAddress SeAddress { get; private set; }
         public long SeAddressRaw { get; private set; }
-        public IPStatus LastStatus { get; private set; }
+        public string LastStatus { get; private set; }
         public long LastRTT { get; private set; }
         public Queue<float> RTTTimes { get; private set; }
 
@@ -31,7 +31,7 @@ namespace PingPlugin
             this.pid = Process.GetProcessesByName("ffxiv_dx11")[0].Id;
             this.ping = new Ping();
             this.config = config;
-
+            
             UpdateSeAddress();
             
             RTTTimes = new Queue<float>(this.config.PingQueueSize);
@@ -42,7 +42,7 @@ namespace PingPlugin
 
         private void NextRTTCalculation(long nextRTT)
         {
-            lock (RTTTimes) // Not a huge fan of forcing the UI thread to wait for this, but ultimately it doesn't seem to have a notable effect on perf, so it's probably fine.
+            lock (RTTTimes)
             {
                 RTTTimes.Enqueue(nextRTT);
                 
@@ -54,15 +54,9 @@ namespace PingPlugin
             LastRTT = nextRTT;
         }
 
-        private void CalcAverage()
-        {
-            AverageRTT = RTTTimes.Average();
-        }
+        private void CalcAverage() => AverageRTT = RTTTimes.Average();
 
-        private void ResetRTT()
-        {
-            RTTTimes = new Queue<float>();
-        }
+        private void ResetRTT() => RTTTimes = new Queue<float>();
 
         /*
          * This might be done instead of using the game packets for two reasons (if the first reason proves invalid, the old stuff is committed to roll back).
@@ -82,9 +76,18 @@ namespace PingPlugin
             {
                 if (token.IsCancellationRequested)
                     token.ThrowIfCancellationRequested();
-                var pingReply = await this.ping.SendPingAsync(SeAddress);
-                LastStatus = pingReply.Status;
-                if (LastStatus == IPStatus.Success)
+                PingReply pingReply;
+                try
+                {
+                    pingReply = await this.ping.SendPingAsync(SeAddress);
+                }
+                catch (Exception e)
+                {
+                    LastStatus = e.Message;
+                    continue;
+                }
+                LastStatus = pingReply.Status.ToString();
+                if (LastStatus == IPStatus.Success.ToString())
                     NextRTTCalculation(pingReply.RoundtripTime);
                 await Task.Delay(3000, token);
             }
