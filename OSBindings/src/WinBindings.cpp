@@ -63,7 +63,9 @@ DllExport unsigned long GetAddressLastRTT(unsigned long address) {
 			(PUCHAR)eStatsRowRw, 0, rwSize, 
 			nullptr, 0, 0, 
 			nullptr, 0, 0);
-		if (!eStatsRowRw->EnableCollection) { // Data collection seems not to be enabled, let's enable it
+
+		// Thanks UAC, this is an administrative action.
+		if (!eStatsRowRw->EnableCollection) {
 			eStatsRowRw->EnableCollection = true;
 			SetPerTcpConnectionEStats(tcpRow, TcpConnectionEstatsPath, (PUCHAR)eStatsRowRw, 0, rwSize, 0);
 		}
