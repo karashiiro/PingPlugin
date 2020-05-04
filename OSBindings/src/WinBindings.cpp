@@ -57,9 +57,7 @@ DllExport unsigned long GetAddressLastRTT(unsigned long address) {
 
 	if (tcpRow != nullptr) {
 		ULONG hopCount = 0;
-		if (!GetRTTAndHopCount(address, &hopCount, 51, &rtt)) {
-			rtt = GetLastError();
-		}
+		GetRTTAndHopCount(address, &hopCount, 51, &rtt);
 	}
 
 	free(tcpTable);

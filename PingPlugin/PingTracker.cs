@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Net;
-using System.Net.NetworkInformation;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
@@ -20,7 +19,7 @@ namespace PingPlugin
         public double AverageRTT { get; private set; }
         public IPAddress SeAddress { get; private set; }
         public long SeAddressRaw { get; private set; }
-        public ulong LastStatus { get; private set; }
+        public WinError LastError { get; private set; }
         public ulong LastRTT { get; private set; }
         public Queue<float> RTTTimes { get; private set; }
 
@@ -29,11 +28,11 @@ namespace PingPlugin
             this.tokenSource = new CancellationTokenSource();
             this.pid = Process.GetProcessesByName("ffxiv_dx11")[0].Id;
             this.config = config;
-            
+
             UpdateSeAddress();
-            
+
             RTTTimes = new Queue<float>(this.config.PingQueueSize);
-            
+
             Task.Run(() => PingLoop(this.tokenSource.Token));
             Task.Run(() => CheckAddressLoop(this.tokenSource.Token));
         }
@@ -43,7 +42,7 @@ namespace PingPlugin
             lock (RTTTimes)
             {
                 RTTTimes.Enqueue(nextRTT);
-                
+
                 while (RTTTimes.Count > this.config.PingQueueSize)
                     RTTTimes.Dequeue();
             }
@@ -75,7 +74,9 @@ namespace PingPlugin
                 if (token.IsCancellationRequested)
                     token.ThrowIfCancellationRequested();
                 var rtt = GetAddressLastRTT(SeAddressRaw);
-                NextRTTCalculation(rtt);
+                LastError = (WinError)Marshal.GetLastWin32Error();
+                if (LastError == WinError.NO_ERROR)
+                    NextRTTCalculation(rtt);
                 await Task.Delay(3000, token);
             }
         }
@@ -103,7 +104,7 @@ namespace PingPlugin
         [DllImport("OSBindings.dll", EntryPoint = "#2")]
         private static extern long GetProcessHighestPortAddress(int pid);
 
-        [DllImport("OSBindings.dll", EntryPoint = "#1")]
+        [DllImport("OSBindings.dll", EntryPoint = "#1", SetLastError = true)]
         private static extern ulong GetAddressLastRTT(long address);
 
         #region IDisposable Support

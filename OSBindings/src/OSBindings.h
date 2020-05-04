@@ -5,12 +5,6 @@
 
 #define DllExport __declspec( dllexport )
 
-struct ConnectionStatus {
-	unsigned long RTT;
-	unsigned long HopCount;
-	unsigned long LastError;
-};
-
 DllExport unsigned long GetProcessHighestPortAddress(int pid);
 
 DllExport unsigned long GetAddressLastRTT(unsigned long address);
