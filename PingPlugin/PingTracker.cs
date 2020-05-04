@@ -20,7 +20,7 @@ namespace PingPlugin
         public double AverageRTT { get; private set; }
         public IPAddress SeAddress { get; private set; }
         public long SeAddressRaw { get; private set; }
-        public string LastStatus { get; private set; }
+        public ulong LastStatus { get; private set; }
         public ulong LastRTT { get; private set; }
         public Queue<float> RTTTimes { get; private set; }
 

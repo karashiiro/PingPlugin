@@ -23,7 +23,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="..\nsi.dll" Link="nsi.dll" />
     <None Include="..\OSBindings\Build\Release\OSBindings.dll" Link="OSBindings.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

@@ -7,7 +7,6 @@
 #include <Windows.h>
 #include <Ws2tcpip.h>
 #include <iphlpapi.h>
-#include <tcpestats.h>
 
 DllExport unsigned long GetProcessHighestPortAddress(int pid) {
 	DWORD bufferLength = 0;
@@ -57,29 +56,10 @@ DllExport unsigned long GetAddressLastRTT(unsigned long address) {
 	}
 
 	if (tcpRow != nullptr) {
-		const auto eStatsRowRw = static_cast<TCP_ESTATS_PATH_RW_v0*>(malloc(sizeof(TCP_ESTATS_PATH_RW_v0)));
-		const auto rwSize = sizeof(TCP_ESTATS_PATH_RW_v0);
-		GetPerTcpConnectionEStats(tcpRow, TcpConnectionEstatsPath,
-			(PUCHAR)eStatsRowRw, 0, rwSize, 
-			nullptr, 0, 0, 
-			nullptr, 0, 0);
-
-		// Thanks UAC, this is an administrative action.
-		if (!eStatsRowRw->EnableCollection) {
-			eStatsRowRw->EnableCollection = true;
-			SetPerTcpConnectionEStats(tcpRow, TcpConnectionEstatsPath, (PUCHAR)eStatsRowRw, 0, rwSize, 0);
+		ULONG hopCount = 0;
+		if (!GetRTTAndHopCount(address, &hopCount, 51, &rtt)) {
+			rtt = GetLastError();
 		}
-
-		const auto eStatsRowRod = static_cast<TCP_ESTATS_PATH_ROD_v0*>(malloc(sizeof(TCP_ESTATS_PATH_ROD_v0)));
-		const auto rodSize = sizeof(TCP_ESTATS_PATH_ROD_v0);
-		GetPerTcpConnectionEStats(tcpRow, TcpConnectionEstatsPath,
-			nullptr, 0, 0, 
-			nullptr, 0, 0, 
-			(PUCHAR)eStatsRowRod, 0, rodSize);
-		rtt = eStatsRowRod->SampleRtt;
-		
-		free(eStatsRowRod);
-		free(eStatsRowRw);
 	}
 
 	free(tcpTable);
