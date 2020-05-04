@@ -14,7 +14,6 @@ namespace PingPlugin
     {
         private readonly CancellationTokenSource tokenSource;
         private readonly int pid;
-        private readonly Ping ping;
         private readonly PingConfiguration config;
 
         // Everything we want the user to see
@@ -22,14 +21,13 @@ namespace PingPlugin
         public IPAddress SeAddress { get; private set; }
         public long SeAddressRaw { get; private set; }
         public string LastStatus { get; private set; }
-        public long LastRTT { get; private set; }
+        public ulong LastRTT { get; private set; }
         public Queue<float> RTTTimes { get; private set; }
 
         public PingTracker(PingConfiguration config)
         {
             this.tokenSource = new CancellationTokenSource();
             this.pid = Process.GetProcessesByName("ffxiv_dx11")[0].Id;
-            this.ping = new Ping();
             this.config = config;
             
             UpdateSeAddress();
@@ -40,7 +38,7 @@ namespace PingPlugin
             Task.Run(() => CheckAddressLoop(this.tokenSource.Token));
         }
 
-        private void NextRTTCalculation(long nextRTT)
+        private void NextRTTCalculation(ulong nextRTT)
         {
             lock (RTTTimes)
             {
@@ -76,19 +74,8 @@ namespace PingPlugin
             {
                 if (token.IsCancellationRequested)
                     token.ThrowIfCancellationRequested();
-                PingReply pingReply;
-                try
-                {
-                    pingReply = await this.ping.SendPingAsync(SeAddress);
-                }
-                catch (Exception e)
-                {
-                    LastStatus = e.Message;
-                    continue;
-                }
-                LastStatus = pingReply.Status.ToString();
-                if (LastStatus == IPStatus.Success.ToString())
-                    NextRTTCalculation(pingReply.RoundtripTime);
+                var rtt = GetAddressLastRTT(SeAddressRaw);
+                NextRTTCalculation(rtt);
                 await Task.Delay(3000, token);
             }
         }
@@ -113,8 +100,11 @@ namespace PingPlugin
             SeAddress = new IPAddress(SeAddressRaw);
         }
 
-        [DllImport("OSBindings.dll", EntryPoint = "#1")]
+        [DllImport("OSBindings.dll", EntryPoint = "#2")]
         private static extern long GetProcessHighestPortAddress(int pid);
+
+        [DllImport("OSBindings.dll", EntryPoint = "#1")]
+        private static extern ulong GetAddressLastRTT(long address);
 
         #region IDisposable Support
         protected virtual void Dispose(bool disposing)
@@ -123,7 +113,6 @@ namespace PingPlugin
             {
                 this.tokenSource.Cancel();
                 this.tokenSource.Dispose();
-                ping.Dispose();
             }
         }
 

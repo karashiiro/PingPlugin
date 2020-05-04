@@ -1,15 +1,15 @@
+// ReSharper disable CppCStyleCast
 #ifdef _WIN32
 
 #include "OSBindings.h"
 
-#include "WinSock2.h"
-#include "Windows.h"
+#include <WinSock2.h>
+#include <Windows.h>
+#include <Ws2tcpip.h>
+#include <iphlpapi.h>
+#include <tcpestats.h>
 
-#include "TlHelp32.h"
-
-#include "iphlpapi.h"
-
-DllExport unsigned long GetFFXIVRemoteAddress(int pid) {
+DllExport unsigned long GetProcessHighestPortAddress(int pid) {
 	DWORD bufferLength = 0;
 
 	// This will fail, but assign the correct buffer size to bufferLength
@@ -39,6 +39,49 @@ DllExport unsigned long GetFFXIVRemoteAddress(int pid) {
 	// Deallocate memory assigned to the table
 	free(tcpTable);
 	return finalAddr;
+}
+
+DllExport unsigned long GetAddressLastRTT(unsigned long address) {
+	ULONG rtt = 0;
+
+	DWORD bufferLength = 0;
+	GetTcpTable(nullptr, &bufferLength, FALSE);
+	const auto tcpTable = static_cast<MIB_TCPTABLE*>(malloc(bufferLength));
+	GetTcpTable(tcpTable, &bufferLength, FALSE);
+
+	PMIB_TCPROW tcpRow = nullptr;
+	for (DWORD i = 0; i < tcpTable->dwNumEntries; i++) {
+		if (tcpTable->table[i].dwRemoteAddr == address) {
+			tcpRow = &tcpTable->table[i];
+		}
+	}
+
+	if (tcpRow != nullptr) {
+		const auto eStatsRowRw = static_cast<TCP_ESTATS_PATH_RW_v0*>(malloc(sizeof(TCP_ESTATS_PATH_RW_v0)));
+		const auto rwSize = sizeof(TCP_ESTATS_PATH_RW_v0);
+		GetPerTcpConnectionEStats(tcpRow, TcpConnectionEstatsPath,
+			(PUCHAR)eStatsRowRw, 0, rwSize, 
+			nullptr, 0, 0, 
+			nullptr, 0, 0);
+		if (!eStatsRowRw->EnableCollection) { // Data collection seems not to be enabled, let's enable it
+			eStatsRowRw->EnableCollection = true;
+			SetPerTcpConnectionEStats(tcpRow, TcpConnectionEstatsPath, (PUCHAR)eStatsRowRw, 0, rwSize, 0);
+		}
+
+		const auto eStatsRowRod = static_cast<TCP_ESTATS_PATH_ROD_v0*>(malloc(sizeof(TCP_ESTATS_PATH_ROD_v0)));
+		const auto rodSize = sizeof(TCP_ESTATS_PATH_ROD_v0);
+		GetPerTcpConnectionEStats(tcpRow, TcpConnectionEstatsPath,
+			nullptr, 0, 0, 
+			nullptr, 0, 0, 
+			(PUCHAR)eStatsRowRod, 0, rodSize);
+		rtt = eStatsRowRod->SampleRtt;
+		
+		free(eStatsRowRod);
+		free(eStatsRowRw);
+	}
+
+	free(tcpTable);
+	return rtt;
 }
 
 #endif
