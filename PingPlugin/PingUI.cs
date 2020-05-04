@@ -123,8 +123,8 @@ namespace PingPlugin
             ImGui.TextColored(this.config.MonitorFontColor, this.config.MinimalDisplay
                 ? $"Ping: {this.pingTracker.LastRTT}ms / Average: {Math.Round(this.pingTracker.AverageRTT, 2)}ms"
                 : $"Connected to: {this.pingTracker.SeAddress}\nPing: {this.pingTracker.LastRTT}ms\nAverage ping: {Math.Round(this.pingTracker.AverageRTT, 2)}ms");
-            if (this.pingTracker.LastStatus != IPStatus.Success.ToString())
-                ImGui.TextColored(this.config.MonitorErrorFontColor, $"Error: {this.pingTracker.LastStatus}");
+            if (this.pingTracker.LastError != WinError.NO_ERROR)
+                ImGui.TextColored(this.config.MonitorErrorFontColor, $"Error: {(Enum.IsDefined(typeof(WinError), this.pingTracker.LastError) ? this.pingTracker.LastError.ToString() : ((int)this.pingTracker.LastError).ToString())}");
             ImGui.End();
 
             ImGui.PopStyleVar(1);

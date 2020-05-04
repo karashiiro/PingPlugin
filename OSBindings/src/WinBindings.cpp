@@ -1,15 +1,14 @@
+// ReSharper disable CppCStyleCast
 #ifdef _WIN32
 
 #include "OSBindings.h"
 
-#include "WinSock2.h"
-#include "Windows.h"
+#include <WinSock2.h>
+#include <Windows.h>
+#include <Ws2tcpip.h>
+#include <iphlpapi.h>
 
-#include "TlHelp32.h"
-
-#include "iphlpapi.h"
-
-DllExport unsigned long GetFFXIVRemoteAddress(int pid) {
+DllExport unsigned long GetProcessHighestPortAddress(int pid) {
 	DWORD bufferLength = 0;
 
 	// This will fail, but assign the correct buffer size to bufferLength
@@ -39,6 +38,30 @@ DllExport unsigned long GetFFXIVRemoteAddress(int pid) {
 	// Deallocate memory assigned to the table
 	free(tcpTable);
 	return finalAddr;
+}
+
+DllExport unsigned long GetAddressLastRTT(unsigned long address) {
+	ULONG rtt = 0;
+
+	DWORD bufferLength = 0;
+	GetTcpTable(nullptr, &bufferLength, FALSE);
+	const auto tcpTable = static_cast<MIB_TCPTABLE*>(malloc(bufferLength));
+	GetTcpTable(tcpTable, &bufferLength, FALSE);
+
+	PMIB_TCPROW tcpRow = nullptr;
+	for (DWORD i = 0; i < tcpTable->dwNumEntries; i++) {
+		if (tcpTable->table[i].dwRemoteAddr == address) {
+			tcpRow = &tcpTable->table[i];
+		}
+	}
+
+	if (tcpRow != nullptr) {
+		ULONG hopCount = 0;
+		GetRTTAndHopCount(address, &hopCount, 51, &rtt);
+	}
+
+	free(tcpTable);
+	return rtt;
 }
 
 #endif

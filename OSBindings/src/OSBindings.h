@@ -5,7 +5,9 @@
 
 #define DllExport __declspec( dllexport )
 
-DllExport unsigned long GetFFXIVRemoteAddress(int pid);
+DllExport unsigned long GetProcessHighestPortAddress(int pid);
+
+DllExport unsigned long GetAddressLastRTT(unsigned long address);
 
 const int COURIER_LITTLE_ENDIAN = 1;
 inline bool isLittleEndian() {
