@@ -37,7 +37,7 @@ namespace PingPlugin
 
         private void DrawConfigUi()
         {
-            ImGui.SetNextWindowSize(new Vector2(400, 255), ImGuiCond.Always);
+            ImGui.SetNextWindowSize(new Vector2(400, 285), ImGuiCond.Always);
 
             ImGui.Begin("PingPlugin Configuration", ref this.configVisible, ImGuiWindowFlags.NoResize);
             var lockWindows = this.config.LockWindows;
@@ -58,6 +58,13 @@ namespace PingPlugin
             if (ImGui.Checkbox("Minimal display", ref minimalDisplay))
             {
                 this.config.MinimalDisplay = minimalDisplay;
+                this.config.Save();
+            }
+
+            var hideErrors = this.config.HideErrors;
+            if (ImGui.Checkbox("Hide errors", ref hideErrors))
+            {
+                this.config.HideErrors = hideErrors;
                 this.config.Save();
             }
 
@@ -111,7 +118,15 @@ namespace PingPlugin
 
             ImGui.PushStyleVar(ImGuiStyleVar.WindowBorderSize, 0);
             ImGui.SetNextWindowPos(this.config.MonitorPosition, ImGuiCond.FirstUseEver);
-            ImGui.SetNextWindowSize(new Vector2(186, 100), ImGuiCond.Always); // Auto-resize doesn't seem to work here
+
+            var x = this.config.MinimalDisplay ? 206 : 186;
+            var y = 33;
+            if (!this.config.MinimalDisplay)
+                y = 75;
+            if (this.pingTracker.LastError != WinError.NO_ERROR)
+                y += 25;
+            ImGui.SetNextWindowSize(new Vector2(x, y), ImGuiCond.Always);
+            
             ImGui.SetNextWindowBgAlpha(this.config.MonitorBgAlpha);
 
             ImGui.Begin("PingMonitor", windowFlags);

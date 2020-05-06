@@ -21,6 +21,7 @@ namespace PingPlugin
         public bool MonitorIsVisible { get; set; }
         public bool LockWindows { get; set; }
         public bool MinimalDisplay { get; set; }
+        public bool HideErrors { get; set; } // Generally, the errors are just timeouts, so you may want to hide them.
 
         public int PingQueueSize { get; set; }
 

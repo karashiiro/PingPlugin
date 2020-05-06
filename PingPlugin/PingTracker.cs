@@ -101,10 +101,10 @@ namespace PingPlugin
             SeAddress = new IPAddress(SeAddressRaw);
         }
 
-        [DllImport("OSBindings.dll", EntryPoint = "#2")]
+        [DllImport("OSBindings.dll", EntryPoint = "?GetProcessHighestPortAddress@@YAKH@Z")]
         private static extern long GetProcessHighestPortAddress(int pid);
 
-        [DllImport("OSBindings.dll", EntryPoint = "#1", SetLastError = true)]
+        [DllImport("OSBindings.dll", EntryPoint = "?GetAddressLastRTT@@YAKK@Z", SetLastError = true)]
         private static extern ulong GetAddressLastRTT(long address);
 
         #region IDisposable Support
