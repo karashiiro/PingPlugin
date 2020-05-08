@@ -43,9 +43,8 @@ namespace PingPlugin
             if (opCode == eventPlay)
             {
                 var packetData = Marshal.PtrToStructure<EventPlay>(dataPtr);
-
-                // https://github.com/SapphireServer/Sapphire/blob/develop/src/world/Event/EventDefs.h#L21
-                if ((packetData.Flags & 0x00000800) != 0)
+                
+                if ((packetData.Flags & 0x00000400) != 0) // TODO: PR Sapphire, HIDE_UI seems to be wrong now
                     this.ui.CutsceneActive = true;
             }
             else if (opCode == eventFinish)
