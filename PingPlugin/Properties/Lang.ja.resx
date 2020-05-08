@@ -170,7 +170,9 @@
     <value>当分データがありません。</value>
   </data>
   <data name="UIRegularDisplay" xml:space="preserve">
-    <value>サーバーIP：{0}\nレイテンシー：{1}ms\n平均レイテンシー：{2}ms</value>
+    <value>サーバーIP：{0}
+レイテンシー：{1}ms
+平均レイテンシー：{2}ms</value>
     <comment>Need to make the display wider for this</comment>
   </data>
 </root>

@@ -205,7 +205,9 @@ namespace PingPlugin.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Connected to: {0}\nPing: {1}ms\nAverage ping: {2}ms.
+        ///   Looks up a localized string similar to Connected to: {0}
+        ///Ping: {1}ms
+        ///Average ping: {2}ms.
         /// </summary>
         internal static string UIRegularDisplay {
             get {

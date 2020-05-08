@@ -166,6 +166,8 @@
     <value>No data to display at this time.</value>
   </data>
   <data name="UIRegularDisplay" xml:space="preserve">
-    <value>Connected to: {0}\nPing: {1}ms\nAverage ping: {2}ms</value>
+    <value>Connected to: {0}
+Ping: {1}ms
+Average ping: {2}ms</value>
   </data>
 </root>

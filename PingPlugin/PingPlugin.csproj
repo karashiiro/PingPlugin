@@ -62,15 +62,12 @@
   <ItemGroup>
     <EmbeddedResource Update="Properties\Lang.de.resx">
       <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Lang.de.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Update="Properties\Lang.fr.resx">
       <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Lang.fr.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Update="Properties\Lang.ja.resx">
       <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Lang.ja.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Update="Properties\Lang.resx">
       <Generator>ResXFileCodeGenerator</Generator>
