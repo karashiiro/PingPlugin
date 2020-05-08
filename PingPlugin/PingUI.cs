@@ -4,13 +4,14 @@ using System.Globalization;
 using System.Linq;
 using System.Net.NetworkInformation;
 using System.Numerics;
+using PingPlugin.PingTrackers;
 
 namespace PingPlugin
 {
     public class PingUI
     {
         private readonly PingConfiguration config;
-        private readonly PingTracker pingTracker;
+        private readonly IPingTracker pingTracker;
 
         private bool resettingGraphPos;
         private bool resettingMonitorPos;
@@ -22,7 +23,7 @@ namespace PingPlugin
             set => this.configVisible = value;
         }
 
-        public PingUI(PingTracker pingTracker, PingConfiguration config)
+        public PingUI(IPingTracker pingTracker, PingConfiguration config)
         {
             this.config = config;
             this.pingTracker = pingTracker;

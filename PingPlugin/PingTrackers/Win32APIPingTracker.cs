@@ -7,23 +7,23 @@ using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace PingPlugin
+namespace PingPlugin.PingTrackers
 {
-    public class PingTracker : IDisposable
+    public class Win32APIPingTracker : IPingTracker
     {
         private readonly CancellationTokenSource tokenSource;
         private readonly int pid;
         private readonly PingConfiguration config;
 
-        // Everything we want the user to see
-        public double AverageRTT { get; private set; }
-        public IPAddress SeAddress { get; private set; }
-        public long SeAddressRaw { get; private set; }
-        public WinError LastError { get; private set; }
-        public ulong LastRTT { get; private set; }
-        public Queue<float> RTTTimes { get; private set; }
+        public bool Reset { get; set; }
+        public double AverageRTT { get; set; }
+        public IPAddress SeAddress { get; set; }
+        public long SeAddressRaw { get; set; }
+        public WinError LastError { get; set; }
+        public ulong LastRTT { get; set; }
+        public Queue<float> RTTTimes { get; set; }
 
-        public PingTracker(PingConfiguration config)
+        public Win32APIPingTracker(PingConfiguration config)
         {
             this.tokenSource = new CancellationTokenSource();
             this.pid = Process.GetProcessesByName("ffxiv_dx11")[0].Id;
@@ -90,7 +90,14 @@ namespace PingPlugin
                 var lastAddress = SeAddress;
                 UpdateSeAddress();
                 if (!lastAddress.Equals(SeAddress))
+                {
+                    Reset = true;
                     ResetRTT();
+                }
+                else
+                {
+                    Reset = false;
+                }
                 await Task.Delay(10000, token); // It's probably not that expensive, but it's not like the address is constantly changing, either.
             }
         }

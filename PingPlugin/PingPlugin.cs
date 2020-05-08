@@ -1,6 +1,7 @@
 ﻿using Dalamud.Plugin;
 using System;
 using Dalamud.Game.Command;
+using PingPlugin.PingTrackers;
 
 namespace PingPlugin
 {
@@ -8,7 +9,7 @@ namespace PingPlugin
     {
         private DalamudPluginInterface pluginInterface;
         private PingConfiguration config;
-        private PingTracker pingTracker;
+        private IPingTracker pingTracker;
         private PingUI ui;
 
         public string Name => "Ping Plugin";
@@ -18,12 +19,14 @@ namespace PingPlugin
             this.pluginInterface = pluginInterface;
             this.config = (PingConfiguration) this.pluginInterface.GetPluginConfig() ?? new PingConfiguration();
             this.config.Initialize(this.pluginInterface);
-            this.pingTracker = new PingTracker(this.config);
+            this.pingTracker = new AggregatorPingTracker(this.config,
+                new ComponentModelPingTracker(this.config),
+                new Win32APIPingTracker(this.config));
             this.ui = new PingUI(this.pingTracker, this.config);
 
             this.pluginInterface.UiBuilder.OnOpenConfigUi += (sender, e) => this.ui.ConfigVisible = true;
             this.pluginInterface.UiBuilder.OnBuildUi += this.ui.BuildUi;
-
+            
             AddCommandHandlers();
         }
 
