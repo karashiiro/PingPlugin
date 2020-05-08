@@ -74,6 +74,7 @@ namespace PingPlugin
             MonitorIsVisible = true;
             PingQueueSize = 20;
             Lang = LangKind.en.ToString();
+            HideOverlaysDuringCutscenes = true;
         }
 
         public void Save()
