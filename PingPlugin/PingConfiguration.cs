@@ -1,7 +1,10 @@
 ﻿using System;
+using System.Globalization;
 using System.Numerics;
+using System.Threading;
 using Dalamud.Configuration;
 using Dalamud.Plugin;
+using Newtonsoft.Json;
 
 namespace PingPlugin
 {
@@ -22,6 +25,23 @@ namespace PingPlugin
         public bool LockWindows { get; set; }
         public bool MinimalDisplay { get; set; }
         public bool HideErrors { get; set; } // Generally, the errors are just timeouts, so you may want to hide them.
+        public bool HideOverlaysDuringCutscenes { get; set; }
+        public string Lang { get; set; }
+
+        [JsonIgnore]
+        public LangKind RuntimeLang
+        {
+            get
+            {
+                Enum.TryParse(Lang, out LangKind langKind);
+                return langKind;
+            }
+            set
+            {
+                Lang = value.ToString();
+                Thread.CurrentThread.CurrentUICulture = CultureInfo.GetCultureInfo(Lang);
+            }
+        }
 
         public int PingQueueSize { get; set; }
 
@@ -53,6 +73,7 @@ namespace PingPlugin
             MonitorErrorFontColor = new Vector4(1, 0, 0, 1);
             MonitorIsVisible = true;
             PingQueueSize = 20;
+            Lang = LangKind.English;
         }
 
         public void Save()

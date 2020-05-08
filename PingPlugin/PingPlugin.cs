@@ -1,6 +1,8 @@
 ﻿using Dalamud.Plugin;
 using System;
+using System.Runtime.InteropServices;
 using Dalamud.Game.Command;
+using Dalamud.Game.Internal.Network;
 using PingPlugin.PingTrackers;
 
 namespace PingPlugin
@@ -19,15 +21,37 @@ namespace PingPlugin
             this.pluginInterface = pluginInterface;
             this.config = (PingConfiguration) this.pluginInterface.GetPluginConfig() ?? new PingConfiguration();
             this.config.Initialize(this.pluginInterface);
-            this.pingTracker = new AggregatorPingTracker(this.config,
+
+            this.pingTracker = new AggregatePingTracker(this.config,
                 new ComponentModelPingTracker(this.config),
                 new Win32APIPingTracker(this.config));
+
+            this.pluginInterface.Framework.Network.OnNetworkMessage += OnNetworkMessage;
+            
             this.ui = new PingUI(this.pingTracker, this.config);
 
             this.pluginInterface.UiBuilder.OnOpenConfigUi += (sender, e) => this.ui.ConfigVisible = true;
             this.pluginInterface.UiBuilder.OnBuildUi += this.ui.BuildUi;
             
             AddCommandHandlers();
+        }
+
+        private void OnNetworkMessage(IntPtr dataPtr, ushort opCode, uint sourceActorId, uint targetActorId, NetworkMessageDirection direction)
+        {
+            const ushort eventPlay = 0x02C3; // TODO: Get goat to hook the handlers for these
+            const ushort eventFinish = 0x0239;
+            if (opCode == eventPlay)
+            {
+                var packetData = Marshal.PtrToStructure<EventPlay>(dataPtr);
+
+                // https://github.com/SapphireServer/Sapphire/blob/develop/src/world/Event/EventDefs.h#L21
+                if ((packetData.Flags & 0x00000800) != 0)
+                    this.ui.CutsceneActive = true;
+            }
+            else if (opCode == eventFinish)
+            {
+                this.ui.CutsceneActive = false;
+            }
         }
 
         private void AddCommandHandlers()
@@ -79,6 +103,8 @@ namespace PingPlugin
 
                 this.pluginInterface.UiBuilder.OnOpenConfigUi -= (sender, e) => this.ui.ConfigVisible = true;
                 this.pluginInterface.UiBuilder.OnBuildUi -= this.ui.BuildUi;
+
+                this.pluginInterface.Framework.Network.OnNetworkMessage -= OnNetworkMessage;
 
                 this.config.Save();
 

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace PingPlugin.PingTrackers
 {
-    public class AggregatorPingTracker : IPingTracker
+    public class AggregatePingTracker : IPingTracker
     {
         private readonly CancellationTokenSource tokenSource;
         private readonly IEnumerable<IPingTracker> pingTrackers;
@@ -21,7 +21,7 @@ namespace PingPlugin.PingTrackers
         public ulong LastRTT { get; set; }
         public Queue<float> RTTTimes { get; set; }
 
-        public AggregatorPingTracker(PingConfiguration config, params IPingTracker[] pingTrackers)
+        public AggregatePingTracker(PingConfiguration config, params IPingTracker[] pingTrackers)
         {
             this.tokenSource = new CancellationTokenSource();
             this.config = config;
