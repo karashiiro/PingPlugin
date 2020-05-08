@@ -41,7 +41,7 @@ namespace PingPlugin
 
         private void DrawConfigUi()
         {
-            ImGui.SetNextWindowSize(new Vector2(400, 285), ImGuiCond.Always);
+            ImGui.SetNextWindowSize(new Vector2(400, 305), ImGuiCond.Always);
 
             ImGui.Begin("PingPlugin Configuration", ref this.configVisible, ImGuiWindowFlags.NoResize);
             var lockWindows = this.config.LockWindows;
@@ -55,6 +55,13 @@ namespace PingPlugin
             if (ImGui.Checkbox(Properties.Lang.ClickThrough, ref clickThrough))
             {
                 this.config.ClickThrough = clickThrough;
+                this.config.Save();
+            }
+
+            var hideDuringCutscences = this.config.HideOverlaysDuringCutscenes;
+            if (ImGui.Checkbox(Properties.Lang.HideOverlaysDuringCutscenes, ref hideDuringCutscences))
+            {
+                this.config.HideOverlaysDuringCutscenes = hideDuringCutscences;
                 this.config.Save();
             }
 

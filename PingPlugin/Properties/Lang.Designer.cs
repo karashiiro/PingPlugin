@@ -88,6 +88,15 @@ namespace PingPlugin.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Hide overlays during cutscenes.
+        /// </summary>
+        internal static string HideOverlaysDuringCutscenes {
+            get {
+                return ResourceManager.GetString("HideOverlaysDuringCutscenes", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Lock plugin windows.
         /// </summary>
         internal static string LockPluginWindows {

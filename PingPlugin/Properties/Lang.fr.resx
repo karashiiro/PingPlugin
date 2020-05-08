@@ -126,6 +126,9 @@
   <data name="HideErrors" xml:space="preserve">
     <value>Hide errors</value>
   </data>
+  <data name="HideOverlaysDuringCutscenes" xml:space="preserve">
+    <value>Hide overlays during cutscenes</value>
+  </data>
   <data name="LockPluginWindows" xml:space="preserve">
     <value>Lock plugin windows</value>
   </data>

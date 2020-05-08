@@ -127,6 +127,9 @@
     <value>エラーを見せません</value>
     <comment>出しませんか</comment>
   </data>
+  <data name="HideOverlaysDuringCutscenes" xml:space="preserve">
+    <value>映画の中でオーバーレイを見せません</value>
+  </data>
   <data name="LockPluginWindows" xml:space="preserve">
     <value>プラグインウインドウを閉ざします</value>
   </data>
