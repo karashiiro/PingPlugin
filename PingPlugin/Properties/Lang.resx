@@ -123,11 +123,26 @@
   <data name="Defaults" xml:space="preserve">
     <value>Defaults</value>
   </data>
+  <data name="English" xml:space="preserve">
+    <value>English</value>
+  </data>
+  <data name="French" xml:space="preserve">
+    <value>French</value>
+  </data>
+  <data name="German" xml:space="preserve">
+    <value>German</value>
+  </data>
   <data name="HideErrors" xml:space="preserve">
     <value>Hide errors</value>
   </data>
   <data name="HideOverlaysDuringCutscenes" xml:space="preserve">
     <value>Hide overlays during cutscenes</value>
+  </data>
+  <data name="Japanese" xml:space="preserve">
+    <value>Japanese</value>
+  </data>
+  <data name="Language" xml:space="preserve">
+    <value>Language</value>
   </data>
   <data name="LockPluginWindows" xml:space="preserve">
     <value>Lock plugin windows</value>
@@ -149,6 +164,9 @@
   </data>
   <data name="ResetWindowPositions" xml:space="preserve">
     <value>Reset Window Positions</value>
+  </data>
+  <data name="Spanish" xml:space="preserve">
+    <value>Spanish</value>
   </data>
   <data name="UIAverage" xml:space="preserve">
     <value>Average</value>

@@ -118,77 +118,77 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="ClickThrough" xml:space="preserve">
-    <value>Click through plugin windows</value>
+    <value>Haga clic en los windows de plugin</value>
   </data>
   <data name="Defaults" xml:space="preserve">
-    <value>Defaults</value>
+    <value>Reajusta</value>
   </data>
   <data name="English" xml:space="preserve">
-    <value>English</value>
+    <value>Inglés</value>
   </data>
   <data name="French" xml:space="preserve">
-    <value>French</value>
+    <value>Francés</value>
   </data>
   <data name="German" xml:space="preserve">
-    <value>German</value>
+    <value>Alemán</value>
   </data>
   <data name="HideErrors" xml:space="preserve">
-    <value>Hide errors</value>
+    <value>Esconda errores</value>
   </data>
   <data name="HideOverlaysDuringCutscenes" xml:space="preserve">
-    <value>Hide overlays during cutscenes</value>
+    <value>Esconda overlays durante de cutscenes</value>
   </data>
   <data name="Japanese" xml:space="preserve">
-    <value>Japanese</value>
+    <value>Japones</value>
   </data>
   <data name="Language" xml:space="preserve">
-    <value>Language</value>
+    <value>Lengua</value>
   </data>
   <data name="LockPluginWindows" xml:space="preserve">
-    <value>Lock plugin windows</value>
+    <value>Congele los windows de plugin</value>
   </data>
   <data name="MinimalDisplay" xml:space="preserve">
-    <value>Minimal display</value>
+    <value>Visualizador minimo</value>
   </data>
   <data name="MonitorColor" xml:space="preserve">
-    <value>Monitor Color</value>
+    <value>Color del Monitor</value>
   </data>
   <data name="MonitorErrorColor" xml:space="preserve">
-    <value>Monitor Error Color</value>
+    <value>Color del Error del Monitor</value>
   </data>
   <data name="MonitorOpacity" xml:space="preserve">
-    <value>Monitor Opacity</value>
+    <value>Opacidad del Monitor</value>
   </data>
   <data name="RecordedPings" xml:space="preserve">
-    <value>Recorded Pings</value>
+    <value>Pings que se Graban</value>
   </data>
   <data name="ResetWindowPositions" xml:space="preserve">
-    <value>Reset Window Positions</value>
+    <value>Reajuste la Posición de Windows</value>
   </data>
   <data name="Spanish" xml:space="preserve">
-    <value>Spanish</value>
+    <value>Español</value>
   </data>
   <data name="UIAverage" xml:space="preserve">
-    <value>Average</value>
+    <value>Promedio</value>
   </data>
   <data name="UIError" xml:space="preserve">
     <value>Error: {0}</value>
   </data>
   <data name="UIGraphTitle" xml:space="preserve">
-    <value>Network Latency (ms) vs Pings</value>
+    <value>Latencia de Red (ms) vs Pings</value>
   </data>
   <data name="UIMillisecondAbbr" xml:space="preserve">
     <value>ms</value>
   </data>
   <data name="UIMinimalDisplay" xml:space="preserve">
-    <value>Ping: {0}ms / Average: {1}ms</value>
+    <value>Ping: {0}ms / Promedio: {1}ms</value>
   </data>
   <data name="UINoData" xml:space="preserve">
-    <value>No data to display at this time.</value>
+    <value>No hay datos a esto tiempo.</value>
   </data>
   <data name="UIRegularDisplay" xml:space="preserve">
-    <value>Connected to: {0}
+    <value>Connectado a: {0}
 Ping: {1}ms
-Average ping: {2}ms</value>
+Ping promedio: {2}ms</value>
   </data>
 </root>

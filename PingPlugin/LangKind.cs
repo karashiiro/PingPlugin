@@ -4,6 +4,7 @@
     {
         en,
         ja,
+        es,
         de,
         fr,
     }

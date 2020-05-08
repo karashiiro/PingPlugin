@@ -123,12 +123,27 @@
   <data name="Defaults" xml:space="preserve">
     <value>リセット</value>
   </data>
+  <data name="English" xml:space="preserve">
+    <value>英語</value>
+  </data>
+  <data name="French" xml:space="preserve">
+    <value>フランス語</value>
+  </data>
+  <data name="German" xml:space="preserve">
+    <value>ドイツ語</value>
+  </data>
   <data name="HideErrors" xml:space="preserve">
     <value>エラーを見せません</value>
     <comment>出しませんか</comment>
   </data>
   <data name="HideOverlaysDuringCutscenes" xml:space="preserve">
     <value>映画の中でオーバーレイを見せません</value>
+  </data>
+  <data name="Japanese" xml:space="preserve">
+    <value>日本語</value>
+  </data>
+  <data name="Language" xml:space="preserve">
+    <value>言語</value>
   </data>
   <data name="LockPluginWindows" xml:space="preserve">
     <value>プラグインウインドウを閉ざします</value>
@@ -151,6 +166,9 @@
   </data>
   <data name="ResetWindowPositions" xml:space="preserve">
     <value>ウインドウの位置をリセット</value>
+  </data>
+  <data name="Spanish" xml:space="preserve">
+    <value>スペイン語</value>
   </data>
   <data name="UIAverage" xml:space="preserve">
     <value>平均</value>

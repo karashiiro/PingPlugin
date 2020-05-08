@@ -4,6 +4,7 @@ using System;
 using System.Globalization;
 using System.Linq;
 using System.Numerics;
+using System.Threading;
 
 namespace PingPlugin
 {
@@ -15,6 +16,7 @@ namespace PingPlugin
         private bool resettingGraphPos;
         private bool resettingMonitorPos;
         private bool configVisible;
+        private bool uiCultureSet;
 
         public bool ConfigVisible
         {
@@ -31,6 +33,12 @@ namespace PingPlugin
 
         public void BuildUi()
         {
+            if (!uiCultureSet) // UI culture changes seem not to work at initialization, so we just loop this until it finally works.
+            {
+                Thread.CurrentThread.CurrentUICulture = CultureInfo.GetCultureInfo(this.config.Lang);
+                uiCultureSet = true;
+            }
+
             if (this.config.HideOverlaysDuringCutscenes && CutsceneActive)
                 return;
 
@@ -41,7 +49,10 @@ namespace PingPlugin
 
         private void DrawConfigUi()
         {
-            ImGui.SetNextWindowSize(new Vector2(400, 305), ImGuiCond.Always);
+            if (this.config.RuntimeLang == LangKind.es)
+                ImGui.SetNextWindowSize(new Vector2(400, 346), ImGuiCond.Always);
+            else
+                ImGui.SetNextWindowSize(new Vector2(440, 346), ImGuiCond.Always);
 
             ImGui.Begin("PingPlugin Configuration", ref this.configVisible, ImGuiWindowFlags.NoResize);
             var lockWindows = this.config.LockWindows;
@@ -107,6 +118,14 @@ namespace PingPlugin
                 this.config.Save();
             }
 
+            var currentItem = (int)this.config.RuntimeLang;
+            var supportedLanguages = new[] { Properties.Lang.English, Properties.Lang.Japanese, Properties.Lang.Spanish };
+            if (ImGui.Combo(Properties.Lang.Language, ref currentItem, supportedLanguages, supportedLanguages.Length))
+            {
+                this.config.RuntimeLang = (LangKind)currentItem;
+                this.config.Save();
+            }
+
             if (ImGui.Button(Properties.Lang.Defaults))
             {
                 this.config.RestoreDefaults();
@@ -148,9 +167,9 @@ namespace PingPlugin
             }
 
             ImGui.TextColored(this.config.MonitorFontColor, this.config.MinimalDisplay
-                ? string.Format(Properties.Lang.UIMinimalDisplay, this.pingTracker.LastRTT,
+                ? string.Format(CultureInfo.CurrentUICulture, Properties.Lang.UIMinimalDisplay, this.pingTracker.LastRTT,
                     Math.Round(this.pingTracker.AverageRTT, 2))
-                : string.Format(Properties.Lang.UIRegularDisplay, this.pingTracker.SeAddress, this.pingTracker.LastRTT, Math.Round(this.pingTracker.AverageRTT, 2)));
+                : string.Format(CultureInfo.CurrentUICulture, Properties.Lang.UIRegularDisplay, this.pingTracker.SeAddress, this.pingTracker.LastRTT, Math.Round(this.pingTracker.AverageRTT, 2)));
             if (this.pingTracker.LastError != WinError.NO_ERROR)
                 ImGui.TextColored(this.config.MonitorErrorFontColor, string.Format(Properties.Lang.UIError, (Enum.IsDefined(typeof(WinError), this.pingTracker.LastError) ? this.pingTracker.LastError.ToString() : ((int)this.pingTracker.LastError).ToString())));
             ImGui.End();
