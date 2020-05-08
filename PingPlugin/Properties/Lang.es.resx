@@ -154,7 +154,7 @@
     <value>Color del Monitor</value>
   </data>
   <data name="MonitorErrorColor" xml:space="preserve">
-    <value>Color del Error del Monitor</value>
+    <value>Color de los Errores</value>
   </data>
   <data name="MonitorOpacity" xml:space="preserve">
     <value>Opacidad del Monitor</value>

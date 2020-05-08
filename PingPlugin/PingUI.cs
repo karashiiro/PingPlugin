@@ -49,10 +49,7 @@ namespace PingPlugin
 
         private void DrawConfigUi()
         {
-            if (this.config.RuntimeLang == LangKind.es)
-                ImGui.SetNextWindowSize(new Vector2(400, 346), ImGuiCond.Always);
-            else
-                ImGui.SetNextWindowSize(new Vector2(440, 346), ImGuiCond.Always);
+            ImGui.SetNextWindowSize(new Vector2(400, 332), ImGuiCond.Always);
 
             ImGui.Begin("PingPlugin Configuration", ref this.configVisible, ImGuiWindowFlags.NoResize);
             var lockWindows = this.config.LockWindows;
@@ -151,6 +148,8 @@ namespace PingPlugin
 
             var x = this.config.MinimalDisplay ? 206 : 186;
             var y = 33;
+            if (this.config.MinimalDisplay && this.config.RuntimeLang == LangKind.ja)
+                x += 8;
             if (!this.config.MinimalDisplay)
                 y = 75;
             if (this.pingTracker.LastError != WinError.NO_ERROR)

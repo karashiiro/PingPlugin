@@ -162,7 +162,6 @@
   </data>
   <data name="RecordedPings" xml:space="preserve">
     <value>pingを撮る回</value>
-    <comment>Weird</comment>
   </data>
   <data name="ResetWindowPositions" xml:space="preserve">
     <value>ウインドウの位置をリセット</value>
@@ -178,14 +177,12 @@
   </data>
   <data name="UIGraphTitle" xml:space="preserve">
     <value>レイテンシー(ms) vs ping回</value>
-    <comment>Weird</comment>
   </data>
   <data name="UIMillisecondAbbr" xml:space="preserve">
     <value>ms</value>
   </data>
   <data name="UIMinimalDisplay" xml:space="preserve">
     <value>レイテンシー {0}ms／平均：{1}ms</value>
-    <comment>Need to make the display wider for this</comment>
   </data>
   <data name="UINoData" xml:space="preserve">
     <value>当分データがありません。</value>
@@ -194,6 +191,5 @@
     <value>サーバーIP：{0}
 レイテンシー：{1}ms
 平均レイテンシー：{2}ms</value>
-    <comment>Need to make the display wider for this</comment>
   </data>
 </root>
