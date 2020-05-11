@@ -197,8 +197,9 @@ namespace PingPlugin
                 var max = this.pingTracker.RTTTimes.Max();
                 var min = this.pingTracker.RTTTimes.Min();
 
-                const int lowY = 383;
-                const int highY = 239;
+                const int beginX = 8;
+                const int lowY = 199;
+                const int highY = 55;
                 var avgY = lowY - Rescale((float)this.pingTracker.AverageRTT, max, min, graphSize.Y);
 
                 ImGui.Text("                      " + Properties.Lang.UIGraphTitle);
@@ -207,19 +208,19 @@ namespace PingPlugin
 
                 if (!ImGui.IsWindowCollapsed())
                 {
-                    var lowLineStart = new Vector2(16, lowY);
-                    var lowLineEnd = new Vector2(16 + graphSize.X, lowY);
+                    var lowLineStart = ImGui.GetWindowPos() + new Vector2(beginX, lowY);
+                    var lowLineEnd = ImGui.GetWindowPos() + new Vector2(beginX + graphSize.X, lowY);
                     ImGui.GetWindowDrawList().AddLine(lowLineStart, lowLineEnd, ImGui.GetColorU32(ImGuiCol.PlotLines));
                     ImGui.GetWindowDrawList().AddText(lowLineEnd - new Vector2(0, 5), ImGui.GetColorU32(ImGuiCol.Text), min.ToString(CultureInfo.CurrentUICulture) + Properties.Lang.UIMillisecondAbbr);
 
-                    var avgLineStart = new Vector2(16, avgY);
-                    var avgLineEnd = new Vector2(16 + graphSize.X, avgY);
+                    var avgLineStart = ImGui.GetWindowPos() + new Vector2(beginX, avgY);
+                    var avgLineEnd = ImGui.GetWindowPos() + new Vector2(beginX + graphSize.X, avgY);
                     ImGui.GetWindowDrawList().AddLine(avgLineStart, avgLineEnd, ImGui.GetColorU32(ImGuiCol.PlotLines));
                     ImGui.GetWindowDrawList().AddText(avgLineEnd - new Vector2(0, 5), ImGui.GetColorU32(ImGuiCol.Text), Math.Round(this.pingTracker.AverageRTT, 2).ToString(CultureInfo.CurrentUICulture) + Properties.Lang.UIMillisecondAbbr);
                     ImGui.GetWindowDrawList().AddText(avgLineEnd - new Vector2(270, 18), ImGui.GetColorU32(ImGuiCol.Text), Properties.Lang.UIAverage);
 
-                    var highLineStart = new Vector2(16, highY);
-                    var highLineEnd = new Vector2(16 + graphSize.X, highY);
+                    var highLineStart = ImGui.GetWindowPos() + new Vector2(beginX, highY);
+                    var highLineEnd = ImGui.GetWindowPos() + new Vector2(beginX + graphSize.X, highY);
                     ImGui.GetWindowDrawList()
                         .AddLine(highLineStart, highLineEnd, ImGui.GetColorU32(ImGuiCol.PlotLines));
                     ImGui.GetWindowDrawList().AddText(highLineEnd - new Vector2(0, 5), ImGui.GetColorU32(ImGuiCol.Text), max.ToString(CultureInfo.CurrentUICulture) + Properties.Lang.UIMillisecondAbbr);
