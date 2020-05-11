@@ -16,7 +16,7 @@ namespace PingPlugin
         private bool resettingGraphPos;
         private bool resettingMonitorPos;
         private bool configVisible;
-        private bool uiCultureSet;
+        private bool isUiCultureSet;
 
         public bool ConfigVisible
         {
@@ -33,10 +33,10 @@ namespace PingPlugin
 
         public void BuildUi()
         {
-            if (!uiCultureSet) // UI culture changes seem not to work at initialization, so we just loop this until it finally works.
+            if (!this.isUiCultureSet) // UI culture changes seem not to work at initialization, so we just loop this until it finally works.
             {
                 Thread.CurrentThread.CurrentUICulture = CultureInfo.GetCultureInfo(this.config.Lang);
-                uiCultureSet = true;
+                this.isUiCultureSet = true;
             }
 
             if (this.config.HideOverlaysDuringCutscenes && CutsceneActive)
