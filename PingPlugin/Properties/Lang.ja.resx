@@ -137,7 +137,7 @@
     <comment>出しませんか</comment>
   </data>
   <data name="HideOverlaysDuringCutscenes" xml:space="preserve">
-    <value>映画の中でオーバーレイを見せません</value>
+    <value>HUDでオーバーレイを非表示にする</value>
   </data>
   <data name="Japanese" xml:space="preserve">
     <value>日本語</value>

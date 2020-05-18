@@ -58,6 +58,13 @@ namespace PingPlugin
 
         private void OnFrameworkUpdate(Framework framework)
         {
+            if (this.pluginInterface.ClientState.LocalPlayer == null)
+            {
+                this.ui.CutsceneActive = false;
+                this.chatLogObject = IntPtr.Zero;
+                return;
+            }
+
             if (this.chatLogObject == IntPtr.Zero)
             {
                 this.chatLogObject = this.getUI2ObjByName(Marshal.ReadIntPtr(getBaseUIObj(), 0x20), "ChatLog");

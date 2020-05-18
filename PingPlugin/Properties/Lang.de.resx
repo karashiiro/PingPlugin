@@ -136,7 +136,7 @@
     <value>Fehler nicht anzeigen</value>
   </data>
   <data name="HideOverlaysDuringCutscenes" xml:space="preserve">
-    <value>Ausblenden bei Zwischensequenzen</value>
+    <value>Überlagerungen mit HUD ausblenden</value>
   </data>
   <data name="Japanese" xml:space="preserve">
     <value>Japanisch</value>

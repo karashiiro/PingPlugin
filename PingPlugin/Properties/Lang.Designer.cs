@@ -115,7 +115,7 @@ namespace PingPlugin.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Hide overlays during cutscenes.
+        ///   Looks up a localized string similar to Hide overlays with HUD.
         /// </summary>
         internal static string HideOverlaysDuringCutscenes {
             get {

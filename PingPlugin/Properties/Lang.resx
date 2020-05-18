@@ -136,7 +136,7 @@
     <value>Hide errors</value>
   </data>
   <data name="HideOverlaysDuringCutscenes" xml:space="preserve">
-    <value>Hide overlays during cutscenes</value>
+    <value>Hide overlays with HUD</value>
   </data>
   <data name="Japanese" xml:space="preserve">
     <value>Japanese</value>
