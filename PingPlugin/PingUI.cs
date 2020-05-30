@@ -190,22 +190,13 @@ namespace PingPlugin
                 this.resettingGraphPos = false;
             }
 
-            float[] pingArray;
-            lock (this.pingTracker.RTTTimes)
-            {
-                pingArray = this.pingTracker.RTTTimes.ToArray();
-            }
+            var pingArray = this.pingTracker.RTTTimes.ToArray();
             if (pingArray.Length > 0)
             {
                 var graphSize = new Vector2(300, 150);
 
-                float max;
-                float min;
-                lock (this.pingTracker.RTTTimes)
-                {
-                    max = this.pingTracker.RTTTimes.Max();
-                    min = this.pingTracker.RTTTimes.Min();
-                }
+                var max = this.pingTracker.RTTTimes.Max();
+                var min = this.pingTracker.RTTTimes.Min();
 
                 const int beginX = 8;
                 const int lowY = 199;

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -21,7 +22,7 @@ namespace PingPlugin.PingTrackers
         public long SeAddressRaw { get; set; }
         public WinError LastError { get; set; }
         public ulong LastRTT { get; set; }
-        public Queue<float> RTTTimes { get; set; }
+        public ConcurrentQueue<float> RTTTimes { get; set; }
 
         public Win32APIPingTracker(PingConfiguration config)
         {
@@ -31,7 +32,7 @@ namespace PingPlugin.PingTrackers
 
             UpdateSeAddress();
 
-            RTTTimes = new Queue<float>(this.config.PingQueueSize);
+            RTTTimes = new ConcurrentQueue<float>();
 
             Task.Run(() => PingLoop(this.tokenSource.Token));
             Task.Run(() => CheckAddressLoop(this.tokenSource.Token));
@@ -44,7 +45,7 @@ namespace PingPlugin.PingTrackers
                 RTTTimes.Enqueue(nextRTT);
 
                 while (RTTTimes.Count > this.config.PingQueueSize)
-                    RTTTimes.Dequeue();
+                    RTTTimes.TryDequeue(out _);
             }
             CalcAverage();
 
@@ -53,20 +54,8 @@ namespace PingPlugin.PingTrackers
 
         private void CalcAverage() => AverageRTT = RTTTimes.Average();
 
-        private void ResetRTT() => RTTTimes = new Queue<float>();
-
-        /*
-         * This might be done instead of using the game packets for two reasons (if the first reason proves invalid, the old stuff is committed to roll back).
-         * First, there doesn't seem to be a good pair of game packets to use, since the only packets that provide a good indication of latency are the
-         * actor cast and skill packet pairs. Casts work well, but skills can obviously only be used on valid targets, making that method moot outside of
-         * combat (maybe sensor fusion? seems overcomplicated). Ping packets seem to have little correlation to your actual ping, as their dTimes
-         * tend to vary dramatically between exchanges. It's entirely possible that this so-called ping packet is really just a keepalive. There's a number of
-         * actions that don't send responses, as well, including movement and chat. Besides all these, there are some other good pairs such as search info
-         * settings, weapon draws/sheaths, etc., that could give a very accurate representation of latency, but they're also all actions that are only performed
-         * rarely, even in aggregate.
-         *
-         * So, what's the other reason for doing it this way? No need to update opcodes ever lol.
-         */
+        private void ResetRTT() => RTTTimes = new ConcurrentQueue<float>();
+        
         private async Task PingLoop(CancellationToken token)
         {
             while (true)
