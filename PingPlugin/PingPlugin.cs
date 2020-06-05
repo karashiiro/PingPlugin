@@ -72,6 +72,9 @@ namespace PingPlugin
             }
             
             var chatLogProperties = Marshal.ReadIntPtr(this.chatLogObject, 0xC8);
+            if (chatLogProperties == IntPtr.Zero)
+                return;
+
             var hidden = Marshal.ReadByte(chatLogProperties + 0x73) == 0;
 
             this.ui.CutsceneActive = hidden;
