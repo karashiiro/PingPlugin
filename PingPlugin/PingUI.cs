@@ -116,7 +116,7 @@ namespace PingPlugin
             }
 
             var currentItem = (int)this.config.RuntimeLang;
-            var supportedLanguages = new[] { Properties.Lang.English, Properties.Lang.Japanese, Properties.Lang.Spanish, Properties.Lang.German };
+            var supportedLanguages = new[] { Properties.Lang.English, Properties.Lang.Japanese, Properties.Lang.Spanish, Properties.Lang.German, Properties.Lang.Chinese };
             if (ImGui.Combo(Properties.Lang.Language, ref currentItem, supportedLanguages, supportedLanguages.Length))
             {
                 this.config.RuntimeLang = (LangKind)currentItem;
