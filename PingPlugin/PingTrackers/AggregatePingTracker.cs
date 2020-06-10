@@ -22,6 +22,9 @@ namespace PingPlugin.PingTrackers
         public ulong LastRTT { get; set; }
         public ConcurrentQueue<float> RTTTimes { get; set; }
 
+        public delegate void PingUpdatedDelegate(PingStatsPayload payload);
+        public event PingUpdatedDelegate OnPingUpdated;
+
         public AggregatePingTracker(PingConfiguration config, params IPingTracker[] pingTrackers)
         {
             this.tokenSource = new CancellationTokenSource();
@@ -63,6 +66,8 @@ namespace PingPlugin.PingTrackers
                 }
                 CalcAverage();
 
+                SendMessage();
+
                 await Task.Delay(1500, token);
             }
         }
@@ -90,6 +95,16 @@ namespace PingPlugin.PingTrackers
                 }
             }
             return bestTracker;
+        }
+
+        private void SendMessage()
+        {
+            var del = OnPingUpdated;
+            del?.Invoke(new PingStatsPayload
+            {
+                AverageRTT = Convert.ToUInt64(AverageRTT),
+                LastRTT = LastRTT,
+            });
         }
 
         protected virtual void Dispose(bool disposing)
