@@ -123,6 +123,9 @@
   <data name="ClickThrough" xml:space="preserve">
     <value>鼠标穿透</value>
   </data>
+  <data name="ConfigurationWindowTitle" xml:space="preserve">
+    <value>PingPlugin设置</value>
+  </data>
   <data name="Defaults" xml:space="preserve">
     <value>默认</value>
   </data>
@@ -161,6 +164,9 @@
   </data>
   <data name="MonitorOpacity" xml:space="preserve">
     <value>监视器不透明度</value>
+  </data>
+  <data name="PingGraphTitle" xml:space="preserve">
+    <value>延迟视图</value>
   </data>
   <data name="RecordedPings" xml:space="preserve">
     <value>记录延迟数据</value>
