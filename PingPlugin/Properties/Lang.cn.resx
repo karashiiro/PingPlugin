@@ -118,86 +118,86 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="Chinese" xml:space="preserve">
-    <value>Chinesisch</value>
+    <value>中文</value>
   </data>
   <data name="ClickThrough" xml:space="preserve">
-    <value>Anzeige durchklicken</value>
+    <value>鼠标穿透</value>
   </data>
   <data name="ConfigurationWindowTitle" xml:space="preserve">
-    <value>PingPlugin Configuration</value>
+    <value>PingPlugin设置</value>
   </data>
   <data name="Defaults" xml:space="preserve">
-    <value>Voreinstellungen</value>
+    <value>默认</value>
   </data>
   <data name="English" xml:space="preserve">
-    <value>Englisch</value>
+    <value>英语</value>
   </data>
   <data name="French" xml:space="preserve">
-    <value>Französisch</value>
+    <value>法语</value>
   </data>
   <data name="German" xml:space="preserve">
-    <value>Deutsch</value>
+    <value>德语</value>
   </data>
   <data name="HideErrors" xml:space="preserve">
-    <value>Fehler nicht anzeigen</value>
+    <value>隐藏错误</value>
   </data>
   <data name="HideOverlaysDuringCutscenes" xml:space="preserve">
-    <value>Überlagerungen mit HUD ausblenden</value>
+    <value>过场动画时隐藏悬浮窗</value>
   </data>
   <data name="Japanese" xml:space="preserve">
-    <value>Japanisch</value>
+    <value>日语</value>
   </data>
   <data name="Language" xml:space="preserve">
-    <value>Sprache</value>
+    <value>语言</value>
   </data>
   <data name="LockPluginWindows" xml:space="preserve">
-    <value>Pluginfenster sperren</value>
+    <value>锁定悬浮窗</value>
   </data>
   <data name="MinimalDisplay" xml:space="preserve">
-    <value>Kleinere Anzeige</value>
+    <value>最小化显示</value>
   </data>
   <data name="MonitorColor" xml:space="preserve">
-    <value>Monitor Farbe</value>
+    <value>监视器颜色</value>
   </data>
   <data name="MonitorErrorColor" xml:space="preserve">
-    <value>Monitor Fehlerfarbe</value>
+    <value>监视器错误颜色</value>
   </data>
   <data name="MonitorOpacity" xml:space="preserve">
-    <value>Monitor Transparenz</value>
+    <value>监视器不透明度</value>
   </data>
   <data name="PingGraphTitle" xml:space="preserve">
-    <value>Ping Graph</value>
+    <value>延迟视图</value>
   </data>
   <data name="RecordedPings" xml:space="preserve">
-    <value>Aufgezeichnete Pings</value>
+    <value>记录延迟数据</value>
   </data>
   <data name="ResetWindowPositions" xml:space="preserve">
-    <value>Fenster zurücksetzen</value>
+    <value>重置悬浮窗位置</value>
   </data>
   <data name="Spanish" xml:space="preserve">
-    <value>Spanisch</value>
+    <value>西班牙语</value>
   </data>
   <data name="UIAverage" xml:space="preserve">
-    <value>Mittelwert</value>
+    <value>平均</value>
   </data>
   <data name="UIError" xml:space="preserve">
-    <value>Fehler: {0}</value>
+    <value>错误: {0}</value>
   </data>
   <data name="UIGraphTitle" xml:space="preserve">
-    <value>Netzwerklatenz (ms) vs Pings</value>
+    <value>网络延迟 (ms)与Ping</value>
   </data>
   <data name="UIMillisecondAbbr" xml:space="preserve">
     <value>ms</value>
   </data>
   <data name="UIMinimalDisplay" xml:space="preserve">
-    <value>Ping: {0}ms / Mittelwert: {1}ms</value>
+    <value>延迟: {0}ms / 平均: {1}ms</value>
   </data>
   <data name="UINoData" xml:space="preserve">
-    <value>Zur Zeit keine Daten vorhanden.</value>
+    <value>目前没有数据。</value>
   </data>
   <data name="UIRegularDisplay" xml:space="preserve">
-    <value>Verbunden mit: {0}
-Ping: {1}ms
-Mittlerer Ping: {2}ms</value>
+    <value>服务器IP: {0}
+延迟: {1}ms
+平均延迟: {2}ms</value>
   </data>
 </root>

@@ -61,6 +61,15 @@ namespace PingPlugin.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Chinese.
+        /// </summary>
+        internal static string Chinese {
+            get {
+                return ResourceManager.GetString("Chinese", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Click through plugin windows.
         /// </summary>
         internal static string ClickThrough {
