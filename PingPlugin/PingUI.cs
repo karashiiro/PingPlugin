@@ -51,7 +51,7 @@ namespace PingPlugin
         {
             ImGui.SetNextWindowSize(new Vector2(400, 332), ImGuiCond.Always);
 
-            ImGui.Begin("PingPlugin Configuration", ref this.configVisible, ImGuiWindowFlags.NoResize);
+            ImGui.Begin($"{Properties.Lang.ConfigurationWindowTitle}##PingPlugin Configuration", ref this.configVisible, ImGuiWindowFlags.NoResize);
             var lockWindows = this.config.LockWindows;
             if (ImGui.Checkbox(Properties.Lang.LockPluginWindows, ref lockWindows))
             {
@@ -183,12 +183,13 @@ namespace PingPlugin
             ImGui.SetNextWindowPos(this.config.GraphPosition, ImGuiCond.FirstUseEver);
             ImGui.SetNextWindowSize(new Vector2(367, 210), ImGuiCond.Always);
 
-            ImGui.Begin("Ping Graph", windowFlags);
+            ImGui.Begin($"{Properties.Lang.PingGraphTitle}##Ping Graph", windowFlags);
             if (this.resettingGraphPos)
             {
                 ImGui.SetWindowPos(this.config.GraphPosition);
                 this.resettingGraphPos = false;
             }
+
             var pingArray = this.pingTracker.RTTTimes.ToArray();
             if (pingArray.Length > 0)
             {

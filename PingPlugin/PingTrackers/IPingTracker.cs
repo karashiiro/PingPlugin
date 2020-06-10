@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Collections.Concurrent;
 using System.Net;
 
 namespace PingPlugin.PingTrackers
@@ -18,6 +18,6 @@ namespace PingPlugin.PingTrackers
 
         ulong LastRTT { get; set; }
 
-        Queue<float> RTTTimes { get; set; }
+        ConcurrentQueue<float> RTTTimes { get; set; }
     }
 }

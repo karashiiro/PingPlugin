@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -23,7 +24,7 @@ namespace PingPlugin.PingTrackers
         public long SeAddressRaw { get; set; }
         public WinError LastError { get; set; }
         public ulong LastRTT { get; set; }
-        public Queue<float> RTTTimes { get; set; }
+        public ConcurrentQueue<float> RTTTimes { get; set; }
 
         public ComponentModelPingTracker(PingConfiguration config)
         {
@@ -36,7 +37,7 @@ namespace PingPlugin.PingTrackers
             UpdateSeAddress();
 
             LastError = WinError.NO_ERROR;
-            RTTTimes = new Queue<float>(this.config.PingQueueSize);
+            RTTTimes = new ConcurrentQueue<float>();
 
             Task.Run(() => PingLoop(this.tokenSource.Token));
             Task.Run(() => AddressUpdateLoop(this.tokenSource.Token));
@@ -49,7 +50,7 @@ namespace PingPlugin.PingTrackers
                 RTTTimes.Enqueue(nextRTT);
                 
                 while (RTTTimes.Count > this.config.PingQueueSize)
-                    RTTTimes.Dequeue();
+                    RTTTimes.TryDequeue(out _);
             }
             CalcAverage();
 
@@ -97,7 +98,7 @@ namespace PingPlugin.PingTrackers
 
         private void ResetRTT()
         {
-            RTTTimes = new Queue<float>();
+            RTTTimes = new ConcurrentQueue<float>();
         }
 
         private void UpdateSeAddress()

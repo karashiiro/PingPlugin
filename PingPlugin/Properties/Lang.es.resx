@@ -120,6 +120,9 @@
   <data name="ClickThrough" xml:space="preserve">
     <value>Haga clic en los windows de plugin</value>
   </data>
+  <data name="ConfigurationWindowTitle" xml:space="preserve">
+    <value>PingPlugin Configuration</value>
+  </data>
   <data name="Defaults" xml:space="preserve">
     <value>Reajusta</value>
   </data>
@@ -136,7 +139,7 @@
     <value>Esconda errores</value>
   </data>
   <data name="HideOverlaysDuringCutscenes" xml:space="preserve">
-    <value>Esconda overlays durante de cutscenes</value>
+    <value>Esconda overlays con HUD</value>
   </data>
   <data name="Japanese" xml:space="preserve">
     <value>Japones</value>
@@ -158,6 +161,9 @@
   </data>
   <data name="MonitorOpacity" xml:space="preserve">
     <value>Opacidad del Monitor</value>
+  </data>
+  <data name="PingGraphTitle" xml:space="preserve">
+    <value>Ping Graph</value>
   </data>
   <data name="RecordedPings" xml:space="preserve">
     <value>Pings que se Graban</value>

@@ -120,6 +120,9 @@
   <data name="ClickThrough" xml:space="preserve">
     <value>プラグインウインドウをクリックスルーします</value>
   </data>
+  <data name="ConfigurationWindowTitle" xml:space="preserve">
+    <value>PingPlugin Configuration</value>
+  </data>
   <data name="Defaults" xml:space="preserve">
     <value>リセット</value>
   </data>
@@ -137,7 +140,7 @@
     <comment>出しませんか</comment>
   </data>
   <data name="HideOverlaysDuringCutscenes" xml:space="preserve">
-    <value>映画の中でオーバーレイを見せません</value>
+    <value>HUDでオーバーレイを非表示にする</value>
   </data>
   <data name="Japanese" xml:space="preserve">
     <value>日本語</value>
@@ -159,6 +162,9 @@
   </data>
   <data name="MonitorOpacity" xml:space="preserve">
     <value>モニターの不透明</value>
+  </data>
+  <data name="PingGraphTitle" xml:space="preserve">
+    <value>Ping Graph</value>
   </data>
   <data name="RecordedPings" xml:space="preserve">
     <value>pingを撮る回</value>

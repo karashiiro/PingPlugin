@@ -70,6 +70,15 @@ namespace PingPlugin.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to PingPlugin Configuration.
+        /// </summary>
+        internal static string ConfigurationWindowTitle {
+            get {
+                return ResourceManager.GetString("ConfigurationWindowTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Defaults.
         /// </summary>
         internal static string Defaults {
@@ -115,7 +124,7 @@ namespace PingPlugin.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Hide overlays during cutscenes.
+        ///   Looks up a localized string similar to Hide overlays with HUD.
         /// </summary>
         internal static string HideOverlaysDuringCutscenes {
             get {
@@ -183,6 +192,15 @@ namespace PingPlugin.Properties {
         internal static string MonitorOpacity {
             get {
                 return ResourceManager.GetString("MonitorOpacity", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Ping Graph.
+        /// </summary>
+        internal static string PingGraphTitle {
+            get {
+                return ResourceManager.GetString("PingGraphTitle", resourceCulture);
             }
         }
         
