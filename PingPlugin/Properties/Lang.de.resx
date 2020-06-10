@@ -120,6 +120,9 @@
   <data name="ClickThrough" xml:space="preserve">
     <value>Anzeige durchklicken</value>
   </data>
+  <data name="ConfigurationWindowTitle" xml:space="preserve">
+    <value>PingPlugin Configuration</value>
+  </data>
   <data name="Defaults" xml:space="preserve">
     <value>Voreinstellungen</value>
   </data>
@@ -158,6 +161,9 @@
   </data>
   <data name="MonitorOpacity" xml:space="preserve">
     <value>Monitor Transparenz</value>
+  </data>
+  <data name="PingGraphTitle" xml:space="preserve">
+    <value>Ping Graph</value>
   </data>
   <data name="RecordedPings" xml:space="preserve">
     <value>Aufgezeichnete Pings</value>
