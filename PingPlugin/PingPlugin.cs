@@ -1,7 +1,12 @@
 ﻿using Dalamud.Plugin;
 using System;
+using System.Linq;
 using System.Runtime.InteropServices;
+using Dalamud.Game.Chat;
+using Dalamud.Game.Chat.SeStringHandling;
+using Dalamud.Game.Chat.SeStringHandling.Payloads;
 using Dalamud.Game.Command;
+using Dalamud.Game.Internal;
 using Dalamud.Game.Internal.Network;
 using PingPlugin.PingTrackers;
 
@@ -11,14 +16,29 @@ namespace PingPlugin
     {
         private DalamudPluginInterface pluginInterface;
         private PingConfiguration config;
+        private IntPtr chatLogObject;
         private IPingTracker pingTracker;
         private PingUI ui;
 
         public string Name => "Ping Plugin";
 
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        private delegate IntPtr GetBaseUIObjDelegate();
+        private GetBaseUIObjDelegate getBaseUIObj;
+        [UnmanagedFunctionPointer(CallingConvention.ThisCall, CharSet = CharSet.Ansi)]
+        private delegate IntPtr GetUI2ObjByNameDelegate(IntPtr getBaseUIObj, string UIName, int index = 1);
+        private GetUI2ObjByNameDelegate getUI2ObjByName;
+
         public void Initialize(DalamudPluginInterface pluginInterface)
         {
             this.pluginInterface = pluginInterface;
+
+            var getBaseUIObjScan = this.pluginInterface.TargetModuleScanner.ScanText("E8 ?? ?? ?? ?? 41 b8 01 00 00 00 48 8d 15 ?? ?? ?? ?? 48 8b 48 20 e8 ?? ?? ?? ?? 48 8b cf");
+            var getUI2ObjByNameScan = this.pluginInterface.TargetModuleScanner.ScanText("e8 ?? ?? ?? ?? 48 8b cf 48 89 87 ?? ?? 00 00 e8 ?? ?? ?? ?? 41 b8 01 00 00 00");
+            this.getBaseUIObj = Marshal.GetDelegateForFunctionPointer<GetBaseUIObjDelegate>(getBaseUIObjScan);
+            this.getUI2ObjByName = Marshal.GetDelegateForFunctionPointer<GetUI2ObjByNameDelegate>(getUI2ObjByNameScan);
+            this.chatLogObject = this.getUI2ObjByName(Marshal.ReadIntPtr(getBaseUIObj(), 0x20), "ChatLog");
+
             this.config = (PingConfiguration) this.pluginInterface.GetPluginConfig() ?? new PingConfiguration();
             this.config.Initialize(this.pluginInterface);
 
@@ -26,7 +46,7 @@ namespace PingPlugin
                 new ComponentModelPingTracker(this.config),
                 new Win32APIPingTracker(this.config));
 
-            this.pluginInterface.Framework.Network.OnNetworkMessage += OnNetworkMessage;
+            this.pluginInterface.Framework.OnUpdateEvent += OnFrameworkUpdate;
             
             this.ui = new PingUI(this.pingTracker, this.config);
 
@@ -36,21 +56,31 @@ namespace PingPlugin
             AddCommandHandlers();
         }
 
-        private void OnNetworkMessage(IntPtr dataPtr, ushort opCode, uint sourceActorId, uint targetActorId, NetworkMessageDirection direction)
+        private void OnFrameworkUpdate(Framework framework)
         {
-            const ushort eventPlay = 0x02C3; // TODO: Get goat to hook the handlers for these
-            const ushort eventFinish = 0x0239;
-            if (opCode == eventPlay)
-            {
-                var packetData = Marshal.PtrToStructure<EventPlay>(dataPtr);
-                
-                if ((packetData.Flags & 0x00000400) != 0) // TODO: PR Sapphire, HIDE_UI seems to be wrong now
-                    this.ui.CutsceneActive = true;
-            }
-            else if (opCode == eventFinish)
+            if (this.pluginInterface.ClientState.LocalPlayer == null)
             {
                 this.ui.CutsceneActive = false;
+                this.chatLogObject = IntPtr.Zero;
+                return;
             }
+
+            if (this.chatLogObject == IntPtr.Zero)
+            {
+                this.chatLogObject = this.getUI2ObjByName(Marshal.ReadIntPtr(getBaseUIObj(), 0x20), "ChatLog");
+                return;
+            }
+            
+            var chatLogProperties = Marshal.ReadIntPtr(this.chatLogObject, 0xC8);
+            if (chatLogProperties == IntPtr.Zero)
+            {
+                this.ui.CutsceneActive = true;
+                return;
+            }
+
+            var hidden = Marshal.ReadByte(chatLogProperties + 0x73) == 0;
+
+            this.ui.CutsceneActive = hidden;
         }
 
         private void AddCommandHandlers()
@@ -103,7 +133,7 @@ namespace PingPlugin
                 this.pluginInterface.UiBuilder.OnOpenConfigUi -= (sender, e) => this.ui.ConfigVisible = true;
                 this.pluginInterface.UiBuilder.OnBuildUi -= this.ui.BuildUi;
 
-                this.pluginInterface.Framework.Network.OnNetworkMessage -= OnNetworkMessage;
+                this.pluginInterface.Framework.OnUpdateEvent -= OnFrameworkUpdate;
 
                 this.config.Save();
 

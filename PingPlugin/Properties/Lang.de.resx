@@ -123,6 +123,9 @@
   <data name="ClickThrough" xml:space="preserve">
     <value>Anzeige durchklicken</value>
   </data>
+  <data name="ConfigurationWindowTitle" xml:space="preserve">
+    <value>PingPlugin Configuration</value>
+  </data>
   <data name="Defaults" xml:space="preserve">
     <value>Voreinstellungen</value>
   </data>
@@ -139,7 +142,7 @@
     <value>Fehler nicht anzeigen</value>
   </data>
   <data name="HideOverlaysDuringCutscenes" xml:space="preserve">
-    <value>Ausblenden bei Zwischensequenzen</value>
+    <value>Überlagerungen mit HUD ausblenden</value>
   </data>
   <data name="Japanese" xml:space="preserve">
     <value>Japanisch</value>
@@ -161,6 +164,9 @@
   </data>
   <data name="MonitorOpacity" xml:space="preserve">
     <value>Monitor Transparenz</value>
+  </data>
+  <data name="PingGraphTitle" xml:space="preserve">
+    <value>Ping Graph</value>
   </data>
   <data name="RecordedPings" xml:space="preserve">
     <value>Aufgezeichnete Pings</value>
