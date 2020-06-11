@@ -1,0 +1,110 @@
+﻿{
+  "Chinese": {
+    "message": "Chino",
+    "description": "PingPlugin.LangKind"
+  },
+  "English": {
+    "message": "Inglés",
+    "description": "PingPlugin.LangKind"
+  },
+  "French": {
+    "message": "Francés",
+    "description": "PingPlugin.LangKind"
+  },
+  "German": {
+    "message": "Alemán",
+    "description": "PingPlugin.LangKind"
+  },
+  "Japanese": {
+    "message": "Japones",
+    "description": "PingPlugin.LangKind"
+  },
+  "Spanish": {
+    "message": "Español",
+    "description": "PingPlugin.LangKind"
+  },
+  "ClickThrough": {
+    "message": "Haga clic en los windows de plugin",
+    "description": "PingPlugin.Configuration"
+  },
+  "Defaults": {
+    "message": "Reajusta",
+    "description": "PingPlugin.Configuration"
+  },
+  "HideErrors": {
+    "message": "Esconda errores",
+    "description": "PingPlugin.Configuration"
+  },
+  "HideOverlaysDuringCutscenes": {
+    "message": "Esconda overlays con HUD",
+    "description": "PingPlugin.Configuration"
+  },
+  "Language": {
+    "message": "Lengua",
+    "description": "PingPlugin.Configuration"
+  },
+  "LockPluginWindows": {
+    "message": "Congele los windows de plugin",
+    "description": "PingPlugin.Configuration"
+  },
+  "MinimalDisplay": {
+    "message": "Visualizador minimo",
+    "description": "PingPlugin.Configuration"
+  },
+  "MonitorColor": {
+    "message": "Color del Monitor",
+    "description": "PingPlugin.Configuration"
+  },
+  "MonitorErrorColor": {
+    "message": "Color de los Errores",
+    "description": "PingPlugin.Configuration"
+  },
+  "MonitorOpacity": {
+    "message": "Opacidad del Monitor",
+    "description": "PingPlugin.Configuration"
+  },
+  "RecordedPings": {
+    "message": "Pings que se Graban",
+    "description": "PingPlugin.Configuration"
+  },
+  "ResetWindowPositions": {
+    "message": "Reajuste la Posición de Windows",
+    "description": "PingPlugin.Configuration"
+  },
+  "ConfigurationWindowTitle": {
+    "message": "PingPlugin Configuration",
+    "description": "PingPlugin.WindowTitles"
+  },
+  "PingGraphTitle": {
+    "message": "Ping Graph",
+    "description": "PingPlugin.WindowTitles"
+  },
+  "UIAverage": {
+    "message": "Promedio",
+    "description": "PingPlugin.UIText"
+  },
+  "UIError": {
+    "message": "Error: {0}",
+    "description": "PingPlugin.UIText"
+  },
+  "UIGraphTitle": {
+    "message": "Latencia de Red (ms) vs Pings",
+    "description": "PingPlugin.UIText"
+  },
+  "UIMillisecondAbbr": {
+    "message": "ms",
+    "description": "PingPlugin.UIText"
+  },
+  "UIMinimalDisplay": {
+    "message": "Ping: {0}ms / Promedio: {1}ms",
+    "description": "PingPlugin.UIText"
+  },
+  "UINoData": {
+    "message": "No hay datos a esto tiempo.",
+    "description": "PingPlugin.UIText"
+  },
+  "UIRegularDisplay": {
+    "message": "Connectado a: {0}\nPing: {1}ms\nPing promedio: {2}ms",
+    "description": "PingPlugin.UIText"
+  }
+}

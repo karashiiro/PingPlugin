@@ -1,7 +1,8 @@
 ﻿using System;
-using System.Globalization;
+using System.IO;
 using System.Numerics;
-using System.Threading;
+using System.Reflection;
+using CheapLoc;
 using Dalamud.Configuration;
 using Dalamud.Plugin;
 using Newtonsoft.Json;
@@ -39,7 +40,7 @@ namespace PingPlugin
             set
             {
                 Lang = value.ToString();
-                Thread.CurrentThread.CurrentUICulture = CultureInfo.GetCultureInfo(Lang);
+                LoadLang();
             }
         }
 
@@ -57,6 +58,7 @@ namespace PingPlugin
         public void Initialize(DalamudPluginInterface pluginInterface)
         {
             this.pluginInterface = pluginInterface;
+            LoadLang();
         }
 
         // Chances are the user doesn't expect the window positions to be reset with the other button, so we have a separate thingy instead.
@@ -79,6 +81,15 @@ namespace PingPlugin
         public void Save()
         {
             this.pluginInterface.SavePluginConfig(this);
+        }
+
+        private void LoadLang()
+        {
+            PluginLog.Log($"Loading lang data from PingPlugin.Lang.lang_{Lang}.json");
+            using var langStream = Assembly.GetExecutingAssembly().GetManifestResourceStream($"PingPlugin.Lang.lang_{Lang}.json");
+            // ReSharper disable once AssignNullToNotNullAttribute
+            using var langStreamReader = new StreamReader(langStream);
+            Loc.Setup(langStreamReader.ReadToEnd());
         }
     }
 }

@@ -1,0 +1,110 @@
+﻿{
+  "Chinese": {
+    "message": "中国語",
+    "description": "PingPlugin.LangKind"
+  },
+  "English": {
+    "message": "英語",
+    "description": "PingPlugin.LangKind"
+  },
+  "French": {
+    "message": "フランス語",
+    "description": "PingPlugin.LangKind"
+  },
+  "German": {
+    "message": "ドイツ語",
+    "description": "PingPlugin.LangKind"
+  },
+  "Japanese": {
+    "message": "日本語",
+    "description": "PingPlugin.LangKind"
+  },
+  "Spanish": {
+    "message": "スペイン語",
+    "description": "PingPlugin.LangKind"
+  },
+  "ClickThrough": {
+    "message": "プラグインウインドウをクリックスルーします",
+    "description": "PingPlugin.Configuration"
+  },
+  "Defaults": {
+    "message": "リセット",
+    "description": "PingPlugin.Configuration"
+  },
+  "HideErrors": {
+    "message": "エラーを見せません",
+    "description": "PingPlugin.Configuration"
+  },
+  "HideOverlaysDuringCutscenes": {
+    "message": "HUDでオーバーレイを非表示にする",
+    "description": "PingPlugin.Configuration"
+  },
+  "Language": {
+    "message": "言語",
+    "description": "PingPlugin.Configuration"
+  },
+  "LockPluginWindows": {
+    "message": "プラグインウインドウを閉ざします",
+    "description": "PingPlugin.Configuration"
+  },
+  "MinimalDisplay": {
+    "message": "最小ディスプレイ",
+    "description": "PingPlugin.Configuration"
+  },
+  "MonitorColor": {
+    "message": "モニター色",
+    "description": "PingPlugin.Configuration"
+  },
+  "MonitorErrorColor": {
+    "message": "モニターエラー色",
+    "description": "PingPlugin.Configuration"
+  },
+  "MonitorOpacity": {
+    "message": "モニターの不透明",
+    "description": "PingPlugin.Configuration"
+  },
+  "RecordedPings": {
+    "message": "pingを撮る回",
+    "description": "PingPlugin.Configuration"
+  },
+  "ResetWindowPositions": {
+    "message": "ウインドウの位置をリセット",
+    "description": "PingPlugin.Configuration"
+  },
+  "ConfigurationWindowTitle": {
+    "message": "PingPlugin Configuration",
+    "description": "PingPlugin.WindowTitles"
+  },
+  "PingGraphTitle": {
+    "message": "Ping Graph",
+    "description": "PingPlugin.WindowTitles"
+  },
+  "UIAverage": {
+    "message": "平均",
+    "description": "PingPlugin.UIText"
+  },
+  "UIError": {
+    "message": "エラー：{0}",
+    "description": "PingPlugin.UIText"
+  },
+  "UIGraphTitle": {
+    "message": "レイテンシー(ms) vs ping回",
+    "description": "PingPlugin.UIText"
+  },
+  "UIMillisecondAbbr": {
+    "message": "ms",
+    "description": "PingPlugin.UIText"
+  },
+  "UIMinimalDisplay": {
+    "message": "レイテンシー {0}ms／平均：{1}ms",
+    "description": "PingPlugin.UIText"
+  },
+  "UINoData": {
+    "message": "当分データがありません。",
+    "description": "PingPlugin.UIText"
+  },
+  "UIRegularDisplay": {
+    "message": "サーバーIP：{0}\nレイテンシー：{1}ms\n平均レイテンシー：{2}ms",
+    "description": "PingPlugin.UIText"
+  }
+}

@@ -1,10 +1,10 @@
-﻿using ImGuiNET;
+﻿using CheapLoc;
+using ImGuiNET;
 using PingPlugin.PingTrackers;
 using System;
 using System.Globalization;
 using System.Linq;
 using System.Numerics;
-using System.Threading;
 
 namespace PingPlugin
 {
@@ -16,7 +16,6 @@ namespace PingPlugin
         private bool resettingGraphPos;
         private bool resettingMonitorPos;
         private bool configVisible;
-        private bool isUiCultureSet;
 
         public bool ConfigVisible
         {
@@ -33,12 +32,6 @@ namespace PingPlugin
 
         public void BuildUi()
         {
-            if (!this.isUiCultureSet) // UI culture changes seem not to work at initialization, so we just loop this until it finally works.
-            {
-                Thread.CurrentThread.CurrentUICulture = CultureInfo.GetCultureInfo(this.config.Lang);
-                this.isUiCultureSet = true;
-            }
-
             if (this.config.HideOverlaysDuringCutscenes && CutsceneActive)
                 return;
 
@@ -51,86 +44,86 @@ namespace PingPlugin
         {
             ImGui.SetNextWindowSize(new Vector2(400, 332), ImGuiCond.Always);
 
-            ImGui.Begin($"{Properties.Lang.ConfigurationWindowTitle}##PingPlugin Configuration", ref this.configVisible, ImGuiWindowFlags.NoResize);
+            ImGui.Begin($"{Loc.Localize("ConfigurationWindowTitle", string.Empty)}##PingPlugin Configuration", ref this.configVisible, ImGuiWindowFlags.NoResize);
             var lockWindows = this.config.LockWindows;
-            if (ImGui.Checkbox(Properties.Lang.LockPluginWindows, ref lockWindows))
+            if (ImGui.Checkbox(Loc.Localize("LockPluginWindows", string.Empty), ref lockWindows))
             {
                 this.config.LockWindows = lockWindows;
                 this.config.Save();
             }
 
             var clickThrough = this.config.ClickThrough;
-            if (ImGui.Checkbox(Properties.Lang.ClickThrough, ref clickThrough))
+            if (ImGui.Checkbox(Loc.Localize("ClickThrough", string.Empty), ref clickThrough))
             {
                 this.config.ClickThrough = clickThrough;
                 this.config.Save();
             }
 
             var hideDuringCutscences = this.config.HideOverlaysDuringCutscenes;
-            if (ImGui.Checkbox(Properties.Lang.HideOverlaysDuringCutscenes, ref hideDuringCutscences))
+            if (ImGui.Checkbox(Loc.Localize("HideOverlaysDuringCutscenes", string.Empty), ref hideDuringCutscences))
             {
                 this.config.HideOverlaysDuringCutscenes = hideDuringCutscences;
                 this.config.Save();
             }
 
             var minimalDisplay = this.config.MinimalDisplay;
-            if (ImGui.Checkbox(Properties.Lang.MinimalDisplay, ref minimalDisplay))
+            if (ImGui.Checkbox(Loc.Localize("MinimalDisplay", string.Empty), ref minimalDisplay))
             {
                 this.config.MinimalDisplay = minimalDisplay;
                 this.config.Save();
             }
 
             var hideErrors = this.config.HideErrors;
-            if (ImGui.Checkbox(Properties.Lang.HideErrors, ref hideErrors))
+            if (ImGui.Checkbox(Loc.Localize("HideErrors", string.Empty), ref hideErrors))
             {
                 this.config.HideErrors = hideErrors;
                 this.config.Save();
             }
 
             var queueSize = this.config.PingQueueSize;
-            if (ImGui.InputInt(Properties.Lang.RecordedPings, ref queueSize))
+            if (ImGui.InputInt(Loc.Localize("RecordedPings", string.Empty), ref queueSize))
             {
                 this.config.PingQueueSize = queueSize;
                 this.config.Save();
             }
 
             var monitorColor = this.config.MonitorFontColor;
-            if (ImGui.ColorEdit4(Properties.Lang.MonitorColor, ref monitorColor))
+            if (ImGui.ColorEdit4(Loc.Localize("MonitorColor", string.Empty), ref monitorColor))
             {
                 this.config.MonitorFontColor = monitorColor;
                 this.config.Save();
             }
 
             var monitorErrorColor = this.config.MonitorErrorFontColor;
-            if (ImGui.ColorEdit4(Properties.Lang.MonitorErrorColor, ref monitorErrorColor))
+            if (ImGui.ColorEdit4(Loc.Localize("MonitorErrorColor", string.Empty), ref monitorErrorColor))
             {
                 this.config.MonitorErrorFontColor = monitorErrorColor;
                 this.config.Save();
             }
 
             var monitorBgAlpha = this.config.MonitorBgAlpha;
-            if (ImGui.SliderFloat(Properties.Lang.MonitorOpacity, ref monitorBgAlpha, 0.0f, 1.0f))
+            if (ImGui.SliderFloat(Loc.Localize("MonitorOpacity", string.Empty), ref monitorBgAlpha, 0.0f, 1.0f))
             {
                 this.config.MonitorBgAlpha = monitorBgAlpha;
                 this.config.Save();
             }
 
             var currentItem = (int)this.config.RuntimeLang;
-            var supportedLanguages = new[] { Properties.Lang.English, Properties.Lang.Japanese, Properties.Lang.Spanish, Properties.Lang.German, Properties.Lang.Chinese };
-            if (ImGui.Combo(Properties.Lang.Language, ref currentItem, supportedLanguages, supportedLanguages.Length))
+            var supportedLanguages = new[] { Loc.Localize("English", string.Empty), Loc.Localize("Japanese", string.Empty), Loc.Localize("Spanish", string.Empty), Loc.Localize("German", string.Empty), Loc.Localize("Chinese", string.Empty) };
+            if (ImGui.Combo(Loc.Localize("Language", string.Empty), ref currentItem, supportedLanguages, supportedLanguages.Length))
             {
                 this.config.RuntimeLang = (LangKind)currentItem;
                 this.config.Save();
             }
 
-            if (ImGui.Button(Properties.Lang.Defaults))
+            if (ImGui.Button(Loc.Localize("Defaults", string.Empty)))
             {
                 this.config.RestoreDefaults();
                 this.config.Save();
             }
 
             ImGui.SameLine();
-            if (ImGui.Button(Properties.Lang.ResetWindowPositions))
+            if (ImGui.Button(Loc.Localize("ResetWindowPositions", string.Empty)))
             {
                 this.config.ResetWindowPositions();
                 this.resettingGraphPos = true;
@@ -166,11 +159,11 @@ namespace PingPlugin
             }
 
             ImGui.TextColored(this.config.MonitorFontColor, this.config.MinimalDisplay
-                ? string.Format(CultureInfo.CurrentUICulture, Properties.Lang.UIMinimalDisplay, this.pingTracker.LastRTT,
+                ? string.Format(CultureInfo.CurrentUICulture, Loc.Localize("UIMinimalDisplay", string.Empty), this.pingTracker.LastRTT,
                     Math.Round(this.pingTracker.AverageRTT, 2))
-                : string.Format(CultureInfo.CurrentUICulture, Properties.Lang.UIRegularDisplay, this.pingTracker.SeAddress, this.pingTracker.LastRTT, Math.Round(this.pingTracker.AverageRTT, 2)));
+                : string.Format(CultureInfo.CurrentUICulture, Loc.Localize("UIRegularDisplay", string.Empty), this.pingTracker.SeAddress, this.pingTracker.LastRTT, Math.Round(this.pingTracker.AverageRTT, 2)));
             if (this.pingTracker.LastError != WinError.NO_ERROR)
-                ImGui.TextColored(this.config.MonitorErrorFontColor, string.Format(Properties.Lang.UIError, (Enum.IsDefined(typeof(WinError), this.pingTracker.LastError) ? this.pingTracker.LastError.ToString() : ((int)this.pingTracker.LastError).ToString())));
+                ImGui.TextColored(this.config.MonitorErrorFontColor, string.Format(Loc.Localize("UIError", string.Empty), (Enum.IsDefined(typeof(WinError), this.pingTracker.LastError) ? this.pingTracker.LastError.ToString() : ((int)this.pingTracker.LastError).ToString())));
             ImGui.End();
 
             ImGui.PopStyleVar();
@@ -183,7 +176,7 @@ namespace PingPlugin
             ImGui.SetNextWindowPos(this.config.GraphPosition, ImGuiCond.FirstUseEver);
             ImGui.SetNextWindowSize(new Vector2(367, 210), ImGuiCond.Always);
 
-            ImGui.Begin($"{Properties.Lang.PingGraphTitle}##Ping Graph", windowFlags);
+            ImGui.Begin($"{Loc.Localize("PingGraphTitle", string.Empty)}##Ping Graph", windowFlags);
             if (this.resettingGraphPos)
             {
                 ImGui.SetWindowPos(this.config.GraphPosition);
@@ -203,7 +196,7 @@ namespace PingPlugin
                 const int highY = 55;
                 var avgY = lowY - Rescale((float)this.pingTracker.AverageRTT, max, min, graphSize.Y);
 
-                ImGui.Text("                      " + Properties.Lang.UIGraphTitle);
+                ImGui.Text("                      " + Loc.Localize("UIGraphTitle", string.Empty));
                 ImGui.PlotLines(string.Empty, ref pingArray[0], pingArray.Length, 0, null,
                     float.MaxValue, float.MaxValue, graphSize);
 
@@ -212,23 +205,23 @@ namespace PingPlugin
                     var lowLineStart = ImGui.GetWindowPos() + new Vector2(beginX, lowY);
                     var lowLineEnd = ImGui.GetWindowPos() + new Vector2(beginX + graphSize.X, lowY);
                     ImGui.GetWindowDrawList().AddLine(lowLineStart, lowLineEnd, ImGui.GetColorU32(ImGuiCol.PlotLines));
-                    ImGui.GetWindowDrawList().AddText(lowLineEnd - new Vector2(0, 5), ImGui.GetColorU32(ImGuiCol.Text), min.ToString(CultureInfo.CurrentUICulture) + Properties.Lang.UIMillisecondAbbr);
+                    ImGui.GetWindowDrawList().AddText(lowLineEnd - new Vector2(0, 5), ImGui.GetColorU32(ImGuiCol.Text), min.ToString(CultureInfo.CurrentUICulture) + Loc.Localize("UIMillisecondAbbr", string.Empty));
 
                     var avgLineStart = ImGui.GetWindowPos() + new Vector2(beginX, avgY);
                     var avgLineEnd = ImGui.GetWindowPos() + new Vector2(beginX + graphSize.X, avgY);
                     ImGui.GetWindowDrawList().AddLine(avgLineStart, avgLineEnd, ImGui.GetColorU32(ImGuiCol.PlotLines));
-                    ImGui.GetWindowDrawList().AddText(avgLineEnd - new Vector2(0, 5), ImGui.GetColorU32(ImGuiCol.Text), Math.Round(this.pingTracker.AverageRTT, 2).ToString(CultureInfo.CurrentUICulture) + Properties.Lang.UIMillisecondAbbr);
-                    ImGui.GetWindowDrawList().AddText(avgLineEnd - new Vector2(270, 18), ImGui.GetColorU32(ImGuiCol.Text), Properties.Lang.UIAverage);
+                    ImGui.GetWindowDrawList().AddText(avgLineEnd - new Vector2(0, 5), ImGui.GetColorU32(ImGuiCol.Text), Math.Round(this.pingTracker.AverageRTT, 2).ToString(CultureInfo.CurrentUICulture) + Loc.Localize("UIMillisecondAbbr", string.Empty));
+                    ImGui.GetWindowDrawList().AddText(avgLineEnd - new Vector2(270, 18), ImGui.GetColorU32(ImGuiCol.Text), Loc.Localize("UIAverage", string.Empty));
 
                     var highLineStart = ImGui.GetWindowPos() + new Vector2(beginX, highY);
                     var highLineEnd = ImGui.GetWindowPos() + new Vector2(beginX + graphSize.X, highY);
                     ImGui.GetWindowDrawList()
                         .AddLine(highLineStart, highLineEnd, ImGui.GetColorU32(ImGuiCol.PlotLines));
-                    ImGui.GetWindowDrawList().AddText(highLineEnd - new Vector2(0, 5), ImGui.GetColorU32(ImGuiCol.Text), max.ToString(CultureInfo.CurrentUICulture) + Properties.Lang.UIMillisecondAbbr);
+                    ImGui.GetWindowDrawList().AddText(highLineEnd - new Vector2(0, 5), ImGui.GetColorU32(ImGuiCol.Text), max.ToString(CultureInfo.CurrentUICulture) + Loc.Localize("UIMillisecondAbbr", string.Empty));
                 }
             }
             else
-                ImGui.Text(Properties.Lang.UINoData);
+                ImGui.Text(Loc.Localize("UINoData", string.Empty));
             ImGui.End();
         }
 

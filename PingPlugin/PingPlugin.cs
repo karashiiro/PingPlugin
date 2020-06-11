@@ -5,26 +5,32 @@ using PingPlugin.Attributes;
 using PingPlugin.PingTrackers;
 using System;
 using System.Dynamic;
+using System.IO;
+using System.Reflection;
+using CheapLoc;
 
 namespace PingPlugin
 {
     public class PingPlugin : IDalamudPlugin
     {
         private DalamudPluginInterface pluginInterface;
-        private PingConfiguration config;
         private PluginCommandManager<PingPlugin> commandManager;
+        private PingConfiguration config;
+        
         private AggregatePingTracker pingTracker;
         private PingUI ui;
 
-        public string Name => "Ping Plugin";
+        public string Name => "PingPlugin";
 
         public void Initialize(DalamudPluginInterface pluginInterface)
         {
+            // Core plugin initialization
             this.pluginInterface = pluginInterface;
 
             this.config = (PingConfiguration)this.pluginInterface.GetPluginConfig() ?? new PingConfiguration();
             this.config.Initialize(this.pluginInterface);
 
+            // Set up ping trackers
             this.pingTracker = new AggregatePingTracker(this.config,
                 new ComponentModelPingTracker(this.config),
                 new Win32APIPingTracker(this.config));
@@ -38,11 +44,13 @@ namespace PingPlugin
 
             this.pluginInterface.Framework.OnUpdateEvent += OnFrameworkUpdate;
 
+            // Set up UI
             this.ui = new PingUI(this.pingTracker, this.config);
 
             this.pluginInterface.UiBuilder.OnOpenConfigUi += (sender, e) => this.ui.ConfigVisible = true;
             this.pluginInterface.UiBuilder.OnBuildUi += this.ui.BuildUi;
 
+            // Initialize command manager
             this.commandManager = new PluginCommandManager<PingPlugin>(this, this.pluginInterface);
         }
 

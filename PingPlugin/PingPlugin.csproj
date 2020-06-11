@@ -16,6 +16,12 @@
   <ItemGroup>
     <None Remove=".gitattributes" />
     <None Remove=".gitignore" />
+    <None Remove="Lang\lang_de.json" />
+    <None Remove="Lang\lang_en.json" />
+    <None Remove="Lang\lang_es.json" />
+    <None Remove="Lang\lang_fr.json" />
+    <None Remove="Lang\lang_ja.json" />
+    <None Remove="Lang\lang_zh.json" />
   </ItemGroup>
 
   <ItemGroup>
@@ -31,6 +37,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Reference Include="CheapLoc">
+      <HintPath>..\..\Dalamud\Dalamud\bin\Debug\CheapLoc.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
     <Reference Include="Dalamud">
       <HintPath>..\..\Dalamud\Dalamud\bin\Debug\Dalamud.dll</HintPath>
       <Private>false</Private>
@@ -43,10 +53,6 @@
       <HintPath>..\..\Dalamud\Dalamud\bin\Debug\ImGuiScene.dll</HintPath>
       <Private>false</Private>
     </Reference>
-    <Reference Include="Lumina">
-      <HintPath>..\..\Dalamud\Dalamud\bin\Debug\Lumina.dll</HintPath>
-      <Private>false</Private>
-    </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\..\Dalamud\Dalamud\bin\Debug\Newtonsoft.Json.dll</HintPath>
@@ -55,30 +61,16 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="Properties\Lang.Designer.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Lang.resx</DependentUpon>
-    </Compile>
+    <Folder Include="Properties\" />
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Update="Properties\Lang.de.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Properties\Lang.fr.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Properties\Lang.ja.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Properties\Lang.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Lang.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Properties\Lang.zh.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-    </EmbeddedResource>
+    <EmbeddedResource Include="Lang\lang_de.json" />
+    <EmbeddedResource Include="Lang\lang_en.json" />
+    <EmbeddedResource Include="Lang\lang_es.json" />
+    <EmbeddedResource Include="Lang\lang_fr.json" />
+    <EmbeddedResource Include="Lang\lang_ja.json" />
+    <EmbeddedResource Include="Lang\lang_zh.json" />
   </ItemGroup>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
