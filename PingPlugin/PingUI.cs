@@ -1,17 +1,17 @@
 ﻿using CheapLoc;
 using ImGuiNET;
-using PingPlugin.PingTrackers;
 using System;
 using System.Globalization;
 using System.Linq;
 using System.Numerics;
+using PingPlugin.PingTrackers;
 
 namespace PingPlugin
 {
     public class PingUI
     {
         private readonly PingConfiguration config;
-        private readonly IPingTracker pingTracker;
+        private readonly PingTracker pingTracker;
 
         private bool resettingGraphPos;
         private bool resettingMonitorPos;
@@ -24,7 +24,7 @@ namespace PingPlugin
         }
         public bool CutsceneActive { get; set; }
 
-        public PingUI(IPingTracker pingTracker, PingConfiguration config)
+        public PingUI(PingTracker pingTracker, PingConfiguration config)
         {
             this.config = config;
             this.pingTracker = pingTracker;

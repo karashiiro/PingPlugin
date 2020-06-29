@@ -1,42 +1,23 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Linq;
-using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace PingPlugin.PingTrackers
 {
-    public class AggregatePingTracker : IPingTracker
+    public class AggregatePingTracker : PingTracker
     {
-        private readonly CancellationTokenSource tokenSource;
-        private readonly IEnumerable<IPingTracker> pingTrackers;
-        private readonly PingConfiguration config;
-
-        public bool Reset { get; set; }
-        public double AverageRTT { get; set; }
-        public IPAddress SeAddress { get; set; }
-        public long SeAddressRaw { get; set; }
-        public WinError LastError { get; set; }
-        public ulong LastRTT { get; set; }
-        public ConcurrentQueue<float> RTTTimes { get; set; }
+        private readonly IEnumerable<PingTracker> pingTrackers;
 
         public delegate void PingUpdatedDelegate(PingStatsPayload payload);
         public event PingUpdatedDelegate OnPingUpdated;
 
-        public AggregatePingTracker(PingConfiguration config, params IPingTracker[] pingTrackers)
+        public AggregatePingTracker(PingConfiguration config, params PingTracker[] pingTrackers) : base(config)
         {
-            this.tokenSource = new CancellationTokenSource();
-            this.config = config;
-
             this.pingTrackers = pingTrackers;
-            RTTTimes = new ConcurrentQueue<float>();
-
-            Task.Run(() => UpdateLoop(this.tokenSource.Token));
         }
 
-        private async Task UpdateLoop(CancellationToken token)
+        protected override async Task PingLoop(CancellationToken token)
         {
             while (true)
             {
@@ -72,20 +53,10 @@ namespace PingPlugin.PingTrackers
             }
         }
 
-        private void CalcAverage()
-        {
-            AverageRTT = RTTTimes.Average();
-        }
-
-        private void ResetRTT()
-        {
-            RTTTimes = new ConcurrentQueue<float>();
-        }
-
-        private IPingTracker GetBestTracker()
+        private PingTracker GetBestTracker()
         {
             var bestPing = 0UL;
-            IPingTracker bestTracker = null;
+            PingTracker bestTracker = null;
             foreach (var tracker in this.pingTrackers)
             {
                 if (tracker.LastRTT >= bestPing)
@@ -107,24 +78,17 @@ namespace PingPlugin.PingTrackers
             });
         }
 
-        protected virtual void Dispose(bool disposing)
+        protected override void Dispose(bool disposing)
         {
             if (disposing)
             {
-                this.tokenSource.Cancel();
-                this.tokenSource.Dispose();
-
                 foreach (var pingTracker in pingTrackers)
                 {
                     pingTracker.Dispose();
                 }
-            }
-        }
 
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
+                base.Dispose(true);
+            }
         }
     }
 }
