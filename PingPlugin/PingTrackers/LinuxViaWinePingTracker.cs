@@ -25,7 +25,7 @@ namespace PingPlugin.PingTrackers
                 {
                     rtt = await GetNextRTT();
                 }
-                catch
+                catch (ArgumentOutOfRangeException)
                 {
                     return; // Not running under wine
                 }
