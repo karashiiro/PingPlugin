@@ -58,7 +58,7 @@ namespace PingPlugin
             var toggleUiPtr = this.pluginInterface.TargetModuleScanner.ScanText("48 89 5C 24 ?? 48 89 74 24 ?? 57 48 83 EC 20 0F B6 B9 ?? ?? ?? ?? B8 ?? ?? ?? ??");
             this.toggleUIHook = new Hook<ToggleUIDelegate>(toggleUiPtr, new ToggleUIDelegate((ptr, b) =>
             {
-                this.uiHidden = (Marshal.ReadByte(ptr, 104008) & 4) == 0;
+                this.uiHidden = (Marshal.ReadByte(ptr, 105168) & 4) == 0;
                 return this.toggleUIHook.Original(ptr, b);
             }));
             this.toggleUIHook.Enable();
