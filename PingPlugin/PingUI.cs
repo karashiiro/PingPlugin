@@ -22,7 +22,6 @@ namespace PingPlugin
             get => this.configVisible;
             set => this.configVisible = value;
         }
-        public bool CutsceneActive { get; set; }
 
         public PingUI(PingTracker pingTracker, PingConfiguration config)
         {
@@ -32,9 +31,6 @@ namespace PingPlugin
 
         public void BuildUi()
         {
-            if (this.config.HideOverlaysDuringCutscenes && CutsceneActive)
-                return;
-
             if (this.ConfigVisible) DrawConfigUi();
             if (this.config.GraphIsVisible) DrawGraph();
             if (this.config.MonitorIsVisible) DrawMonitor();
@@ -42,9 +38,9 @@ namespace PingPlugin
 
         private void DrawConfigUi()
         {
-            ImGui.SetNextWindowSize(new Vector2(400, 332), ImGuiCond.Always);
-
-            ImGui.Begin($"{Loc.Localize("ConfigurationWindowTitle", string.Empty)}##PingPlugin Configuration", ref this.configVisible, ImGuiWindowFlags.NoResize);
+            ImGui.Begin($"{Loc.Localize("ConfigurationWindowTitle", string.Empty)}##PingPlugin Configuration",
+                            ref this.configVisible,
+                            ImGuiWindowFlags.NoResize | ImGuiWindowFlags.AlwaysAutoResize);
             var lockWindows = this.config.LockWindows;
             if (ImGui.Checkbox(Loc.Localize("LockPluginWindows", string.Empty), ref lockWindows))
             {
@@ -56,13 +52,6 @@ namespace PingPlugin
             if (ImGui.Checkbox(Loc.Localize("ClickThrough", string.Empty), ref clickThrough))
             {
                 this.config.ClickThrough = clickThrough;
-                this.config.Save();
-            }
-
-            var hideDuringCutscences = this.config.HideOverlaysDuringCutscenes;
-            if (ImGui.Checkbox(Loc.Localize("HideOverlaysDuringCutscenes", string.Empty), ref hideDuringCutscences))
-            {
-                this.config.HideOverlaysDuringCutscenes = hideDuringCutscences;
                 this.config.Save();
             }
 

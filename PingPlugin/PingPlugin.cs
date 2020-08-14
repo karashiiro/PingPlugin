@@ -18,7 +18,6 @@ namespace PingPlugin
         
         private AggregatePingTracker pingTracker;
         private bool uiHidden;
-        private Hook<ToggleUIDelegate> toggleUIHook;
         private PingUI ui;
 
         private delegate IntPtr ToggleUIDelegate(IntPtr baseAddress, byte unknownByte);
@@ -46,33 +45,14 @@ namespace PingPlugin
                 this.pluginInterface.SendMessage(obj);
             };
 
-            this.pluginInterface.Framework.OnUpdateEvent += OnFrameworkUpdate;
-
             // Set up UI
             this.ui = new PingUI(this.pingTracker, this.config);
 
             this.pluginInterface.UiBuilder.OnOpenConfigUi += (sender, e) => this.ui.ConfigVisible = true;
             this.pluginInterface.UiBuilder.OnBuildUi += this.ui.BuildUi;
 
-            // Lifted from FPSPlugin, hook the ScrLk UI toggle; the client condition doesn't handle this
-            var toggleUiPtr = this.pluginInterface.TargetModuleScanner.ScanText("48 89 5C 24 ?? 48 89 74 24 ?? 57 48 83 EC 20 0F B6 B9 ?? ?? ?? ?? B8 ?? ?? ?? ??");
-            this.toggleUIHook = new Hook<ToggleUIDelegate>(toggleUiPtr, new ToggleUIDelegate((ptr, b) =>
-            {
-                this.uiHidden = (Marshal.ReadByte(ptr, 105168) & 4) == 0;
-                return this.toggleUIHook.Original(ptr, b);
-            }));
-            this.toggleUIHook.Enable();
-
             // Initialize command manager
             this.commandManager = new PluginCommandManager<PingPlugin>(this, this.pluginInterface);
-        }
-
-        private void OnFrameworkUpdate(Framework framework)
-        {
-            this.ui.CutsceneActive = this.pluginInterface.ClientState.Condition[ConditionFlag.OccupiedInCutSceneEvent] ||
-                                     this.pluginInterface.ClientState.Condition[ConditionFlag.WatchingCutscene] ||
-                                     this.pluginInterface.ClientState.Condition[ConditionFlag.WatchingCutscene78] ||
-                                     this.uiHidden;
         }
 
         [Command("/ping")]
@@ -104,22 +84,17 @@ namespace PingPlugin
         #region IDisposable Support
         protected virtual void Dispose(bool disposing)
         {
-            if (disposing)
-            {
-                this.commandManager.Dispose();
+            if (!disposing) return;
 
-                this.toggleUIHook?.Disable();
+            this.commandManager.Dispose();
 
-                this.pluginInterface.UiBuilder.OnOpenConfigUi -= (sender, e) => this.ui.ConfigVisible = true;
-                this.pluginInterface.UiBuilder.OnBuildUi -= this.ui.BuildUi;
+            this.pluginInterface.UiBuilder.OnOpenConfigUi -= (sender, e) => this.ui.ConfigVisible = true;
+            this.pluginInterface.UiBuilder.OnBuildUi -= this.ui.BuildUi;
 
-                this.pluginInterface.Framework.OnUpdateEvent -= OnFrameworkUpdate;
+            this.config.Save();
 
-                this.config.Save();
-
-                this.pingTracker.Dispose();
-                this.pluginInterface.Dispose();
-            }
+            this.pingTracker.Dispose();
+            this.pluginInterface.Dispose();
         }
 
         public void Dispose()

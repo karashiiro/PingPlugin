@@ -35,10 +35,6 @@
     "message": "Fehler nicht anzeigen",
     "description": "PingPlugin.Configuration"
   },
-  "HideOverlaysDuringCutscenes": {
-    "message": "Überlagerungen mit HUD ausblenden",
-    "description": "PingPlugin.Configuration"
-  },
   "Language": {
     "message": "Sprache",
     "description": "PingPlugin.Configuration"

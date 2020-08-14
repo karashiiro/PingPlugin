@@ -35,10 +35,6 @@
     "message": "エラーを見せません",
     "description": "PingPlugin.Configuration"
   },
-  "HideOverlaysDuringCutscenes": {
-    "message": "HUDでオーバーレイを非表示にする",
-    "description": "PingPlugin.Configuration"
-  },
   "Language": {
     "message": "言語",
     "description": "PingPlugin.Configuration"
