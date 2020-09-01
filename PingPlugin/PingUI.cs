@@ -2,14 +2,19 @@
 using ImGuiNET;
 using System;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Numerics;
+using System.Reflection;
+using System.Runtime.InteropServices;
+using Dalamud.Plugin;
 using PingPlugin.PingTrackers;
 
 namespace PingPlugin
 {
-    public class PingUI
+    public class PingUI : IDisposable
     {
+        private readonly DalamudPluginInterface pluginInterface;
         private readonly PingConfiguration config;
         private readonly PingTracker pingTracker;
 
@@ -17,16 +22,21 @@ namespace PingPlugin
         private bool resettingMonitorPos;
         private bool configVisible;
 
+        private ImFontPtr uiFont;
+
         public bool ConfigVisible
         {
             get => this.configVisible;
             set => this.configVisible = value;
         }
 
-        public PingUI(PingTracker pingTracker, PingConfiguration config)
+        public PingUI(PingTracker pingTracker, DalamudPluginInterface pluginInterface, PingConfiguration config)
         {
             this.config = config;
+            this.pluginInterface = pluginInterface;
             this.pingTracker = pingTracker;
+
+            BuildFont();
         }
 
         public void BuildUi()
@@ -38,6 +48,8 @@ namespace PingPlugin
 
         private void DrawConfigUi()
         {
+            ImGui.PushFont(this.uiFont);
+
             ImGui.Begin($"{Loc.Localize("ConfigurationWindowTitle", string.Empty)}##PingPlugin Configuration",
                             ref this.configVisible,
                             ImGuiWindowFlags.NoResize | ImGuiWindowFlags.AlwaysAutoResize);
@@ -119,10 +131,14 @@ namespace PingPlugin
                 this.resettingMonitorPos = true;
             }
             ImGui.End();
+
+            ImGui.PopFont();
         }
 
         private void DrawMonitor()
         {
+            ImGui.PushFont(this.uiFont);
+
             var windowFlags = BuildWindowFlags(ImGuiWindowFlags.NoResize | ImGuiWindowFlags.NoTitleBar);
 
             ImGui.PushStyleVar(ImGuiStyleVar.WindowBorderSize, 0);
@@ -156,10 +172,14 @@ namespace PingPlugin
             ImGui.End();
 
             ImGui.PopStyleVar();
+
+            ImGui.PopFont();
         }
 
         private void DrawGraph()
         {
+            ImGui.PushFont(this.uiFont);
+
             var windowFlags = BuildWindowFlags(ImGuiWindowFlags.NoResize);
 
             ImGui.SetNextWindowPos(this.config.GraphPosition, ImGuiCond.FirstUseEver);
@@ -212,6 +232,22 @@ namespace PingPlugin
             else
                 ImGui.Text(Loc.Localize("UINoData", string.Empty));
             ImGui.End();
+
+            ImGui.PopFont();
+        }
+
+        private unsafe void BuildFont()
+        {
+            if (this.uiFont.IsLoaded()) this.uiFont.Destroy();
+
+            var fontStream = Assembly.GetExecutingAssembly().GetManifestResourceStream("PingPlugin.Font.gamesym.ttf");
+            var fontPtr = Marshal.AllocHGlobal((int)fontStream.Length);
+            var font = new UnmanagedMemoryStream((byte*)fontPtr.ToPointer(), fontStream.Length, fontStream.Length, FileAccess.Write);
+            fontStream.CopyTo(font);
+
+            this.uiFont = ImGui.GetIO().Fonts.AddFontFromMemoryTTF(fontPtr, (int)fontStream.Length, Math.Max(8, this.config.MonitorFontScale));
+
+            this.pluginInterface.UiBuilder.RebuildFonts();
         }
 
         private ImGuiWindowFlags BuildWindowFlags(ImGuiWindowFlags flags)
@@ -225,5 +261,11 @@ namespace PingPlugin
 
         private static float Rescale(float input, float max, float min, float scaleFactor)
             => (input - min) / (max - min) * scaleFactor;
+
+        public void Dispose()
+        {
+            this.uiFont.Destroy();
+            this.pluginInterface.UiBuilder.RebuildFonts();
+        }
     }
 }

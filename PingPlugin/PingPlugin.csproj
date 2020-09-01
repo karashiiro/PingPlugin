@@ -13,6 +13,14 @@
     <Deterministic>true</Deterministic>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+
   <ItemGroup>
     <None Remove=".gitattributes" />
     <None Remove=".gitignore" />
@@ -61,6 +69,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Font\" />
     <Folder Include="Properties\" />
   </ItemGroup>
 
