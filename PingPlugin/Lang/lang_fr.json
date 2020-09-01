@@ -35,6 +35,10 @@
     "message": "Hide Errors",
     "description": "PingPlugin.Configuration"
   },
+  "HideOverlaysDuringCutscenes": {
+    "message": "Hide overlays with HUD",
+    "description": "PingPlugin.Configuration"
+  },
   "Language": {
     "message": "Language",
     "description": "PingPlugin.Configuration"

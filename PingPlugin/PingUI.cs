@@ -17,6 +17,8 @@ namespace PingPlugin
         private bool resettingMonitorPos;
         private bool configVisible;
 
+        public bool CutsceneActive { get; set; }
+
         public bool ConfigVisible
         {
             get => this.configVisible;
@@ -31,6 +33,9 @@ namespace PingPlugin
 
         public void BuildUi()
         {
+            if (this.config.HideOverlaysDuringCutscenes && CutsceneActive)
+                return;
+
             if (this.ConfigVisible) DrawConfigUi();
             if (this.config.GraphIsVisible) DrawGraph();
             if (this.config.MonitorIsVisible) DrawMonitor();
@@ -52,6 +57,13 @@ namespace PingPlugin
             if (ImGui.Checkbox(Loc.Localize("ClickThrough", string.Empty), ref clickThrough))
             {
                 this.config.ClickThrough = clickThrough;
+                this.config.Save();
+            }
+
+            var hideDuringCutscences = this.config.HideOverlaysDuringCutscenes;
+            if (ImGui.Checkbox(Loc.Localize("HideOverlaysDuringCutscenes", string.Empty), ref hideDuringCutscences))
+            {
+                this.config.HideOverlaysDuringCutscenes = hideDuringCutscences;
                 this.config.Save();
             }
 

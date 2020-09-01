@@ -35,8 +35,12 @@
     "message": "Esconda errores",
     "description": "PingPlugin.Configuration"
   },
+  "HideOverlaysDuringCutscenes": {
+    "message": "Esconda overlays con HUD",
+    "description": "PingPlugin.Configuration"
+  },
   "Language": {
-    "message": "Lengua",
+    "message": "Idioma",
     "description": "PingPlugin.Configuration"
   },
   "LockPluginWindows": {
