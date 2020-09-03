@@ -63,6 +63,7 @@ namespace PingPlugin
             if (this.fontBuilt) ImGui.PopFont();
         }
 
+        private bool fontScaleTooSmall;
         private void DrawConfigUi()
         {
             ImGui.Begin($"{Loc.Localize("ConfigurationWindowTitle", string.Empty)}##PingPlugin Configuration",
@@ -103,12 +104,25 @@ namespace PingPlugin
                 this.config.Save();
             }
 
+            if (this.fontScaleTooSmall)
+            {
+                ReloadFont();
+                this.fontScaleTooSmall = false;
+            }
             var fontScale = (int)this.config.FontScale;
             if (ImGui.InputInt(Loc.Localize("FontScale", string.Empty), ref fontScale))
             {
-                this.config.FontScale = Math.Max(8f, fontScale);
+                this.config.FontScale = fontScale;
                 this.config.Save();
-                ReloadFont();
+                if (this.config.FontScale >= 8)
+                {
+                    ReloadFont();
+                }
+                else
+                {
+                    this.fontScaleTooSmall = true;
+                }
+                this.config.FontScale = Math.Max(8f, fontScale);
             }
 
             var monitorColor = this.config.MonitorFontColor;
