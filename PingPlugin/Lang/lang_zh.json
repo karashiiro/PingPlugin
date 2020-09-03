@@ -47,6 +47,10 @@
     "message": "最小化显示",
     "description": "PingPlugin.Configuration"
   },
+  "FontScale": {
+    "message": "字體比例",
+    "description": "PingPlugin.Configuration"
+  },
   "MonitorColor": {
     "message": "监视器颜色",
     "description": "PingPlugin.Configuration"

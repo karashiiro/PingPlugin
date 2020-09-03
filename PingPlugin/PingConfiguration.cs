@@ -16,8 +16,8 @@ namespace PingPlugin
         
         public Vector2 GraphPosition { get; set; }
         public Vector2 MonitorPosition { get; set; }
+        public float FontScale { get; set; }
 
-        public float MonitorFontScale { get; set; }
         public float MonitorBgAlpha { get; set; }
         public Vector4 MonitorFontColor { get; set; }
         public Vector4 MonitorErrorFontColor { get; set; }
@@ -66,7 +66,7 @@ namespace PingPlugin
 
             if (!PingPlugin17)
             {
-                MonitorFontScale = 17.0f;
+                FontScale = 17.0f;
                 PingPlugin17 = true;
             }
         }
@@ -80,7 +80,7 @@ namespace PingPlugin
 
         public void RestoreDefaults()
         {
-            MonitorFontScale = 17.0f;
+            FontScale = 17.0f;
             MonitorBgAlpha = 0.0f;
             MonitorFontColor = new Vector4(1, 1, 0, 1); // Yellow, it's ABGR instead of RGBA for some reason.
             MonitorErrorFontColor = new Vector4(1, 0, 0, 1);

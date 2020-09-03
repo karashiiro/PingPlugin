@@ -17,10 +17,7 @@ namespace PingPlugin
         private PingConfiguration config;
         
         private AggregatePingTracker pingTracker;
-        private bool uiHidden;
         private PingUI ui;
-
-        private delegate IntPtr ToggleUIDelegate(IntPtr baseAddress, byte unknownByte);
 
         public string Name => "PingPlugin";
 
@@ -46,7 +43,7 @@ namespace PingPlugin
             };
 
             // Set up UI
-            this.ui = new PingUI(this.pingTracker, this.config);
+            this.ui = new PingUI(this.pingTracker, this.pluginInterface.UiBuilder, this.config);
 
             this.pluginInterface.UiBuilder.OnOpenConfigUi += (sender, e) => this.ui.ConfigVisible = true;
             this.pluginInterface.UiBuilder.OnBuildUi += this.ui.BuildUi;

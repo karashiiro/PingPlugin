@@ -47,6 +47,10 @@
     "message": "Visualizador minimo",
     "description": "PingPlugin.Configuration"
   },
+  "FontScale": {
+    "message": "Escala de fuentes",
+    "description": "PingPlugin.Configuration"
+  },
   "MonitorColor": {
     "message": "Color del Monitor",
     "description": "PingPlugin.Configuration"
