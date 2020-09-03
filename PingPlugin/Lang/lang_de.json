@@ -51,6 +51,10 @@
     "message": "Kleinere Anzeige",
     "description": "PingPlugin.Configuration"
   },
+  "FontScale": {
+    "message": "Schriftgröße",
+    "description": "PingPlugin.Configuration"
+  },
   "MonitorColor": {
     "message": "Monitor Farbe",
     "description": "PingPlugin.Configuration"

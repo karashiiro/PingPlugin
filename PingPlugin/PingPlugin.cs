@@ -45,7 +45,7 @@ namespace PingPlugin
             this.pluginInterface.Framework.OnUpdateEvent += OnFrameworkUpdate;
 
             // Set up UI
-            this.ui = new PingUI(this.pingTracker, this.config);
+            this.ui = new PingUI(this.pingTracker, this.pluginInterface.UiBuilder, this.config);
 
             this.pluginInterface.UiBuilder.OnOpenConfigUi += (sender, e) => this.ui.ConfigVisible = true;
             this.pluginInterface.UiBuilder.OnBuildUi += this.ui.BuildUi;

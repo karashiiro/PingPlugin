@@ -51,6 +51,10 @@
     "message": "最小ディスプレイ",
     "description": "PingPlugin.Configuration"
   },
+  "FontScale": {
+    "message": "フォントの大小",
+    "description": "PingPlugin.Configuration"
+  },
   "MonitorColor": {
     "message": "モニター色",
     "description": "PingPlugin.Configuration"

@@ -5,6 +5,7 @@ using System.Reflection;
 using CheapLoc;
 using Dalamud.Configuration;
 using Dalamud.Plugin;
+using ImGuiNET;
 using Newtonsoft.Json;
 
 namespace PingPlugin
@@ -15,6 +16,7 @@ namespace PingPlugin
         
         public Vector2 GraphPosition { get; set; }
         public Vector2 MonitorPosition { get; set; }
+        public float FontScale { get; set; }
 
         public float MonitorBgAlpha { get; set; }
         public Vector4 MonitorFontColor { get; set; }
@@ -28,6 +30,9 @@ namespace PingPlugin
         public bool HideErrors { get; set; } // Generally, the errors are just timeouts, so you may want to hide them.
         public bool HideOverlaysDuringCutscenes { get; set; }
         public string Lang { get; set; }
+
+        [JsonProperty]
+        private bool PingPlugin17 { get; set; }
 
         [JsonIgnore]
         public LangKind RuntimeLang
@@ -59,6 +64,12 @@ namespace PingPlugin
         {
             this.pluginInterface = pluginInterface;
             LoadLang();
+
+            if (!PingPlugin17)
+            {
+                FontScale = 17.0f;
+                PingPlugin17 = true;
+            }
         }
 
         // Chances are the user doesn't expect the window positions to be reset with the other button, so we have a separate thingy instead.
@@ -70,6 +81,7 @@ namespace PingPlugin
 
         public void RestoreDefaults()
         {
+            FontScale = 17.0f;
             MonitorBgAlpha = 0.0f;
             MonitorFontColor = new Vector4(1, 1, 0, 1); // Yellow, it's ABGR instead of RGBA for some reason.
             MonitorErrorFontColor = new Vector4(1, 0, 0, 1);

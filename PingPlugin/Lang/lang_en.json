@@ -51,6 +51,10 @@
     "message": "Minimal display",
     "description": "PingPlugin.Configuration"
   },
+  "FontScale": {
+    "message": "Font scale",
+    "description": "PingPlugin.Configuration"
+  },
   "MonitorColor": {
     "message": "Monitor Color",
     "description": "PingPlugin.Configuration"

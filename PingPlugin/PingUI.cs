@@ -1,15 +1,21 @@
 ﻿using CheapLoc;
+using Dalamud.Interface;
+using Dalamud.Plugin;
 using ImGuiNET;
+using PingPlugin.PingTrackers;
 using System;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Numerics;
-using PingPlugin.PingTrackers;
+using System.Reflection;
+using System.Runtime.InteropServices;
 
 namespace PingPlugin
 {
-    public class PingUI
+    public class PingUI : IDisposable
     {
+        private readonly UiBuilder uiBuilder;
         private readonly PingConfiguration config;
         private readonly PingTracker pingTracker;
 
@@ -17,7 +23,10 @@ namespace PingPlugin
         private bool resettingMonitorPos;
         private bool configVisible;
 
-        public bool CutsceneActive { get; set; }
+        private bool fontBuilt;
+        private bool fontLoadFailed;
+        private IntPtr fontPtr;
+        private ImFontPtr uiFont;
 
         public bool ConfigVisible
         {
@@ -25,22 +34,36 @@ namespace PingPlugin
             set => this.configVisible = value;
         }
 
-        public PingUI(PingTracker pingTracker, PingConfiguration config)
+        public PingUI(PingTracker pingTracker, UiBuilder uiBuilder, PingConfiguration config)
         {
             this.config = config;
+            this.uiBuilder = uiBuilder;
             this.pingTracker = pingTracker;
+
+            this.uiBuilder.OnBuildFonts += BuildFont;
+#if DEBUG
+            ConfigVisible = true;
+#endif
         }
 
         public void BuildUi()
         {
-            if (this.config.HideOverlaysDuringCutscenes && CutsceneActive)
+            if (!this.fontBuilt && !this.fontLoadFailed)
+            {
+                this.uiBuilder.RebuildFonts();
                 return;
+            }
 
-            if (this.ConfigVisible) DrawConfigUi();
+            if (this.fontBuilt) ImGui.PushFont(this.uiFont);
+
+            if (ConfigVisible) DrawConfigUi();
             if (this.config.GraphIsVisible) DrawGraph();
             if (this.config.MonitorIsVisible) DrawMonitor();
+
+            if (this.fontBuilt) ImGui.PopFont();
         }
 
+        private bool fontScaleTooSmall;
         private void DrawConfigUi()
         {
             ImGui.Begin($"{Loc.Localize("ConfigurationWindowTitle", string.Empty)}##PingPlugin Configuration",
@@ -86,6 +109,27 @@ namespace PingPlugin
             {
                 this.config.PingQueueSize = queueSize;
                 this.config.Save();
+            }
+
+            if (this.fontScaleTooSmall)
+            {
+                ReloadFont();
+                this.fontScaleTooSmall = false;
+            }
+            var fontScale = (int)this.config.FontScale;
+            if (ImGui.InputInt(Loc.Localize("FontScale", string.Empty), ref fontScale))
+            {
+                this.config.FontScale = fontScale;
+                this.config.Save();
+                if (this.config.FontScale >= 8)
+                {
+                    ReloadFont();
+                }
+                else
+                {
+                    this.fontScaleTooSmall = true;
+                }
+                this.config.FontScale = Math.Max(8f, fontScale);
             }
 
             var monitorColor = this.config.MonitorFontColor;
@@ -135,20 +179,10 @@ namespace PingPlugin
 
         private void DrawMonitor()
         {
-            var windowFlags = BuildWindowFlags(ImGuiWindowFlags.NoResize | ImGuiWindowFlags.NoTitleBar);
+            var windowFlags = BuildWindowFlags(ImGuiWindowFlags.NoResize | ImGuiWindowFlags.NoTitleBar | ImGuiWindowFlags.AlwaysAutoResize);
 
             ImGui.PushStyleVar(ImGuiStyleVar.WindowBorderSize, 0);
             ImGui.SetNextWindowPos(this.config.MonitorPosition, ImGuiCond.FirstUseEver);
-
-            var x = this.config.MinimalDisplay ? 206 : 186;
-            var y = 33;
-            if (this.config.MinimalDisplay && this.config.RuntimeLang == LangKind.ja)
-                x += 8;
-            if (!this.config.MinimalDisplay)
-                y = 75;
-            if (this.pingTracker.LastError != WinError.NO_ERROR)
-                y += 25;
-            ImGui.SetNextWindowSize(new Vector2(x, y), ImGuiCond.Always);
 
             ImGui.SetNextWindowBgAlpha(this.config.MonitorBgAlpha);
 
@@ -174,10 +208,15 @@ namespace PingPlugin
         {
             var windowFlags = BuildWindowFlags(ImGuiWindowFlags.NoResize);
 
-            ImGui.SetNextWindowPos(this.config.GraphPosition, ImGuiCond.FirstUseEver);
-            ImGui.SetNextWindowSize(new Vector2(367, 210), ImGuiCond.Always);
+            const float positionScaleFactor = 0.79f;
 
-            ImGui.Begin($"{Loc.Localize("PingGraphTitle", string.Empty)}##Ping Graph", windowFlags);
+            ImGui.SetNextWindowPos(this.config.GraphPosition, ImGuiCond.FirstUseEver);
+            ImGui.SetNextWindowSize(new Vector2(350 + this.config.FontScale * (1.5f / positionScaleFactor), 185 + this.config.FontScale * positionScaleFactor), ImGuiCond.Always);
+
+            ImGui.PushStyleVar(ImGuiStyleVar.WindowTitleAlign, new Vector2(0.5f, 0.5f));
+            ImGui.Begin($"{Loc.Localize("UIGraphTitle", string.Empty)}##Ping Graph", windowFlags);
+            ImGui.PopStyleVar();
+
             if (this.resettingGraphPos)
             {
                 ImGui.SetWindowPos(this.config.GraphPosition);
@@ -193,11 +232,10 @@ namespace PingPlugin
                 var min = this.pingTracker.RTTTimes.Min();
 
                 const int beginX = 8;
-                const int lowY = 199;
-                const int highY = 55;
+                var lowY = 166 + this.config.FontScale * positionScaleFactor;
+                var highY = 22 + this.config.FontScale * positionScaleFactor;
                 var avgY = lowY - Rescale((float)this.pingTracker.AverageRTT, max, min, graphSize.Y);
 
-                ImGui.Text("                      " + Loc.Localize("UIGraphTitle", string.Empty));
                 ImGui.PlotLines(string.Empty, ref pingArray[0], pingArray.Length, 0, null,
                     float.MaxValue, float.MaxValue, graphSize);
 
@@ -206,24 +244,77 @@ namespace PingPlugin
                     var lowLineStart = ImGui.GetWindowPos() + new Vector2(beginX, lowY);
                     var lowLineEnd = ImGui.GetWindowPos() + new Vector2(beginX + graphSize.X, lowY);
                     ImGui.GetWindowDrawList().AddLine(lowLineStart, lowLineEnd, ImGui.GetColorU32(ImGuiCol.PlotLines));
-                    ImGui.GetWindowDrawList().AddText(lowLineEnd - new Vector2(0, 5), ImGui.GetColorU32(ImGuiCol.Text), min.ToString(CultureInfo.CurrentUICulture) + Loc.Localize("UIMillisecondAbbr", string.Empty));
+                    ImGui.GetWindowDrawList().AddText(
+                        lowLineEnd - new Vector2(0, this.config.FontScale / 2),
+                        ImGui.GetColorU32(ImGuiCol.Text),
+                        min.ToString(CultureInfo.CurrentUICulture) + Loc.Localize("UIMillisecondAbbr", string.Empty));
 
                     var avgLineStart = ImGui.GetWindowPos() + new Vector2(beginX, avgY);
                     var avgLineEnd = ImGui.GetWindowPos() + new Vector2(beginX + graphSize.X, avgY);
                     ImGui.GetWindowDrawList().AddLine(avgLineStart, avgLineEnd, ImGui.GetColorU32(ImGuiCol.PlotLines));
-                    ImGui.GetWindowDrawList().AddText(avgLineEnd - new Vector2(0, 5), ImGui.GetColorU32(ImGuiCol.Text), Math.Round(this.pingTracker.AverageRTT, 2).ToString(CultureInfo.CurrentUICulture) + Loc.Localize("UIMillisecondAbbr", string.Empty));
-                    ImGui.GetWindowDrawList().AddText(avgLineEnd - new Vector2(270, 18), ImGui.GetColorU32(ImGuiCol.Text), Loc.Localize("UIAverage", string.Empty));
+                    ImGui.GetWindowDrawList().AddText(
+                        avgLineEnd - new Vector2(0, this.config.FontScale / 2),
+                        ImGui.GetColorU32(ImGuiCol.Text),
+                        Math.Round(this.pingTracker.AverageRTT, 2).ToString(CultureInfo.CurrentUICulture) + Loc.Localize("UIMillisecondAbbr", string.Empty));
+                    ImGui.GetWindowDrawList().AddText(
+                        avgLineEnd - new Vector2(270, 18),
+                        ImGui.GetColorU32(ImGuiCol.Text),
+                        Loc.Localize("UIAverage", string.Empty));
 
                     var highLineStart = ImGui.GetWindowPos() + new Vector2(beginX, highY);
                     var highLineEnd = ImGui.GetWindowPos() + new Vector2(beginX + graphSize.X, highY);
                     ImGui.GetWindowDrawList()
                         .AddLine(highLineStart, highLineEnd, ImGui.GetColorU32(ImGuiCol.PlotLines));
-                    ImGui.GetWindowDrawList().AddText(highLineEnd - new Vector2(0, 5), ImGui.GetColorU32(ImGuiCol.Text), max.ToString(CultureInfo.CurrentUICulture) + Loc.Localize("UIMillisecondAbbr", string.Empty));
+                    ImGui.GetWindowDrawList().AddText(
+                        highLineEnd - new Vector2(0, this.config.FontScale / 2),
+                        ImGui.GetColorU32(ImGuiCol.Text),
+                        max.ToString(CultureInfo.CurrentUICulture) + Loc.Localize("UIMillisecondAbbr", string.Empty));
                 }
             }
             else
                 ImGui.Text(Loc.Localize("UINoData", string.Empty));
             ImGui.End();
+        }
+
+        // Mostly copied from FPSPlugin
+        private void BuildFont()
+        {
+            this.fontBuilt = false;
+            try
+            {
+                using var fontStream = Assembly.GetExecutingAssembly()
+                    .GetManifestResourceStream("PingPlugin.Font.NotoSansCJKjp-Medium.otf");
+
+#if DEBUG
+                if (fontStream == null)
+                    throw new FileNotFoundException("Font file not found!");
+#endif
+
+                this.fontPtr = Marshal.AllocHGlobal((int)fontStream.Length);
+
+                unsafe
+                {
+                    using var font = new UnmanagedMemoryStream((byte*)this.fontPtr.ToPointer(), fontStream.Length,
+                        fontStream.Length, FileAccess.Write);
+                    fontStream.CopyTo(font);
+                }
+
+                this.uiFont = ImGui.GetIO().Fonts.AddFontFromMemoryTTF(this.fontPtr, (int)fontStream.Length,
+                    Math.Max(8, this.config.FontScale));
+
+                this.fontBuilt = true;
+            }
+            catch (Exception e)
+            {
+                PluginLog.LogError(e.Message);
+                this.fontLoadFailed = true;
+            }
+        }
+
+        private void ReloadFont()
+        {
+            this.uiBuilder.RebuildFonts();
+            this.fontPtr = IntPtr.Zero;
         }
 
         private ImGuiWindowFlags BuildWindowFlags(ImGuiWindowFlags flags)
@@ -237,5 +328,12 @@ namespace PingPlugin
 
         private static float Rescale(float input, float max, float min, float scaleFactor)
             => (input - min) / (max - min) * scaleFactor;
+
+        public void Dispose()
+        {
+            this.uiBuilder.OnBuildFonts -= BuildFont;
+            this.uiFont.Destroy();
+            this.uiBuilder.RebuildFonts();
+        }
     }
 }
