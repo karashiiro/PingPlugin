@@ -28,6 +28,8 @@ namespace PingPlugin
         private IntPtr fontPtr;
         private ImFontPtr uiFont;
 
+        public bool CutsceneActive { get; set; }
+
         public bool ConfigVisible
         {
             get => this.configVisible;
@@ -48,6 +50,9 @@ namespace PingPlugin
 
         public void BuildUi()
         {
+            if (this.config.HideOverlaysDuringCutscenes && CutsceneActive)
+                return;
+
             if (!this.fontBuilt && !this.fontLoadFailed)
             {
                 this.uiBuilder.RebuildFonts();
@@ -83,10 +88,10 @@ namespace PingPlugin
                 this.config.Save();
             }
 
-            var hideDuringCutscences = this.config.HideOverlaysDuringCutscenes;
-            if (ImGui.Checkbox(Loc.Localize("HideOverlaysDuringCutscenes", string.Empty), ref hideDuringCutscences))
+            var hideDuringCutscenes = this.config.HideOverlaysDuringCutscenes;
+            if (ImGui.Checkbox(Loc.Localize("HideOverlaysDuringCutscenes", string.Empty), ref hideDuringCutscenes))
             {
-                this.config.HideOverlaysDuringCutscenes = hideDuringCutscences;
+                this.config.HideOverlaysDuringCutscenes = hideDuringCutscenes;
                 this.config.Save();
             }
 
