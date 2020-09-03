@@ -34,13 +34,15 @@ namespace PingPlugin
                 new ComponentModelPingTracker(this.config),
                 new Win32APIPingTracker(this.config)
                 /*new LinuxViaWinePingTracker(this.config)*/);
-            this.pingTracker.OnPingUpdated += (payload) =>
+            this.pingTracker.OnPingUpdated += payload =>
             {
                 dynamic obj = new ExpandoObject();
                 obj.LastRTT = payload.LastRTT;
                 obj.AverageRTT = payload.AverageRTT;
                 this.pluginInterface.SendMessage(obj);
             };
+
+            this.pluginInterface.Framework.OnUpdateEvent += OnFrameworkUpdate;
 
             // Set up UI
             this.ui = new PingUI(this.pingTracker, this.pluginInterface.UiBuilder, this.config);
@@ -50,6 +52,13 @@ namespace PingPlugin
 
             // Initialize command manager
             this.commandManager = new PluginCommandManager<PingPlugin>(this, this.pluginInterface);
+        }
+
+        private void OnFrameworkUpdate(Framework framework)
+        {
+            this.ui.CutsceneActive = this.pluginInterface.ClientState.Condition[ConditionFlag.OccupiedInCutSceneEvent] ||
+                                     this.pluginInterface.ClientState.Condition[ConditionFlag.WatchingCutscene] ||
+                                     this.pluginInterface.ClientState.Condition[ConditionFlag.WatchingCutscene78];
         }
 
         [Command("/ping")]
@@ -84,6 +93,8 @@ namespace PingPlugin
             if (!disposing) return;
 
             this.commandManager.Dispose();
+
+            this.pluginInterface.Framework.OnUpdateEvent -= OnFrameworkUpdate;
 
             this.pluginInterface.UiBuilder.OnOpenConfigUi -= (sender, e) => this.ui.ConfigVisible = true;
             this.pluginInterface.UiBuilder.OnBuildUi -= this.ui.BuildUi;

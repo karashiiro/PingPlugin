@@ -83,6 +83,13 @@ namespace PingPlugin
                 this.config.Save();
             }
 
+            var hideDuringCutscences = this.config.HideOverlaysDuringCutscenes;
+            if (ImGui.Checkbox(Loc.Localize("HideOverlaysDuringCutscenes", string.Empty), ref hideDuringCutscences))
+            {
+                this.config.HideOverlaysDuringCutscenes = hideDuringCutscences;
+                this.config.Save();
+            }
+
             var minimalDisplay = this.config.MinimalDisplay;
             if (ImGui.Checkbox(Loc.Localize("MinimalDisplay", string.Empty), ref minimalDisplay))
             {

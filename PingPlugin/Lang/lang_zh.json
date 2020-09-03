@@ -35,6 +35,10 @@
     "message": "隐藏错误",
     "description": "PingPlugin.Configuration"
   },
+  "HideOverlaysDuringCutscenes": {
+    "message": "过场动画时隐藏悬浮窗",
+    "description": "PingPlugin.Configuration"
+  },
   "Language": {
     "message": "语言",
     "description": "PingPlugin.Configuration"
