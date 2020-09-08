@@ -24,7 +24,6 @@ namespace PingPlugin
         private bool configVisible;
 
         private bool fontLoaded;
-        private IntPtr fontPtr;
         private ImFontPtr uiFont;
 
         public bool CutsceneActive { get; set; }
@@ -117,7 +116,7 @@ namespace PingPlugin
 
             if (this.fontScaleTooSmall)
             {
-                ReloadFont();
+                this.uiBuilder.RebuildFonts();
                 this.fontScaleTooSmall = false;
             }
             var fontScale = (int)this.config.FontScale;
@@ -127,7 +126,7 @@ namespace PingPlugin
                 this.config.Save();
                 if (this.config.FontScale >= 8)
                 {
-                    ReloadFont();
+                    this.uiBuilder.RebuildFonts();
                 }
                 else
                 {
@@ -280,25 +279,13 @@ namespace PingPlugin
             ImGui.End();
         }
 
-        // Kinda copied from FPSPlugin
-        private unsafe void BuildFont()
+        private void BuildFont()
         {
             try
             {
-                using var fontStream = Assembly.GetExecutingAssembly()
-                    .GetManifestResourceStream("PingPlugin.Font.NotoSansCJKjp-Medium.otf");
-
-                if (fontStream == null)
-                    throw new FileNotFoundException("Font file not found!");
-
-                this.fontPtr = Marshal.AllocHGlobal((int)fontStream.Length);
-                using var font = new UnmanagedMemoryStream((byte*)this.fontPtr.ToPointer(), fontStream.Length,
-                    fontStream.Length, FileAccess.Write);
-                fontStream.CopyTo(font);
-
-                this.uiFont = ImGui.GetIO().Fonts.AddFontFromMemoryTTF(this.fontPtr, (int)fontStream.Length,
-                    Math.Max(8, this.config.FontScale));
-
+                var filePath = Path.Combine(Assembly.GetExecutingAssembly().Location, "..", "..", "addon", "Hooks",
+                    "UIRes", "NotoSansCJKjp-Medium.otf");
+                this.uiFont = ImGui.GetIO().Fonts.AddFontFromFileTTF(filePath, Math.Max(8, this.config.FontScale));
                 this.fontLoaded = true;
             }
             catch (Exception e)
@@ -306,12 +293,6 @@ namespace PingPlugin
                 PluginLog.LogError(e.Message);
                 this.fontLoaded = false;
             }
-        }
-
-        private void ReloadFont()
-        {
-            this.uiBuilder.RebuildFonts();
-            this.fontPtr = IntPtr.Zero;
         }
 
         private ImGuiWindowFlags BuildWindowFlags(ImGuiWindowFlags flags)

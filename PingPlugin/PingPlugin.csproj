@@ -13,18 +13,9 @@
     <Deterministic>true</Deterministic>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-  </PropertyGroup>
-
   <ItemGroup>
     <None Remove=".gitattributes" />
     <None Remove=".gitignore" />
-    <None Remove="Font\NotoSansCJKjp-Medium.otf" />
     <None Remove="Lang\lang_de.json" />
     <None Remove="Lang\lang_en.json" />
     <None Remove="Lang\lang_es.json" />
@@ -74,7 +65,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="Font\NotoSansCJKjp-Medium.otf" />
     <EmbeddedResource Include="Lang\lang_de.json" />
     <EmbeddedResource Include="Lang\lang_en.json" />
     <EmbeddedResource Include="Lang\lang_es.json" />
