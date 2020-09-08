@@ -23,8 +23,7 @@ namespace PingPlugin
         private bool resettingMonitorPos;
         private bool configVisible;
 
-        private bool fontBuilt;
-        private bool fontLoadFailed;
+        private bool fontLoaded;
         private IntPtr fontPtr;
         private ImFontPtr uiFont;
 
@@ -42,7 +41,7 @@ namespace PingPlugin
             this.uiBuilder = uiBuilder;
             this.pingTracker = pingTracker;
 
-            this.uiBuilder.OnBuildFonts += BuildFont;
+            this.uiBuilder.OnBuildFonts = BuildFont;
 #if DEBUG
             ConfigVisible = true;
 #endif
@@ -53,19 +52,19 @@ namespace PingPlugin
             if (this.config.HideOverlaysDuringCutscenes && CutsceneActive)
                 return;
 
-            if (!this.fontBuilt && !this.fontLoadFailed)
+            if (!this.fontLoaded)
             {
                 this.uiBuilder.RebuildFonts();
                 return;
             }
 
-            if (this.fontBuilt) ImGui.PushFont(this.uiFont);
+            ImGui.PushFont(this.uiFont);
 
             if (ConfigVisible) DrawConfigUi();
             if (this.config.GraphIsVisible) DrawGraph();
             if (this.config.MonitorIsVisible) DrawMonitor();
 
-            if (this.fontBuilt) ImGui.PopFont();
+            ImGui.PopFont();
         }
 
         private bool fontScaleTooSmall;
@@ -281,38 +280,31 @@ namespace PingPlugin
             ImGui.End();
         }
 
-        // Mostly copied from FPSPlugin
-        private void BuildFont()
+        // Kinda copied from FPSPlugin
+        private unsafe void BuildFont()
         {
-            this.fontBuilt = false;
             try
             {
                 using var fontStream = Assembly.GetExecutingAssembly()
                     .GetManifestResourceStream("PingPlugin.Font.NotoSansCJKjp-Medium.otf");
 
-#if DEBUG
                 if (fontStream == null)
                     throw new FileNotFoundException("Font file not found!");
-#endif
 
                 this.fontPtr = Marshal.AllocHGlobal((int)fontStream.Length);
-
-                unsafe
-                {
-                    using var font = new UnmanagedMemoryStream((byte*)this.fontPtr.ToPointer(), fontStream.Length,
-                        fontStream.Length, FileAccess.Write);
-                    fontStream.CopyTo(font);
-                }
+                using var font = new UnmanagedMemoryStream((byte*)this.fontPtr.ToPointer(), fontStream.Length,
+                    fontStream.Length, FileAccess.Write);
+                fontStream.CopyTo(font);
 
                 this.uiFont = ImGui.GetIO().Fonts.AddFontFromMemoryTTF(this.fontPtr, (int)fontStream.Length,
                     Math.Max(8, this.config.FontScale));
 
-                this.fontBuilt = true;
+                this.fontLoaded = true;
             }
             catch (Exception e)
             {
                 PluginLog.LogError(e.Message);
-                this.fontLoadFailed = true;
+                this.fontLoaded = false;
             }
         }
 
@@ -336,7 +328,7 @@ namespace PingPlugin
 
         public void Dispose()
         {
-            this.uiBuilder.OnBuildFonts -= BuildFont;
+            this.uiBuilder.OnBuildFonts = null;
             this.uiFont.Destroy();
             this.uiBuilder.RebuildFonts();
         }
