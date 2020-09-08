@@ -41,7 +41,7 @@ namespace PingPlugin
             this.uiBuilder = uiBuilder;
             this.pingTracker = pingTracker;
 
-            this.uiBuilder.OnBuildFonts = BuildFont;
+            this.uiBuilder.OnBuildFonts += BuildFont;
 #if DEBUG
             ConfigVisible = true;
 #endif
@@ -328,7 +328,7 @@ namespace PingPlugin
 
         public void Dispose()
         {
-            this.uiBuilder.OnBuildFonts = null;
+            this.uiBuilder.OnBuildFonts -= BuildFont;
             this.uiFont.Destroy();
             this.uiBuilder.RebuildFonts();
         }
