@@ -42,7 +42,9 @@ namespace PingPlugin
                 this.pluginInterface.SendMessage(obj);
             };
 
-            this.pluginInterface.Framework.OnUpdateEvent += OnFrameworkUpdate;
+            this.pluginInterface.UiBuilder.DisableAutomaticUiHide = true;
+            this.pluginInterface.UiBuilder.DisableCutsceneUiHide = true;
+            this.pluginInterface.UiBuilder.DisableGposeUiHide = true;
 
             // Set up UI
             this.ui = new PingUI(this.pingTracker, this.pluginInterface.UiBuilder, this.config);
@@ -52,13 +54,6 @@ namespace PingPlugin
 
             // Initialize command manager
             this.commandManager = new PluginCommandManager<PingPlugin>(this, this.pluginInterface);
-        }
-
-        private void OnFrameworkUpdate(Framework framework)
-        {
-            this.ui.CutsceneActive = this.pluginInterface.ClientState.Condition[ConditionFlag.OccupiedInCutSceneEvent] ||
-                                     this.pluginInterface.ClientState.Condition[ConditionFlag.WatchingCutscene] ||
-                                     this.pluginInterface.ClientState.Condition[ConditionFlag.WatchingCutscene78];
         }
 
         [Command("/ping")]
@@ -93,8 +88,6 @@ namespace PingPlugin
             if (!disposing) return;
 
             this.commandManager.Dispose();
-
-            this.pluginInterface.Framework.OnUpdateEvent -= OnFrameworkUpdate;
 
             this.pluginInterface.UiBuilder.OnOpenConfigUi -= (sender, e) => this.ui.ConfigVisible = true;
             this.pluginInterface.UiBuilder.OnBuildUi -= this.ui.BuildUi;
