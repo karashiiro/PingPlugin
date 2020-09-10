@@ -42,8 +42,6 @@ namespace PingPlugin
                 this.pluginInterface.SendMessage(obj);
             };
 
-            this.pluginInterface.UiBuilder.DisableAutomaticUiHide = true;
-
             // Set up UI
             this.ui = new PingUI(this.pingTracker, this.pluginInterface.UiBuilder, this.config);
 
