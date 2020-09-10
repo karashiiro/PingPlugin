@@ -43,8 +43,6 @@ namespace PingPlugin
             };
 
             this.pluginInterface.UiBuilder.DisableAutomaticUiHide = true;
-            this.pluginInterface.UiBuilder.DisableCutsceneUiHide = true;
-            this.pluginInterface.UiBuilder.DisableGposeUiHide = true;
 
             // Set up UI
             this.ui = new PingUI(this.pingTracker, this.pluginInterface.UiBuilder, this.config);
