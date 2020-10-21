@@ -1,6 +1,6 @@
 [![Download count](https://img.shields.io/endpoint?url=https%3A%2F%2Fvz32sgcoal.execute-api.us-east-1.amazonaws.com%2FPingPlugin)](https://github.com/karashiiro/PingPlugin)
 # PingPlugin
-A ping display plugin for Dalamud.
+A ping display plugin for [Dalamud](https://github.com/goatcorp/Dalamud).
 
 This plugin provides a ping monitor and graph that show your latest ping and your average ping over a configurable number of steps.
 
