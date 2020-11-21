@@ -108,7 +108,7 @@
     "description": "PingPlugin.UIText"
   },
   "UIRegularDisplay": {
-    "message": "サーバーIP：{0}\nレイテンシー：{1}ms\n平均レイテンシー：{2}ms",
+    "message": "レイテンシー：{0}ms\n平均レイテンシー：{1}ms",
     "description": "PingPlugin.UIText"
   }
 }

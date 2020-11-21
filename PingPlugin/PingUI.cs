@@ -2,7 +2,6 @@
 using Dalamud.Interface;
 using Dalamud.Plugin;
 using ImGuiNET;
-using PingPlugin.PingTrackers;
 using System;
 using System.Globalization;
 using System.IO;
@@ -93,13 +92,6 @@ namespace PingPlugin
                 this.config.Save();
             }
 
-            var hideErrors = this.config.HideErrors;
-            if (ImGui.Checkbox(Loc.Localize("HideErrors", string.Empty), ref hideErrors))
-            {
-                this.config.HideErrors = hideErrors;
-                this.config.Save();
-            }
-
             var queueSize = this.config.PingQueueSize;
             if (ImGui.InputInt(Loc.Localize("RecordedPings", string.Empty), ref queueSize))
             {
@@ -132,13 +124,6 @@ namespace PingPlugin
             if (ImGui.ColorEdit4(Loc.Localize("MonitorColor", string.Empty), ref monitorColor))
             {
                 this.config.MonitorFontColor = monitorColor;
-                this.config.Save();
-            }
-
-            var monitorErrorColor = this.config.MonitorErrorFontColor;
-            if (ImGui.ColorEdit4(Loc.Localize("MonitorErrorColor", string.Empty), ref monitorErrorColor))
-            {
-                this.config.MonitorErrorFontColor = monitorErrorColor;
                 this.config.Save();
             }
 
@@ -192,9 +177,7 @@ namespace PingPlugin
             ImGui.TextColored(this.config.MonitorFontColor, this.config.MinimalDisplay
                 ? string.Format(CultureInfo.CurrentUICulture, Loc.Localize("UIMinimalDisplay", string.Empty), this.pingTracker.LastRTT,
                     Math.Round(this.pingTracker.AverageRTT, 2))
-                : string.Format(CultureInfo.CurrentUICulture, Loc.Localize("UIRegularDisplay", string.Empty), this.pingTracker.SeAddress, this.pingTracker.LastRTT, Math.Round(this.pingTracker.AverageRTT, 2)));
-            if (this.pingTracker.LastError != WinError.NO_ERROR)
-                ImGui.TextColored(this.config.MonitorErrorFontColor, string.Format(Loc.Localize("UIError", string.Empty), (Enum.IsDefined(typeof(WinError), this.pingTracker.LastError) ? this.pingTracker.LastError.ToString() : ((int)this.pingTracker.LastError).ToString())));
+                : string.Format(CultureInfo.CurrentUICulture, Loc.Localize("UIRegularDisplay", string.Empty), this.pingTracker.LastRTT, Math.Round(this.pingTracker.AverageRTT, 2)));
             ImGui.End();
 
             ImGui.PopStyleVar();

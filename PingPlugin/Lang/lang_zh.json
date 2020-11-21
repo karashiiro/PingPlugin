@@ -108,7 +108,7 @@
     "description": "PingPlugin.UIText"
   },
   "UIRegularDisplay": {
-    "message": "服务器IP: {0}\n延迟: {1}ms\n平均延迟: {2}ms",
+    "message": "延迟: {0}ms\n平均延迟: {1}ms",
     "description": "PingPlugin.UIText"
   }
 }

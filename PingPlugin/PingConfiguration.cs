@@ -20,14 +20,12 @@ namespace PingPlugin
 
         public float MonitorBgAlpha { get; set; }
         public Vector4 MonitorFontColor { get; set; }
-        public Vector4 MonitorErrorFontColor { get; set; }
 
         public bool ClickThrough { get; set; }
         public bool GraphIsVisible { get; set; }
         public bool MonitorIsVisible { get; set; }
         public bool LockWindows { get; set; }
         public bool MinimalDisplay { get; set; }
-        public bool HideErrors { get; set; } // Generally, the errors are just timeouts, so you may want to hide them.
         public bool HideOverlaysDuringCutscenes { get; set; }
         public string Lang { get; set; }
 
@@ -84,7 +82,6 @@ namespace PingPlugin
             FontScale = 17.0f;
             MonitorBgAlpha = 0.0f;
             MonitorFontColor = new Vector4(1, 1, 0, 1); // Yellow, it's ABGR instead of RGBA for some reason.
-            MonitorErrorFontColor = new Vector4(1, 0, 0, 1);
             MonitorIsVisible = true;
             PingQueueSize = 20;
             Lang = LangKind.en.ToString();
