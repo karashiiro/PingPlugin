@@ -278,8 +278,11 @@ namespace PingPlugin
             {
                 var filePath = Path.Combine(Assembly.GetExecutingAssembly().Location, "..", "..", "addon", "Hooks",
                     "UIRes", "NotoSansCJKjp-Medium.otf");
-                this.uiFont = ImGui.GetIO().Fonts.AddFontFromFileTTF(filePath, Math.Max(8, this.config.FontScale));
+                if (!File.Exists(filePath)) throw new FileNotFoundException("Font file not found!");
+                var jpRangeHandle = GCHandle.Alloc(GlyphRangesJapanese.GlyphRanges, GCHandleType.Pinned);
+                this.uiFont = ImGui.GetIO().Fonts.AddFontFromFileTTF(filePath, Math.Max(8, this.config.FontScale), null, jpRangeHandle.AddrOfPinnedObject());
                 this.fontLoaded = true;
+                jpRangeHandle.Free();
             }
             catch (Exception e)
             {
