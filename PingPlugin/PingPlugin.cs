@@ -26,8 +26,7 @@ namespace PingPlugin
 
             this.pingTracker = new AggregatePingTracker(this.config,
                 new ComponentModelPingTracker(this.config),
-                new Win32APIPingTracker(this.config)
-                /*new LinuxViaWinePingTracker(this.config)*/);
+                new Win32APIPingTracker(this.config));
             this.pingTracker.OnPingUpdated += payload =>
             {
                 dynamic obj = new ExpandoObject();
