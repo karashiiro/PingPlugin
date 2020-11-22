@@ -1,98 +1,98 @@
-﻿{
+{
   "Chinese": {
     "message": "Chinois",
     "description": "PingPlugin.LangKind"
   },
   "English": {
-    "message": "English",
+    "message": "Anglais",
     "description": "PingPlugin.LangKind"
   },
   "French": {
-    "message": "French",
+    "message": "Français",
     "description": "PingPlugin.LangKind"
   },
   "German": {
-    "message": "German",
+    "message": "Allemand",
     "description": "PingPlugin.LangKind"
   },
   "Japanese": {
-    "message": "Japanese",
+    "message": "Japonais",
     "description": "PingPlugin.LangKind"
   },
   "Spanish": {
-    "message": "Spanish",
+    "message": "Espagnol",
     "description": "PingPlugin.LangKind"
   },
   "ClickThrough": {
-    "message": "Click through plugin windows",
+    "message": "Clic passe à travers",
     "description": "PingPlugin.Configuration"
   },
   "Defaults": {
-    "message": "Defaults",
+    "message": "Défauts",
     "description": "PingPlugin.Configuration"
   },
   "HideErrors": {
-    "message": "Hide Errors",
+    "message": "Cacher les erreurs",
     "description": "PingPlugin.Configuration"
   },
   "HideOverlaysDuringCutscenes": {
-    "message": "Hide overlays with HUD",
+    "message": "Cacher l'overlay avec l'ATH",
     "description": "PingPlugin.Configuration"
   },
   "Language": {
-    "message": "Language",
+    "message": "Langage",
     "description": "PingPlugin.Configuration"
   },
   "LockPluginWindows": {
-    "message": "Lock plugin windows",
+    "message": "Verrouiller la position de la fenêtre",
     "description": "PingPlugin.Configuration"
   },
   "MinimalDisplay": {
-    "message": "Minimal display",
+    "message": "Affichage réduit",
     "description": "PingPlugin.Configuration"
   },
   "FontScale": {
-    "message": "Font scale",
+    "message": "Échelle de la police",
     "description": "PingPlugin.Configuration"
   },
   "MonitorColor": {
-    "message": "Monitor Color",
+    "message": "Couleur",
     "description": "PingPlugin.Configuration"
   },
   "MonitorErrorColor": {
-    "message": "Monitor Error Color",
+    "message": "Couleur erreur",
     "description": "PingPlugin.Configuration"
   },
   "MonitorOpacity": {
-    "message": "Monitor Opacity",
+    "message": "Opacité",
     "description": "PingPlugin.Configuration"
   },
   "RecordedPings": {
-    "message": "Recorded Pings",
+    "message": "Pings enregistrés",
     "description": "PingPlugin.Configuration"
   },
   "ResetWindowPositions": {
-    "message": "Reset Window Positions",
+    "message": "Réinitialiser la position de la fenêtre",
     "description": "PingPlugin.Configuration"
   },
   "ConfigurationWindowTitle": {
-    "message": "PingPlugin Configuration",
+    "message": "Configuration PingPlugin",
     "description": "PingPlugin.WindowTitles"
   },
   "PingGraphTitle": {
-    "message": "Ping Graph",
+    "message": "Graphique du Ping",
     "description": "PingPlugin.WindowTitles"
   },
   "UIAverage": {
-    "message": "Average",
+    "message": "Moyenne",
     "description": "PingPlugin.UIText"
   },
   "UIError": {
-    "message": "Error: {0}",
+    "message": "Erreur : {0}",
     "description": "PingPlugin.UIText"
   },
   "UIGraphTitle": {
-    "message": "Network Latency (ms) vs Pings",
+    "message": "Latence du réseau (ms) vs Pings",
     "description": "PingPlugin.UIText"
   },
   "UIMillisecondAbbr": {
@@ -100,15 +100,15 @@
     "description": "PingPlugin.UIText"
   },
   "UIMinimalDisplay": {
-    "message": "Ping: {0}ms / Average: {1}ms",
+    "message": "Ping : {0}ms / Moyenne : {1}ms",
     "description": "PingPlugin.UIText"
   },
   "UINoData": {
-    "message": "No data to display at this time.",
+    "message": "Pas de données à afficher pour le moment.",
     "description": "PingPlugin.UIText"
   },
   "UIRegularDisplay": {
-    "message": "Connected to: {0}\nPing: {1}ms\nAverage ping: {2}ms",
+    "message": "Ping : {0}ms\nPing moyen : {1}ms",
     "description": "PingPlugin.UIText"
   }
 }

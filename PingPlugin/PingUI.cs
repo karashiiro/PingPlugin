@@ -150,7 +150,7 @@ namespace PingPlugin
             }
 
             var currentItem = (int)this.config.RuntimeLang;
-            var supportedLanguages = new[] { Loc.Localize("English", string.Empty), Loc.Localize("Japanese", string.Empty), Loc.Localize("Spanish", string.Empty), Loc.Localize("German", string.Empty), /*Loc.Localize("Chinese", string.Empty)*/ };
+            var supportedLanguages = new[] { Loc.Localize("English", string.Empty), Loc.Localize("Japanese", string.Empty), Loc.Localize("Spanish", string.Empty), Loc.Localize("German", string.Empty), Loc.Localize("French", string.Empty),  /*Loc.Localize("Chinese", string.Empty)*/ };
             if (ImGui.Combo(Loc.Localize("Language", string.Empty), ref currentItem, supportedLanguages, supportedLanguages.Length))
             {
                 this.config.RuntimeLang = (LangKind)currentItem;
