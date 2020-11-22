@@ -9,6 +9,7 @@ using System.Linq;
 using System.Numerics;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using PingPlugin.PingTrackers;
 
 namespace PingPlugin
 {

@@ -2,27 +2,27 @@
 using System.Collections.Concurrent;
 using System.Linq;
 
-namespace PingPlugin
+namespace PingPlugin.PingTrackers
 {
-    public class PingTracker
+    public abstract class PingTracker : IDisposable
     {
-        private readonly PingConfiguration config;
+        protected readonly PingConfiguration config;
 
         public delegate void PingUpdatedDelegate(PingStatsPayload payload);
         public event PingUpdatedDelegate OnPingUpdated;
 
         public double AverageRTT { get; private set; }
         public ulong LastRTT { get; private set; }
-        public ConcurrentQueue<float> RTTTimes { get; }
+        public ConcurrentQueue<float> RTTTimes { get; private set; }
 
-        public PingTracker(PingConfiguration config)
+        protected PingTracker(PingConfiguration config)
         {
             this.config = config;
 
             RTTTimes = new ConcurrentQueue<float>();
         }
 
-        public void DoNextRTTCalculation(long nextRTT)
+        protected void DoNextRTTCalculation(long nextRTT)
         {
             lock (RTTTimes)
             {
@@ -34,9 +34,11 @@ namespace PingPlugin
             CalcAverage();
 
             LastRTT = (ulong)nextRTT;
+
+            SendMessage();
         }
 
-        public void SendMessage()
+        private void SendMessage()
         {
             var del = OnPingUpdated;
             del?.Invoke(new PingStatsPayload
@@ -46,6 +48,18 @@ namespace PingPlugin
             });
         }
 
-        private void CalcAverage() => AverageRTT = RTTTimes.Average();
+        protected void CalcAverage() => AverageRTT = RTTTimes.Average();
+
+        protected void ResetRTT() => RTTTimes = new ConcurrentQueue<float>();
+
+        protected virtual void Dispose(bool disposing)
+        {
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
     }
 }

@@ -14,18 +14,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove=".gitattributes" />
-    <None Remove=".gitignore" />
-    <None Remove="Lang\lang_de.json" />
-    <None Remove="Lang\lang_en.json" />
-    <None Remove="Lang\lang_es.json" />
-    <None Remove="Lang\lang_fr.json" />
-    <None Remove="Lang\lang_ja.json" />
-    <None Remove="Lang\lang_zh.json" />
-    <None Remove="PingPlugin.cs~RF4dda3da9.TMP" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Content Include="..\PingPlugin.json" Link="PingPlugin.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -66,6 +54,12 @@
     <EmbeddedResource Include="Lang\lang_fr.json" />
     <EmbeddedResource Include="Lang\lang_ja.json" />
     <EmbeddedResource Include="Lang\lang_zh.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\OSBindings\Build\Release\OSBindings.dll" Link="OSBindings.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
