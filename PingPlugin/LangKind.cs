@@ -6,7 +6,7 @@
         ja,
         es,
         de,
-        zh,
         fr,
+        zh,
     }
 }
