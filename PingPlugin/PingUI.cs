@@ -276,7 +276,7 @@ namespace PingPlugin
         {
             try
             {
-                var filePath = Path.Combine(Assembly.GetEntryAssembly().Location, "..", "UIRes", "NotoSansCJKjp-Medium.otf");
+                var filePath = Path.Combine(Assembly.GetAssembly(typeof(DalamudPluginInterface)).Location, "..", "UIRes", "NotoSansCJKjp-Medium.otf");
                 if (!File.Exists(filePath)) throw new FileNotFoundException("Font file not found!");
                 var jpRangeHandle = GCHandle.Alloc(GlyphRangesJapanese.GlyphRanges, GCHandleType.Pinned);
                 this.uiFont = ImGui.GetIO().Fonts.AddFontFromFileTTF(filePath, Math.Max(8, this.config.FontScale), null, jpRangeHandle.AddrOfPinnedObject());
