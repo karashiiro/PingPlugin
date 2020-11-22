@@ -263,7 +263,7 @@ namespace PingPlugin
                 var filePath = Path.Combine(Assembly.GetExecutingAssembly().Location, "..", "..", "addon", "Hooks",
                     "UIRes", "NotoSansCJKjp-Medium.otf");
 #else
-                var filePath = Path.Combine(Assembly.GetExecutingAssembly().Location, "..", "..", "..", "addon", "Hooks",
+                var filePath = Path.Combine(Assembly.GetExecutingAssembly().Location, "..", "..", "..", "..", "addon", "Hooks",
                     "UIRes", "NotoSansCJKjp-Medium.otf");
 #endif
                 if (!File.Exists(filePath)) throw new FileNotFoundException("Font file not found!");
