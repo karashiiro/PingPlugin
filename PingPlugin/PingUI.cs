@@ -57,13 +57,13 @@ namespace PingPlugin
                 return;
             }
 
-            ImGui.PushFont(this.uiFont);
+            if (this.uiFont.IsLoaded()) ImGui.PushFont(this.uiFont);
 
             if (ConfigVisible) DrawConfigUi();
             if (this.config.GraphIsVisible) DrawGraph();
             if (this.config.MonitorIsVisible) DrawMonitor();
 
-            ImGui.PopFont();
+            if (this.uiFont.IsLoaded()) ImGui.PopFont();
         }
 
         private bool fontScaleTooSmall;
@@ -276,19 +276,18 @@ namespace PingPlugin
         {
             try
             {
-                var filePath = Path.Combine(Assembly.GetExecutingAssembly().Location, "..", "..", "addon", "Hooks",
-                    "UIRes", "NotoSansCJKjp-Medium.otf");
+                var filePath = Path.Combine(Assembly.GetEntryAssembly().Location, "..", "UIRes", "NotoSansCJKjp-Medium.otf");
                 if (!File.Exists(filePath)) throw new FileNotFoundException("Font file not found!");
                 var jpRangeHandle = GCHandle.Alloc(GlyphRangesJapanese.GlyphRanges, GCHandleType.Pinned);
                 this.uiFont = ImGui.GetIO().Fonts.AddFontFromFileTTF(filePath, Math.Max(8, this.config.FontScale), null, jpRangeHandle.AddrOfPinnedObject());
-                this.fontLoaded = true;
                 jpRangeHandle.Free();
             }
             catch (Exception e)
             {
                 PluginLog.LogError(e.Message);
-                this.fontLoaded = false;
             }
+
+            this.fontLoaded = true;
         }
 
         private ImGuiWindowFlags BuildWindowFlags(ImGuiWindowFlags flags)
