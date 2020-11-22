@@ -17,11 +17,8 @@ namespace PingPlugin.PingTrackers
             {
                 if (token.IsCancellationRequested)
                     token.ThrowIfCancellationRequested();
-                PluginLog.Log("OK1");
                 var rtt = (long)GetAddressLastRTT(SeAddressRaw);
-                PluginLog.Log("OK2");
                 LastError = (WinError)Marshal.GetLastWin32Error();
-                PluginLog.Log("OK3");
                 if (LastError == WinError.NO_ERROR)
                     NextRTTCalculation(rtt);
                 await Task.Delay(3000, token);
