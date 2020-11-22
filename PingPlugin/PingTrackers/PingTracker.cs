@@ -87,7 +87,7 @@ namespace PingPlugin.PingTrackers
             SeAddress = new IPAddress(SeAddressRaw);
         }
 
-        [DllImport("OSBindingsV2.dll", EntryPoint = "GetProcessHighestPortAddress")]
+        [DllImport("OSBindings.dll", EntryPoint = "?GetProcessHighestPortAddress@@YAKH@Z")]
         private static extern long GetProcessHighestPortAddress(int pid);
 
         #region IDisposable Support

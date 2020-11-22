@@ -28,7 +28,7 @@ namespace PingPlugin.PingTrackers
             }
         }
 
-        [DllImport("OSBindingsV2.dll", EntryPoint = "GetAddressLastRTT", SetLastError = true)]
+        [DllImport("OSBindings.dll", EntryPoint = "?GetAddressLastRTT@@YAKK@Z", SetLastError = true)]
         private static extern ulong GetAddressLastRTT(long address);
     }
 }
