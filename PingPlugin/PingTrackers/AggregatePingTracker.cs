@@ -57,15 +57,27 @@ namespace PingPlugin.PingTrackers
         {
             var bestPing = 0UL;
             PingTracker bestTracker = null;
+            TrampolinePingTracker tpt = null;
             foreach (var tracker in this.pingTrackers)
             {
+                if (tracker is TrampolinePingTracker _tpt)
+                {
+                    tpt = _tpt;
+                    continue;
+                }
+
                 if (tracker.LastRTT >= bestPing)
                 {
                     bestPing = tracker.LastRTT;
                     bestTracker = tracker;
                 }
             }
-            return bestTracker;
+
+            if (bestPing != 0)
+            {
+                return bestTracker;
+            }
+            return tpt;
         }
 
         private void SendMessage()

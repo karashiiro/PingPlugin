@@ -108,7 +108,7 @@
     "description": "PingPlugin.UIText"
   },
   "UIRegularDisplay": {
-    "message": "Ping : {0}ms\nPing moyen : {1}ms",
+    "message": "Connecté à : {0}\nPing : {1}ms\nPing moyen : {2}ms",
     "description": "PingPlugin.UIText"
   }
 }
