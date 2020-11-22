@@ -103,7 +103,7 @@ namespace PingPlugin
             var queueSize = this.config.PingQueueSize;
             if (ImGui.InputInt(Loc.Localize("RecordedPings", string.Empty), ref queueSize))
             {
-                this.config.PingQueueSize = queueSize;
+                this.config.PingQueueSize = Math.Max(queueSize, 1);
                 this.config.Save();
             }
 
