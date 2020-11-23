@@ -9,6 +9,7 @@
         OUTOFMEMORY = 14,
         NOT_SUPPORTED = 50,
         INVALID_PARAMETER = 87,
+        ERROR_INVALID_NETNAME = 1214,
         WSAEINTR = 10004,
         WSAEACCES = 10013,
         WSAEFAULT = 10014,
