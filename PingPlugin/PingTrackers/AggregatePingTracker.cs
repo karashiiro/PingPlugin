@@ -73,7 +73,7 @@ namespace PingPlugin.PingTrackers
                 }
             }
 
-            if (bestPing > 2)
+            if (bestPing > 5)
             {
                 return bestTracker;
             }
