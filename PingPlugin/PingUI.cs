@@ -193,7 +193,7 @@ namespace PingPlugin
                 ? string.Format(CultureInfo.CurrentUICulture, Loc.Localize("UIMinimalDisplay", string.Empty), this.pingTracker.LastRTT,
                     Math.Round(this.pingTracker.AverageRTT, 2))
                 : string.Format(CultureInfo.CurrentUICulture, Loc.Localize("UIRegularDisplay", string.Empty), this.pingTracker.SeAddress, this.pingTracker.LastRTT, Math.Round(this.pingTracker.AverageRTT, 2)));
-            if (this.pingTracker.LastError != WinError.NO_ERROR)
+            if (!this.config.HideErrors && this.pingTracker.LastError != WinError.NO_ERROR && this.pingTracker.LastError != WinError.ERROR_INVALID_NETNAME)
                 ImGui.TextColored(this.config.MonitorErrorFontColor, string.Format(Loc.Localize("UIError", string.Empty), (Enum.IsDefined(typeof(WinError), this.pingTracker.LastError) ? this.pingTracker.LastError.ToString() : ((int)this.pingTracker.LastError).ToString())));
             ImGui.End();
 
