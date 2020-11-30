@@ -8,6 +8,7 @@
 #include <Ws2tcpip.h>
 #include <iphlpapi.h>
 
+// The highest port is not actually the one with the zone packets, but it's on the same address as the one we want.
 DllExport unsigned long GetProcessHighestPortAddress(int pid) {
 	DWORD bufferLength = 0;
 
@@ -24,43 +25,24 @@ DllExport unsigned long GetProcessHighestPortAddress(int pid) {
 		const DWORD state = tcpTable->table[i].dwState;
 		const DWORD tcpPid = tcpTable->table[i].dwOwningPid;
 		const DWORD tcpRemoteAddr = tcpTable->table[i].dwRemoteAddr;
-		const DWORD tcpRemotePort = littleEndian(tcpTable->table[i].dwRemotePort);
+		const DWORD tcpLocalPort = littleEndian(tcpTable->table[i].dwLocalPort);
 
-		if (state == MIB_TCP_STATE_LISTEN || tcpRemoteAddr == 16777343)
-			continue;
+		if (state == MIB_TCP_STATE_LISTEN || tcpRemoteAddr == LOCALHOST) continue;
 		
-		if (tcpPid == pid && tcpRemotePort > maxPort) { // This is specific to FFXIV, but oh well, it performs best
-			maxPort = tcpRemotePort;
+		if (tcpPid == pid && tcpLocalPort > maxPort) { // This is specific to FFXIV, but oh well, it performs best
+			maxPort = tcpLocalPort;
 			finalAddr = tcpRemoteAddr;
 		}
 	}
 
-	// Deallocate memory assigned to the table
 	free(tcpTable);
 	return finalAddr;
 }
 
 DllExport unsigned long GetAddressLastRTT(unsigned long address) {
 	ULONG rtt = 0;
-
-	DWORD bufferLength = 0;
-	GetTcpTable(nullptr, &bufferLength, FALSE);
-	const auto tcpTable = static_cast<MIB_TCPTABLE*>(malloc(bufferLength));
-	GetTcpTable(tcpTable, &bufferLength, FALSE);
-
-	PMIB_TCPROW tcpRow = nullptr;
-	for (DWORD i = 0; i < tcpTable->dwNumEntries; i++) {
-		if (tcpTable->table[i].dwRemoteAddr == address) {
-			tcpRow = &tcpTable->table[i];
-		}
-	}
-
-	if (tcpRow != nullptr) {
-		ULONG hopCount = 0;
-		GetRTTAndHopCount(address, &hopCount, 51, &rtt);
-	}
-
-	free(tcpTable);
+	ULONG hopCount = 0;
+	GetRTTAndHopCount(address, &hopCount, 51, &rtt);
 	return rtt;
 }
 
