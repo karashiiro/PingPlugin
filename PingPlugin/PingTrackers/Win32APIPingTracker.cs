@@ -1,4 +1,5 @@
-﻿using System.Runtime.InteropServices;
+﻿using System;
+using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Dalamud.Plugin;
@@ -17,7 +18,7 @@ namespace PingPlugin.PingTrackers
             {
                 if (token.IsCancellationRequested)
                     token.ThrowIfCancellationRequested();
-                var rtt = (long)GetAddressLastRTT(SeAddressRaw);
+                var rtt = GetAddressLastRTT(SeAddressRaw);
                 LastError = (WinError)Marshal.GetLastWin32Error();
                 if (LastError == WinError.NO_ERROR)
                     NextRTTCalculation(rtt);
@@ -25,7 +26,12 @@ namespace PingPlugin.PingTrackers
             }
         }
 
-        [DllImport("OSBindings.dll", EntryPoint = "?GetAddressLastRTT@@YAKK@Z", SetLastError = true)]
-        private static extern ulong GetAddressLastRTT(long address);
+        private static long GetAddressLastRTT(long address)
+        {
+            var hopCount = 0UL;
+            var rtt = 0UL;
+            NetUtils.GetRTTAndHopCount((ulong)address, ref hopCount, 51, ref rtt);
+            return (long)hopCount;
+        }
     }
 }

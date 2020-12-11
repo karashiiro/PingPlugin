@@ -3,9 +3,9 @@ using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.Linq;
 using System.Net;
-using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
+using Dalamud.Plugin;
 
 namespace PingPlugin.PingTrackers
 {
@@ -13,7 +13,7 @@ namespace PingPlugin.PingTrackers
     {
         private readonly int pid;
 
-        protected readonly CancellationTokenSource tokenSource;
+        private readonly CancellationTokenSource tokenSource;
         protected readonly PingConfiguration config;
 
         public bool Reset { get; set; }
@@ -83,12 +83,11 @@ namespace PingPlugin.PingTrackers
 
         private void UpdateSeAddress()
         {
-            SeAddressRaw = GetProcessHighestPortAddress(this.pid);
-            SeAddress = new IPAddress(SeAddressRaw);
+            var address = NetUtils.GetXIVServerAddress(this.pid);
+            SeAddressRaw = BitConverter.ToUInt32(address.GetAddressBytes(), 0);
+            PluginLog.LogDebug("Got FFXIV server address {Address}", SeAddressRaw);
+            SeAddress = address;
         }
-
-        [DllImport("OSBindings.dll", EntryPoint = "?GetProcessHighestPortAddress@@YAKH@Z")]
-        private static extern long GetProcessHighestPortAddress(int pid);
 
         #region IDisposable Support
         protected virtual void Dispose(bool disposing)
