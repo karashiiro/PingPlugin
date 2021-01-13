@@ -212,7 +212,7 @@ namespace PingPlugin
             }
 
             if (!this.config.HideAveragePing)
-                formatParameters.Add(this.pingTracker.AverageRTT);
+                formatParameters.Add(Math.Round(this.pingTracker.AverageRTT, 2));
 
             ImGui.TextColored(this.config.MonitorFontColor, string.Format(CultureInfo.CurrentUICulture, formatString, formatParameters.ToArray()));
 
