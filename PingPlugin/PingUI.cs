@@ -191,26 +191,21 @@ namespace PingPlugin
             }
 
             string formatString;
-            object[] formatParameters;
+            var formatParameters = new List<object>();
             if (this.config.MinimalDisplay)
             {
-                formatString = Loc.Localize("UIMinimalDisplay", string.Empty);
-                formatParameters = new object[]
-                {
-                    this.pingTracker.LastRTT,
-                    Math.Round(this.pingTracker.AverageRTT, 2),
-                };
+                formatString = Loc.Localize("UIMinimalDisplay" + (this.config.HideAveragePing ? "NoAverage" : ""), string.Empty);
+                formatParameters.Add(this.pingTracker.LastRTT);
             }
             else
             {
-                formatString = Loc.Localize("UIRegularDisplay", string.Empty);
-                formatParameters = new object[]
-                {
-                    this.pingTracker.SeAddress,
-                    this.pingTracker.LastRTT,
-                    Math.Round(this.pingTracker.AverageRTT, 2),
-                };
+                formatString = Loc.Localize("UIRegularDisplay" + (this.config.HideAveragePing ? "NoAverage" : ""), string.Empty);
+                formatParameters.Add(this.pingTracker.SeAddress);
+                formatParameters.Add(this.pingTracker.LastRTT);
             }
+
+            if (this.config.HideAveragePing)
+                formatParameters.Add(this.pingTracker.AverageRTT);
 
             ImGui.TextColored(this.config.MonitorFontColor, string.Format(CultureInfo.CurrentUICulture, formatString, formatParameters.ToArray()));
 
