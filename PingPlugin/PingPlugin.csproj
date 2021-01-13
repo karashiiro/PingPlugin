@@ -14,12 +14,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Include="..\PingPlugin.json" Link="PingPlugin.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
-
-  <ItemGroup>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="CheapLoc">
       <HintPath>$(AppData)\XIVLauncher\addon\Hooks\CheapLoc.dll</HintPath>
@@ -54,6 +48,10 @@
     <EmbeddedResource Include="Lang\lang_fr.json" />
     <EmbeddedResource Include="Lang\lang_ja.json" />
     <EmbeddedResource Include="Lang\lang_zh.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="DalamudPackager" Version="1.2.0" />
   </ItemGroup>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">

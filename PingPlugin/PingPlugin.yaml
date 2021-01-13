@@ -1,0 +1,5 @@
+﻿name: PingPlugin
+author: karashiiro
+description: A ping display plugin for Dalamud.
+repo_url: https://github.com/karashiiro/PingPlugin
+tags: [ "ping", "monitor", "utility", "tool" ]
