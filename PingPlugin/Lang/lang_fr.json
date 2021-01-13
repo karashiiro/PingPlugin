@@ -103,12 +103,20 @@
     "message": "Ping : {0}ms / Moyenne : {1}ms",
     "description": "PingPlugin.UIText"
   },
+  "UIMinimalDisplayNoAverage": {
+    "message": "Ping : {0}ms",
+    "description": "PingPlugin.UIText"
+  },
   "UINoData": {
     "message": "Pas de données à afficher pour le moment.",
     "description": "PingPlugin.UIText"
   },
   "UIRegularDisplay": {
     "message": "Connecté à : {0}\nPing : {1}ms\nPing moyen : {2}ms",
+    "description": "PingPlugin.UIText"
+  },
+  "UIRegularDisplayNoAverage": {
+    "message": "Connecté à : {0}\nPing : {1}ms",
     "description": "PingPlugin.UIText"
   }
 }

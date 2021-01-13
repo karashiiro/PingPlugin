@@ -103,12 +103,20 @@
     "message": "レイテンシー {0}ms／平均：{1}ms",
     "description": "PingPlugin.UIText"
   },
+  "UIMinimalDisplayNoAverage": {
+    "message": "レイテンシー {0}ms",
+    "description": "PingPlugin.UIText"
+  },
   "UINoData": {
     "message": "当分データがありません。",
     "description": "PingPlugin.UIText"
   },
   "UIRegularDisplay": {
     "message": "サーバーIP：{0}\nレイテンシー：{1}ms\n平均レイテンシー：{2}ms",
+    "description": "PingPlugin.UIText"
+  },
+  "UIRegularDisplayNoAverage": {
+    "message": "サーバーIP：{0}\nレイテンシー：{1}ms",
     "description": "PingPlugin.UIText"
   }
 }
