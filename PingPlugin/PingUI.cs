@@ -101,6 +101,13 @@ namespace PingPlugin
                 this.config.Save();
             }
 
+            var hideAveragePing = this.config.HideAveragePing;
+            if (ImGui.Checkbox(Loc.Localize("HideAveragePing", string.Empty), ref hideAveragePing))
+            {
+                this.config.HideAveragePing = hideAveragePing;
+                this.config.Save();
+            }
+
             var queueSize = this.config.PingQueueSize;
             if (ImGui.InputInt(Loc.Localize("RecordedPings", string.Empty), ref queueSize))
             {

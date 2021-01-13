@@ -35,6 +35,10 @@
     "message": "隐藏错误",
     "description": "PingPlugin.Configuration"
   },
+  "HideAveragePing": {
+    "message": "隐藏平均延迟",
+    "description": "PingPlugin.Configuration"
+  },
   "HideOverlaysDuringCutscenes": {
     "message": "过场动画时隐藏悬浮窗",
     "description": "PingPlugin.Configuration"

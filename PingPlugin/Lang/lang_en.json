@@ -32,7 +32,11 @@
     "description": "PingPlugin.Configuration"
   },
   "HideErrors": {
-    "message": "Hide Errors",
+    "message": "Hide errors",
+    "description": "PingPlugin.Configuration"
+  },
+  "HideAveragePing": {
+    "message": "Hide average ping",
     "description": "PingPlugin.Configuration"
   },
   "HideOverlaysDuringCutscenes": {

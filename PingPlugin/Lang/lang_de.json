@@ -35,6 +35,10 @@
     "message": "Fehler nicht anzeigen",
     "description": "PingPlugin.Configuration"
   },
+  "HideAveragePing": {
+    "message": "Mittlerer ping nicht anzeigen",
+    "description": "PingPlugin.Configuration"
+  },
   "HideOverlaysDuringCutscenes": {
     "message": "Überlagerungen mit HUD ausblenden",
     "description": "PingPlugin.Configuration"

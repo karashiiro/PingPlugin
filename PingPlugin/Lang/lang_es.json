@@ -35,6 +35,10 @@
     "message": "Esconda errores",
     "description": "PingPlugin.Configuration"
   },
+  "HideAveragePing": {
+    "message": "Esconda ping promedio",
+    "description": "PingPlugin.Configuration"
+  },
   "HideOverlaysDuringCutscenes": {
     "message": "Esconda overlays con HUD",
     "description": "PingPlugin.Configuration"
