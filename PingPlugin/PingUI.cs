@@ -4,6 +4,7 @@ using Dalamud.Plugin;
 using ImGuiNET;
 using PingPlugin.PingTrackers;
 using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -189,10 +190,30 @@ namespace PingPlugin
                 this.resettingMonitorPos = false;
             }
 
-            ImGui.TextColored(this.config.MonitorFontColor, this.config.MinimalDisplay
-                ? string.Format(CultureInfo.CurrentUICulture, Loc.Localize("UIMinimalDisplay", string.Empty), this.pingTracker.LastRTT,
-                    Math.Round(this.pingTracker.AverageRTT, 2))
-                : string.Format(CultureInfo.CurrentUICulture, Loc.Localize("UIRegularDisplay", string.Empty), this.pingTracker.SeAddress, this.pingTracker.LastRTT, Math.Round(this.pingTracker.AverageRTT, 2)));
+            string formatString;
+            object[] formatParameters;
+            if (this.config.MinimalDisplay)
+            {
+                formatString = Loc.Localize("UIMinimalDisplay", string.Empty);
+                formatParameters = new object[]
+                {
+                    this.pingTracker.LastRTT,
+                    Math.Round(this.pingTracker.AverageRTT, 2),
+                };
+            }
+            else
+            {
+                formatString = Loc.Localize("UIRegularDisplay", string.Empty);
+                formatParameters = new object[]
+                {
+                    this.pingTracker.SeAddress,
+                    this.pingTracker.LastRTT,
+                    Math.Round(this.pingTracker.AverageRTT, 2),
+                };
+            }
+
+            ImGui.TextColored(this.config.MonitorFontColor, string.Format(CultureInfo.CurrentUICulture, formatString, formatParameters.ToArray()));
+
             if (!this.config.HideErrors && this.pingTracker.LastError != WinError.NO_ERROR && this.pingTracker.LastError != WinError.ERROR_INVALID_NETNAME)
                 ImGui.TextColored(this.config.MonitorErrorFontColor, string.Format(Loc.Localize("UIError", string.Empty), (Enum.IsDefined(typeof(WinError), this.pingTracker.LastError) ? this.pingTracker.LastError.ToString() : ((int)this.pingTracker.LastError).ToString())));
             ImGui.End();
