@@ -36,7 +36,7 @@ namespace PingPlugin
                 this.pluginInterface.SendMessage(obj);
             };
 
-            this.ui = new PingUI(this.pingTracker, this.pluginInterface.UiBuilder, this.config);
+            this.ui = new PingUI(this.pingTracker, this.pluginInterface, this.config);
 
             this.pluginInterface.UiBuilder.OnOpenConfigUi += (sender, e) => this.ui.ConfigVisible = true;
             this.pluginInterface.UiBuilder.OnBuildUi += this.ui.BuildUi;

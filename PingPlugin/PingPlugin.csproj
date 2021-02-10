@@ -3,8 +3,8 @@
   <PropertyGroup>
     <TargetFramework>net472</TargetFramework>
     <LangVersion>8.0</LangVersion>
-    <AssemblyVersion>1.11.0.0</AssemblyVersion>
-    <FileVersion>1.11.0.0</FileVersion>
+    <AssemblyVersion>1.11.1.0</AssemblyVersion>
+    <FileVersion>1.11.1.0</FileVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)'=='Release'">
@@ -15,24 +15,29 @@
 
   <ItemGroup>
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="CheapLoc">
-      <HintPath>$(AppData)\XIVLauncher\addon\Hooks\CheapLoc.dll</HintPath>
-      <Private>false</Private>
-    </Reference>
     <Reference Include="Dalamud">
-      <HintPath>$(AppData)\XIVLauncher\addon\Hooks\Dalamud.dll</HintPath>
+      <HintPath Condition="Exists('..\Dalamud\bin')">..\Dalamud\bin\Dalamud.dll</HintPath>
+      <HintPath Condition="Exists('..\..\Dalamud\bin')">..\..\Dalamud\bin\Dalamud.dll</HintPath>
       <Private>false</Private>
     </Reference>
     <Reference Include="ImGui.NET">
-      <HintPath>$(AppData)\XIVLauncher\addon\Hooks\ImGui.NET.dll</HintPath>
+      <HintPath Condition="Exists('..\Dalamud\bin')">..\Dalamud\bin\ImGui.NET.dll</HintPath>
+      <HintPath Condition="Exists('..\..\Dalamud\bin')">..\..\Dalamud\bin\ImGui.NET.dll</HintPath>
       <Private>false</Private>
     </Reference>
     <Reference Include="ImGuiScene">
-      <HintPath>$(AppData)\XIVLauncher\addon\Hooks\ImGuiScene.dll</HintPath>
+      <HintPath Condition="Exists('..\Dalamud\bin')">..\Dalamud\bin\ImGuiScene.dll</HintPath>
+      <HintPath Condition="Exists('..\..\Dalamud\bin')">..\..\Dalamud\bin\ImGuiScene.dll</HintPath>
       <Private>false</Private>
     </Reference>
     <Reference Include="Newtonsoft.Json">
-      <HintPath>$(AppData)\XIVLauncher\addon\Hooks\Newtonsoft.Json.dll</HintPath>
+      <HintPath Condition="Exists('..\Dalamud\bin')">..\Dalamud\bin\Newtonsoft.Json.dll</HintPath>
+      <HintPath Condition="Exists('..\..\Dalamud\bin')">..\..\Dalamud\bin\Newtonsoft.Json.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="CheapLoc">
+      <HintPath Condition="Exists('..\Dalamud\bin')">..\Dalamud\bin\CheapLoc.dll</HintPath>
+      <HintPath Condition="Exists('..\..\Dalamud\bin')">..\..\Dalamud\bin\CheapLoc.dll</HintPath>
       <Private>false</Private>
     </Reference>
   </ItemGroup>

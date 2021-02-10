@@ -5,18 +5,21 @@ using ImGuiNET;
 using PingPlugin.PingTrackers;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Numerics;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using Dalamud;
 
 namespace PingPlugin
 {
     public class PingUI : IDisposable
     {
         private readonly UiBuilder uiBuilder;
+        private readonly DalamudPluginInterface pluginInterface;
         private readonly PingConfiguration config;
         private readonly PingTracker pingTracker;
 
@@ -35,11 +38,12 @@ namespace PingPlugin
             set => this.configVisible = value;
         }
 
-        public PingUI(PingTracker pingTracker, UiBuilder uiBuilder, PingConfiguration config)
+        public PingUI(PingTracker pingTracker, DalamudPluginInterface pluginInterface, PingConfiguration config)
         {
             this.config = config;
-            this.uiBuilder = uiBuilder;
+            this.uiBuilder = pluginInterface.UiBuilder;
             this.pingTracker = pingTracker;
+            this.pluginInterface = pluginInterface;
 
             this.uiBuilder.OnBuildFonts += BuildFont;
 #if DEBUG
@@ -299,7 +303,7 @@ namespace PingPlugin
         {
             try
             {
-                var filePath = Path.Combine(Assembly.GetAssembly(typeof(DalamudPluginInterface)).Location, "..", "UIRes", "NotoSansCJKjp-Medium.otf");
+                var filePath = Path.Combine(this.pluginInterface.DalamudAssetDirectory.FullName, "UIRes", "NotoSansCJKjp-Medium.otf");
                 if (!File.Exists(filePath)) throw new FileNotFoundException("Font file not found!");
                 var jpRangeHandle = GCHandle.Alloc(GlyphRangesJapanese.GlyphRanges, GCHandleType.Pinned);
                 this.uiFont = ImGui.GetIO().Fonts.AddFontFromFileTTF(filePath, Math.Max(8, this.config.FontScale), null, jpRangeHandle.AddrOfPinnedObject());
