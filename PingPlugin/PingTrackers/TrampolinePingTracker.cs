@@ -36,7 +36,7 @@ namespace PingPlugin.PingTrackers
                 var lastPing = 0U;
                 var netFuncPtr =
                     this.pluginInterface.TargetModuleScanner.ScanText(
-                        "40 55 57 41 55 41 56 48 8D 6C 24 E8 48 81 EC 18 01 00 00 48 8B 05 ?? ?? ?? ?? 48 33 C4 48 89 45 00 48 8B F9 89 54 24 58 48 8B 49 10");
+                        "40 55 41 54 41 56 48 8D AC 24 ?? ?? ?? ?? B8 10 10 00 00 E8 ?? ?? ?? ?? 48 2B E0");
                 this.netFuncHook = new Hook<NetworkInfoFunction>(netFuncPtr, new NetworkInfoFunction((a1, a2, a3) =>
                 {
                     var nextPing = (uint)Marshal.ReadInt32(a1 + 0x8C4);
