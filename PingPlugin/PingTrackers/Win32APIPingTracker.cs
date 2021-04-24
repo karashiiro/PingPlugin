@@ -31,7 +31,7 @@ namespace PingPlugin.PingTrackers
             var hopCount = 0UL;
             var rtt = 0UL;
             NetUtils.GetRTTAndHopCount((ulong)address, ref hopCount, 51, ref rtt);
-            return (long)hopCount;
+            return (long)rtt;
         }
     }
 }
