@@ -19,7 +19,7 @@ jobs:
     - name: Build Dalamud
       run: |
         cd ..
-        git clone https://github.com/goatcorp/Dalamud.git
+        git clone https://github.com/goatcorp/Dalamud.git --recursive
         cd Dalamud
         dotnet restore
         dotnet build
