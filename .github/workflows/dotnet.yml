@@ -12,15 +12,18 @@ jobs:
     runs-on: windows-latest
 
     steps:
-    - name: Build Dalamud
-      uses: actions/checkout@v2
-      with:
-        repository: goatcorp/Dalamud
-    - uses: actions/checkout@v2
     - name: Setup .NET
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: 5.0.x
+    - name: Build Dalamud
+      run: |
+        cd ..
+        gh clone goatcorp/Dalamud
+        cd Dalamud
+        dotnet restore
+        dotnet build
+    - uses: actions/checkout@v2
     - name: Restore dependencies
       run: dotnet restore
     - name: Build
