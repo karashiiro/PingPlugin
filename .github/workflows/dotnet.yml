@@ -16,13 +16,17 @@ jobs:
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: 5.0.x
+    - name: Setup Nuget
+      uses: nuget/setup-nuget@v1
+      with:
+        nuget-version: latest
     - name: Build Dalamud
       run: |
         cd ..
         git clone https://github.com/goatcorp/Dalamud.git --recursive
         cd Dalamud
-        dotnet nuget restore Dalamud.sln
-        dotnet build
+        nuget restore Dalamud.sln
+        "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\MSBuild\Current\Bin\MSBuild.exe" Dalamud.sln /t:Build /p:Configuration=Release /p:DefineConstants=XL_NOAUTOUPDATE
     - uses: actions/checkout@v2
     - name: Restore dependencies
       run: dotnet restore
