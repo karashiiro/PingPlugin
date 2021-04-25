@@ -26,7 +26,7 @@ jobs:
         git clone https://github.com/goatcorp/Dalamud.git --recursive
         cd Dalamud
         nuget restore Dalamud.sln
-        "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\MSBuild\Current\Bin\MSBuild.exe" Dalamud.sln /t:Build /p:Configuration=Release /p:DefineConstants=XL_NOAUTOUPDATE
+        MSBuild Dalamud.sln /t:Build /p:Configuration=Release /p:DefineConstants=XL_NOAUTOUPDATE
     - uses: actions/checkout@v2
     - name: Restore dependencies
       run: dotnet restore
