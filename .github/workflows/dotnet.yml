@@ -19,7 +19,7 @@ jobs:
     - name: Build Dalamud
       run: |
         cd ..
-        gh clone goatcorp/Dalamud
+        gh repo clone goatcorp/Dalamud
         cd Dalamud
         dotnet restore
         dotnet build
