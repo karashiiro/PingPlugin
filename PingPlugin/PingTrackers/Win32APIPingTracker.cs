@@ -1,8 +1,6 @@
-﻿using System;
-using System.Runtime.InteropServices;
+﻿using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
-using Dalamud.Plugin;
 
 namespace PingPlugin.PingTrackers
 {
@@ -11,7 +9,7 @@ namespace PingPlugin.PingTrackers
         public Win32APIPingTracker(PingConfiguration config) : base(config)
         {
         }
-        
+
         protected override async Task PingLoop(CancellationToken token)
         {
             while (true)
