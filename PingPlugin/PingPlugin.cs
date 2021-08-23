@@ -1,4 +1,6 @@
-﻿using Dalamud.Plugin;
+﻿using Dalamud.Game;
+using Dalamud.Game.Command;
+using Dalamud.Plugin;
 using PingPlugin.Attributes;
 using PingPlugin.PingTrackers;
 using System;
@@ -8,18 +10,25 @@ namespace PingPlugin
 {
     public class PingPlugin : IDalamudPlugin
     {
-        private DalamudPluginInterface pluginInterface;
-        private PluginCommandManager<PingPlugin> commandManager;
-        private PingConfiguration config;
-        
-        private AggregatePingTracker pingTracker;
-        private PingUI ui;
+        private readonly CommandManager commandManager;
+        private readonly DalamudPluginInterface pluginInterface;
+        private readonly PluginCommandManager<PingPlugin> pluginCommandManager;
+        private readonly PingConfiguration config;
+        private readonly SigScanner sigScanner;
+
+        private readonly AggregatePingTracker pingTracker;
+        private readonly PingUI ui;
 
         public string Name => "PingPlugin";
 
-        public void Initialize(DalamudPluginInterface pluginInterface)
+        public PingPlugin(
+            DalamudPluginInterface pluginInterface,
+            CommandManager commandManager,
+            SigScanner sigScanner)
         {
+            this.commandManager = commandManager;
             this.pluginInterface = pluginInterface;
+            this.sigScanner = sigScanner;
 
             this.config = (PingConfiguration)this.pluginInterface.GetPluginConfig() ?? new PingConfiguration();
             this.config.Initialize(this.pluginInterface);
@@ -27,21 +36,21 @@ namespace PingPlugin
             this.pingTracker = new AggregatePingTracker(this.config,
                 new ComponentModelPingTracker(this.config),
                 new Win32APIPingTracker(this.config),
-                new TrampolinePingTracker(this.config, this.pluginInterface));
+                new TrampolinePingTracker(this.config, this.sigScanner));
             this.pingTracker.OnPingUpdated += payload =>
             {
                 dynamic obj = new ExpandoObject();
                 obj.LastRTT = payload.LastRTT;
                 obj.AverageRTT = payload.AverageRTT;
-                this.pluginInterface.SendMessage(obj);
+                //this.pluginInterface.SendMessage(obj);
             };
 
             this.ui = new PingUI(this.pingTracker, this.pluginInterface, this.config);
 
-            this.pluginInterface.UiBuilder.OnOpenConfigUi += (sender, e) => this.ui.ConfigVisible = true;
-            this.pluginInterface.UiBuilder.OnBuildUi += this.ui.BuildUi;
+            this.pluginInterface.UiBuilder.OpenConfigUi += (_, _) => this.ui.ConfigVisible = true;
+            this.pluginInterface.UiBuilder.Draw += this.ui.BuildUi;
 
-            this.commandManager = new PluginCommandManager<PingPlugin>(this, this.pluginInterface);
+            this.pluginCommandManager = new PluginCommandManager<PingPlugin>(this, this.commandManager);
         }
 
         [Command("/ping")]
@@ -75,10 +84,10 @@ namespace PingPlugin
         {
             if (!disposing) return;
 
-            this.commandManager.Dispose();
+            this.pluginCommandManager.Dispose();
 
-            this.pluginInterface.UiBuilder.OnOpenConfigUi -= (sender, e) => this.ui.ConfigVisible = true;
-            this.pluginInterface.UiBuilder.OnBuildUi -= this.ui.BuildUi;
+            this.pluginInterface.UiBuilder.OpenConfigUi -= (_, _) => this.ui.ConfigVisible = true;
+            this.pluginInterface.UiBuilder.Draw -= this.ui.BuildUi;
 
             this.config.Save();
 

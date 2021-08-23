@@ -1,18 +1,16 @@
 ﻿using CheapLoc;
 using Dalamud.Interface;
+using Dalamud.Logging;
 using Dalamud.Plugin;
 using ImGuiNET;
 using PingPlugin.PingTrackers;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Numerics;
-using System.Reflection;
 using System.Runtime.InteropServices;
-using Dalamud;
 
 namespace PingPlugin
 {
@@ -331,6 +329,7 @@ namespace PingPlugin
 
         public void Dispose()
         {
+            GC.SuppressFinalize(this);
             this.uiBuilder.OnBuildFonts -= BuildFont;
             this.uiFont.Destroy();
             this.uiBuilder.RebuildFonts();

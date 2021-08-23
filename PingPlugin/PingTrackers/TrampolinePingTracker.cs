@@ -1,9 +1,10 @@
-﻿using System;
+﻿using Dalamud.Game;
+using Dalamud.Hooking;
+using Dalamud.Logging;
+using System;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
-using Dalamud.Hooking;
-using Dalamud.Plugin;
 
 namespace PingPlugin.PingTrackers
 {
@@ -17,15 +18,15 @@ namespace PingPlugin.PingTrackers
 
         private Hook<NetworkInfoFunction> netFuncHook;
 
-        private readonly DalamudPluginInterface pluginInterface;
+        private readonly SigScanner sigScanner;
 
         private TrampolinePingTracker(PingConfiguration config) : base(config)
         {
         }
 
-        public TrampolinePingTracker(PingConfiguration config, DalamudPluginInterface pluginInterface) : this(config)
+        public TrampolinePingTracker(PingConfiguration config, SigScanner sigScanner) : this(config)
         {
-            this.pluginInterface = pluginInterface;
+            this.sigScanner = sigScanner;
             InstallHook();
         }
 
@@ -35,9 +36,9 @@ namespace PingPlugin.PingTrackers
             {
                 var lastPing = 0U;
                 var netFuncPtr =
-                    this.pluginInterface.TargetModuleScanner.ScanText(
+                    this.sigScanner.ScanText(
                         "40 55 41 54 41 56 48 8D AC 24 ?? ?? ?? ?? B8 10 10 00 00 E8 ?? ?? ?? ?? 48 2B E0");
-                this.netFuncHook = new Hook<NetworkInfoFunction>(netFuncPtr, new NetworkInfoFunction((a1, a2, a3) =>
+                this.netFuncHook = new Hook<NetworkInfoFunction>(netFuncPtr, (a1, a2, a3) =>
                 {
                     var nextPing = (uint)Marshal.ReadInt32(a1 + 0x8C4);
                     // ReSharper disable once InvertIf
@@ -47,7 +48,7 @@ namespace PingPlugin.PingTrackers
                         lastPing = nextPing;
                     }
                     return this.netFuncHook.Original(a1, a2, a3);
-                }));
+                });
                 this.netFuncHook.Enable();
             }
             catch (Exception e)

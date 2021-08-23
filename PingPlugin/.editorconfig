@@ -11,3 +11,6 @@ dotnet_style_qualification_for_method = false:none
 
 # IDE0003: Remove qualification
 dotnet_style_qualification_for_property = false:none
+
+# IDE0060: Remove unused parameter
+dotnet_diagnostic.IDE0060.severity = none

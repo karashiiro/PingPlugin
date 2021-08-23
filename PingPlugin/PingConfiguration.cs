@@ -1,19 +1,19 @@
-﻿using System;
+﻿using CheapLoc;
+using Dalamud.Configuration;
+using Dalamud.Logging;
+using Dalamud.Plugin;
+using Newtonsoft.Json;
+using System;
 using System.IO;
 using System.Numerics;
 using System.Reflection;
-using CheapLoc;
-using Dalamud.Configuration;
-using Dalamud.Plugin;
-using ImGuiNET;
-using Newtonsoft.Json;
 
 namespace PingPlugin
 {
     public class PingConfiguration : IPluginConfiguration
     {
         public int Version { get; set; }
-        
+
         public Vector2 GraphPosition { get; set; }
         public Vector2 MonitorPosition { get; set; }
         public float FontScale { get; set; }
@@ -40,7 +40,7 @@ namespace PingPlugin
         {
             get
             {
-                Enum.TryParse(Lang, out LangKind langKind);
+                _ = Enum.TryParse(Lang, out LangKind langKind);
                 return langKind;
             }
             set

@@ -1,11 +1,11 @@
-﻿using System;
+﻿using Dalamud.Logging;
+using System;
 using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
-using Dalamud.Plugin;
 
 namespace PingPlugin.PingTrackers
 {
@@ -45,7 +45,7 @@ namespace PingPlugin.PingTrackers
             lock (RTTTimes)
             {
                 RTTTimes.Enqueue(nextRTT);
-                
+
                 while (RTTTimes.Count > this.config.PingQueueSize)
                     RTTTimes.TryDequeue(out _);
             }

@@ -1,5 +1,4 @@
 ﻿using Dalamud.Game.Command;
-using Dalamud.Plugin;
 using PingPlugin.Attributes;
 using System;
 using System.Collections.Generic;
@@ -12,13 +11,13 @@ namespace PingPlugin
 {
     public class PluginCommandManager<THost> : IDisposable
     {
-        private readonly DalamudPluginInterface pluginInterface;
+        private readonly CommandManager commandManager;
         private readonly (string, CommandInfo)[] pluginCommands;
         private readonly THost host;
 
-        public PluginCommandManager(THost host, DalamudPluginInterface pluginInterface)
+        public PluginCommandManager(THost host, CommandManager commandManager)
         {
-            this.pluginInterface = pluginInterface;
+            this.commandManager = commandManager;
             this.host = host;
 
             this.pluginCommands = host.GetType().GetMethods()
@@ -38,7 +37,7 @@ namespace PingPlugin
             for (var i = 0; i < this.pluginCommands.Length; i++)
             {
                 var (command, commandInfo) = this.pluginCommands[i];
-                this.pluginInterface.CommandManager.AddHandler(command, commandInfo);
+                this.commandManager.AddHandler(command, commandInfo);
             }
         }
 
@@ -47,7 +46,7 @@ namespace PingPlugin
             for (var i = 0; i < this.pluginCommands.Length; i++)
             {
                 var (command, _) = this.pluginCommands[i];
-                this.pluginInterface.CommandManager.RemoveHandler(command);
+                this.commandManager.RemoveHandler(command);
             }
         }
 
@@ -82,6 +81,7 @@ namespace PingPlugin
 
         public void Dispose()
         {
+            GC.SuppressFinalize(this);
             RemoveCommandHandlers();
         }
     }
