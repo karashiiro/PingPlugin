@@ -4,3 +4,4 @@ description: A ping display plugin for Dalamud.
 repo_url: https://github.com/karashiiro/PingPlugin
 tags: [ "ping", "monitor", "utility", "tool" ]
 icon_url: https://raw.githubusercontent.com/karashiiro/PingPlugin/main/Assets/icon.png
+image_urls: [ "https://raw.githubusercontent.com/karashiiro/PingPlugin/main/Assets/preview_1.png" ]
