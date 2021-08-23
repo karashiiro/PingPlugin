@@ -6,6 +6,7 @@
       OutputPath="$(OutputPath)"
       AssemblyName="$(AssemblyName)"
       MakeZip="true"
+      HandleImages="true"
       ManifestType="yaml"/>
   </Target>
 </Project>

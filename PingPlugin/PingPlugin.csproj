@@ -17,6 +17,15 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Include="..\Assets\icon.png" Link="icon.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\Assets\image1.png" Link="image1.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
     <Reference Include="Dalamud">
       <HintPath Condition="Exists('..\..\Dalamud\bin\Debug')">..\..\Dalamud\bin\Debug\Dalamud.dll</HintPath>
       <Private>false</Private>
@@ -53,7 +62,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="DalamudPackager" Version="2.0.0" />
+    <PackageReference Include="DalamudPackager" Version="2.1.0" />
   </ItemGroup>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
