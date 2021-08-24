@@ -43,7 +43,7 @@ namespace PingPlugin
             this.pingTracker = pingTracker;
             this.pluginInterface = pluginInterface;
 
-            this.uiBuilder.OnBuildFonts += BuildFont;
+            this.uiBuilder.BuildFonts += BuildFont;
 #if DEBUG
             ConfigVisible = true;
 #endif
@@ -330,7 +330,7 @@ namespace PingPlugin
         public void Dispose()
         {
             GC.SuppressFinalize(this);
-            this.uiBuilder.OnBuildFonts -= BuildFont;
+            this.uiBuilder.BuildFonts -= BuildFont;
             this.uiFont.Destroy();
             this.uiBuilder.RebuildFonts();
         }

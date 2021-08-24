@@ -1,5 +1,6 @@
 ﻿using Dalamud.Game;
 using Dalamud.Game.Command;
+using Dalamud.IoC;
 using Dalamud.Plugin;
 using PingPlugin.Attributes;
 using PingPlugin.PingTrackers;
@@ -10,33 +11,35 @@ namespace PingPlugin
 {
     public class PingPlugin : IDalamudPlugin
     {
-        private readonly CommandManager commandManager;
-        private readonly DalamudPluginInterface pluginInterface;
+        [PluginService]
+        [RequiredVersion("1.0")]
+        private DalamudPluginInterface PluginInterface { get; init; }
+
+        [PluginService]
+        [RequiredVersion("1.0")]
+        private SigScanner SigScanner { get; init; }
+
+        [PluginService]
+        [RequiredVersion("1.0")]
+        private CommandManager Commands { get; init; }
+
         private readonly PluginCommandManager<PingPlugin> pluginCommandManager;
         private readonly PingConfiguration config;
-        private readonly SigScanner sigScanner;
 
         private readonly AggregatePingTracker pingTracker;
         private readonly PingUI ui;
 
         public string Name => "PingPlugin";
 
-        public PingPlugin(
-            DalamudPluginInterface pluginInterface,
-            CommandManager commandManager,
-            SigScanner sigScanner)
+        public PingPlugin()
         {
-            this.commandManager = commandManager;
-            this.pluginInterface = pluginInterface;
-            this.sigScanner = sigScanner;
-
-            this.config = (PingConfiguration)this.pluginInterface.GetPluginConfig() ?? new PingConfiguration();
-            this.config.Initialize(this.pluginInterface);
+            this.config = (PingConfiguration)PluginInterface.GetPluginConfig() ?? new PingConfiguration();
+            this.config.Initialize(PluginInterface);
 
             this.pingTracker = new AggregatePingTracker(this.config,
                 new ComponentModelPingTracker(this.config),
                 new Win32APIPingTracker(this.config),
-                new TrampolinePingTracker(this.config, this.sigScanner));
+                new TrampolinePingTracker(this.config, SigScanner));
             this.pingTracker.OnPingUpdated += payload =>
             {
                 dynamic obj = new ExpandoObject();
@@ -45,12 +48,12 @@ namespace PingPlugin
                 //this.pluginInterface.SendMessage(obj);
             };
 
-            this.ui = new PingUI(this.pingTracker, this.pluginInterface, this.config);
+            this.ui = new PingUI(this.pingTracker, PluginInterface, this.config);
 
-            this.pluginInterface.UiBuilder.OpenConfigUi += (_, _) => this.ui.ConfigVisible = true;
-            this.pluginInterface.UiBuilder.Draw += this.ui.BuildUi;
+            PluginInterface.UiBuilder.OpenConfigUi += OpenConfigUi;
+            PluginInterface.UiBuilder.Draw += this.ui.BuildUi;
 
-            this.pluginCommandManager = new PluginCommandManager<PingPlugin>(this, this.commandManager);
+            this.pluginCommandManager = new PluginCommandManager<PingPlugin>(this, Commands);
         }
 
         [Command("/ping")]
@@ -79,6 +82,11 @@ namespace PingPlugin
             this.ui.ConfigVisible = true;
         }
 
+        private void OpenConfigUi()
+        {
+            this.ui.ConfigVisible = true;
+        }
+
         #region IDisposable Support
         protected virtual void Dispose(bool disposing)
         {
@@ -86,13 +94,12 @@ namespace PingPlugin
 
             this.pluginCommandManager.Dispose();
 
-            this.pluginInterface.UiBuilder.OpenConfigUi -= (_, _) => this.ui.ConfigVisible = true;
-            this.pluginInterface.UiBuilder.Draw -= this.ui.BuildUi;
+            PluginInterface.UiBuilder.OpenConfigUi -= OpenConfigUi;
+            PluginInterface.UiBuilder.Draw -= this.ui.BuildUi;
 
             this.config.Save();
 
             this.pingTracker.Dispose();
-            this.pluginInterface.Dispose();
         }
 
         public void Dispose()
