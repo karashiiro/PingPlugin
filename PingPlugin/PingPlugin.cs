@@ -1,7 +1,9 @@
 ﻿using Dalamud.Game;
 using Dalamud.Game.Command;
 using Dalamud.IoC;
+using Dalamud.Logging;
 using Dalamud.Plugin;
+using Dalamud.Plugin.Ipc;
 using PingPlugin.Attributes;
 using PingPlugin.PingTrackers;
 using System;
@@ -29,6 +31,8 @@ namespace PingPlugin
         private readonly AggregatePingTracker pingTracker;
         private readonly PingUI ui;
 
+        internal ICallGateProvider<object, object> IpcProvider;
+
         public string Name => "PingPlugin";
 
         public PingPlugin()
@@ -40,13 +44,8 @@ namespace PingPlugin
                 new ComponentModelPingTracker(this.config),
                 new Win32APIPingTracker(this.config),
                 new TrampolinePingTracker(this.config, SigScanner));
-            this.pingTracker.OnPingUpdated += payload =>
-            {
-                dynamic obj = new ExpandoObject();
-                obj.LastRTT = payload.LastRTT;
-                obj.AverageRTT = payload.AverageRTT;
-                //this.pluginInterface.SendMessage(obj);
-            };
+
+            InitIpc();
 
             this.ui = new PingUI(this.pingTracker, PluginInterface, this.config);
 
@@ -54,6 +53,25 @@ namespace PingPlugin
             PluginInterface.UiBuilder.Draw += this.ui.BuildUi;
 
             this.pluginCommandManager = new PluginCommandManager<PingPlugin>(this, Commands);
+        }
+
+        private void InitIpc()
+        {
+            try
+            {
+                IpcProvider = PluginInterface.GetIpcProvider<object, object>("PingPlugin.Ipc");
+                this.pingTracker.OnPingUpdated += payload =>
+                {
+                    dynamic obj = new ExpandoObject();
+                    obj.LastRTT = payload.LastRTT;
+                    obj.AverageRTT = payload.AverageRTT;
+                    IpcProvider.SendMessage(obj);
+                };
+            }
+            catch (Exception e)
+            {
+                PluginLog.Error($"Error registering IPC provider:\n{e}");
+            }
         }
 
         [Command("/ping")]
