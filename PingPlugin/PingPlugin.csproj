@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>net5.0-windows</TargetFramework>
     <LangVersion>9.0</LangVersion>
-    <Version>1.13.0.0</Version>
+    <Version>1.14.0.0</Version>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)'=='Release'">
@@ -16,6 +16,10 @@
     <ProduceReferenceAssembly>false</ProduceReferenceAssembly>
     <PlatformTarget>x64</PlatformTarget>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="PingUI.cs~RF60cb0e7.TMP" />
+  </ItemGroup>
 
   <ItemGroup>
     <Content Include="..\Assets\icon.png" Link="images\icon.png">

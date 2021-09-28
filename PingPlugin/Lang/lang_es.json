@@ -51,6 +51,18 @@
     "message": "Congele los windows de plugin",
     "description": "PingPlugin.Configuration"
   },
+  "MicroDisplay": {
+    "message": "Visualizador minúsculo",
+    "description": "PingPlugin.Configuration"
+  },
+  "MicroShowAveragePing": {
+    "message": "Mostrar ping promedio",
+    "description": "PingPlugin.Configuration"
+  },
+  "MicroShowLastPing": {
+    "message": "Mostrar ping anterior",
+    "description": "PingPlugin.Configuration"
+  },
   "MinimalDisplay": {
     "message": "Visualizador minimo",
     "description": "PingPlugin.Configuration"

@@ -27,6 +27,7 @@ namespace PingPlugin
 
         private bool fontLoaded;
         private ImFontPtr uiFont;
+        private ImFontPtr microFont;
 
         public bool CutsceneActive { get; set; }
 
@@ -89,19 +90,55 @@ namespace PingPlugin
                 this.config.Save();
             }
 
-            var minimalDisplay = this.config.MinimalDisplay;
-            if (ImGui.Checkbox(Loc.Localize("MinimalDisplay", string.Empty), ref minimalDisplay))
+            ImGui.Spacing();
+
+            var displayMode = this.config.DisplayMode;
+            var displayMicro = displayMode == DisplayMode.Micro;
+            if (ImGui.Checkbox(Loc.Localize("MicroDisplay", string.Empty), ref displayMicro))
             {
-                this.config.MinimalDisplay = minimalDisplay;
+                this.config.DisplayMode = displayMicro ? DisplayMode.Micro : DisplayMode.Default;
                 this.config.Save();
             }
 
-            var hideErrors = this.config.HideErrors;
-            if (ImGui.Checkbox(Loc.Localize("HideErrors", string.Empty), ref hideErrors))
+            ImGui.Indent();
+            switch (this.config.DisplayMode)
             {
-                this.config.HideErrors = hideErrors;
-                this.config.Save();
+                case DisplayMode.Default:
+                    var minimalDisplay = this.config.MinimalDisplay;
+                    if (ImGui.Checkbox(Loc.Localize("MinimalDisplay", string.Empty), ref minimalDisplay))
+                    {
+                        this.config.MinimalDisplay = minimalDisplay;
+                        this.config.Save();
+                    }
+
+                    var hideErrors = this.config.HideErrors;
+                    if (ImGui.Checkbox(Loc.Localize("HideErrors", string.Empty), ref hideErrors))
+                    {
+                        this.config.HideErrors = hideErrors;
+                        this.config.Save();
+                    }
+                    break;
+                case DisplayMode.Micro:
+                    var microDisplayLast = this.config.MicroDisplayLast;
+                    if (ImGui.Checkbox(Loc.Localize("MicroShowLastPing", string.Empty), ref microDisplayLast))
+                    {
+                        this.config.MicroDisplayLast = microDisplayLast;
+                        this.config.Save();
+                    }
+
+                    var microDisplayAverage = this.config.MicroDisplayAverage;
+                    if (ImGui.Checkbox(Loc.Localize("MicroShowAveragePing", string.Empty), ref microDisplayAverage))
+                    {
+                        this.config.MicroDisplayAverage = microDisplayAverage;
+                        this.config.Save();
+                    }
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
+            ImGui.Unindent();
+
+            ImGui.Spacing();
 
             var hideAveragePing = this.config.HideAveragePing;
             if (ImGui.Checkbox(Loc.Localize("HideAveragePing", string.Empty), ref hideAveragePing))
@@ -199,6 +236,25 @@ namespace PingPlugin
                 this.resettingMonitorPos = false;
             }
 
+            switch (this.config.DisplayMode)
+            {
+                case DisplayMode.Default:
+                    DrawFullMonitor();
+                    break;
+                case DisplayMode.Micro:
+                    DrawMicroMonitor();
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+
+            ImGui.End();
+
+            ImGui.PopStyleVar();
+        }
+
+        private void DrawFullMonitor()
+        {
             string formatString;
             var formatParameters = new List<object>();
             if (this.config.MinimalDisplay)
@@ -220,9 +276,31 @@ namespace PingPlugin
 
             if (!this.config.HideErrors && this.pingTracker.LastError != WinError.NO_ERROR && this.pingTracker.LastError != WinError.ERROR_INVALID_NETNAME)
                 ImGui.TextColored(this.config.MonitorErrorFontColor, string.Format(Loc.Localize("UIError", string.Empty), (Enum.IsDefined(typeof(WinError), this.pingTracker.LastError) ? this.pingTracker.LastError.ToString() : ((int)this.pingTracker.LastError).ToString())));
-            ImGui.End();
+        }
 
-            ImGui.PopStyleVar();
+        private void DrawMicroMonitor()
+        {
+            ImGui.PushFont(this.microFont);
+
+            var text = "";
+
+            if (this.config.MicroDisplayLast)
+            {
+                text = $"{this.pingTracker.LastRTT}ms";
+                if (this.config.MicroDisplayAverage)
+                {
+                    text += "/";
+                }
+            }
+
+            if (this.config.MicroDisplayAverage)
+            {
+                text += $"{Math.Ceiling(this.pingTracker.AverageRTT)}ms";
+            }
+
+            ImGui.TextColored(this.config.MonitorFontColor, text);
+
+            ImGui.PopFont();
         }
 
         private void DrawGraph()
@@ -303,9 +381,17 @@ namespace PingPlugin
             {
                 var filePath = Path.Combine(this.pluginInterface.DalamudAssetDirectory.FullName, "UIRes", "NotoSansCJKjp-Medium.otf");
                 if (!File.Exists(filePath)) throw new FileNotFoundException("Font file not found!");
-                var jpRangeHandle = GCHandle.Alloc(GlyphRangesJapanese.GlyphRanges, GCHandleType.Pinned);
-                this.uiFont = ImGui.GetIO().Fonts.AddFontFromFileTTF(filePath, Math.Max(8, this.config.FontScale), null, jpRangeHandle.AddrOfPinnedObject());
-                jpRangeHandle.Free();
+                
+                var fontPx = Math.Max(8, this.config.FontScale);
+                var fontPxMicro = (float)Math.Floor(fontPx * 1.5);
+
+                {
+                    var jpRangeHandle = GCHandle.Alloc(GlyphRangesJapanese.GlyphRanges, GCHandleType.Pinned);
+                    this.uiFont = ImGui.GetIO().Fonts.AddFontFromFileTTF(filePath, fontPx, null, jpRangeHandle.AddrOfPinnedObject());
+                    jpRangeHandle.Free();
+                }
+                
+                this.microFont = ImGui.GetIO().Fonts.AddFontFromFileTTF(filePath, fontPxMicro, null);
             }
             catch (Exception e)
             {
@@ -332,6 +418,7 @@ namespace PingPlugin
             GC.SuppressFinalize(this);
             this.uiBuilder.BuildFonts -= BuildFont;
             this.uiFont.Destroy();
+            this.microFont.Destroy();
             this.uiBuilder.RebuildFonts();
         }
     }

@@ -51,6 +51,18 @@
     "message": "锁定悬浮窗",
     "description": "PingPlugin.Configuration"
   },
+  "MicroDisplay": {
+    "message": "微型显示",
+    "description": "PingPlugin.Configuration"
+  },
+  "MicroShowAveragePing": {
+    "message": "显示平均延迟",
+    "description": "PingPlugin.Configuration"
+  },
+  "MicroShowLastPing": {
+    "message": "显示以前的延迟",
+    "description": "PingPlugin.Configuration"
+  },
   "MinimalDisplay": {
     "message": "最小化显示",
     "description": "PingPlugin.Configuration"

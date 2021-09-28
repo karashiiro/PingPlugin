@@ -51,6 +51,18 @@
     "message": "Verrouiller la position de la fenêtre",
     "description": "PingPlugin.Configuration"
   },
+  "MicroDisplay": {
+    "message": "Affichage micro",
+    "description": "PingPlugin.Configuration"
+  },
+  "MicroShowAveragePing": {
+    "message": "Afficher le ping moyen",
+    "description": "PingPlugin.Configuration"
+  },
+  "MicroShowLastPing": {
+    "message": "Afficher le ping précédent",
+    "description": "PingPlugin.Configuration"
+  },
   "MinimalDisplay": {
     "message": "Affichage réduit",
     "description": "PingPlugin.Configuration"

@@ -51,6 +51,18 @@
     "message": "プラグインウインドウを閉ざします",
     "description": "PingPlugin.Configuration"
   },
+  "MicroDisplay": {
+    "message": "マイクロディスプレイ",
+    "description": "PingPlugin.Configuration"
+  },
+  "MicroShowAveragePing": {
+    "message": "平均待ち時間を表示する",
+    "description": "PingPlugin.Configuration"
+  },
+  "MicroShowLastPing": {
+    "message": "以前のレイテンシーを表示する",
+    "description": "PingPlugin.Configuration"
+  },
   "MinimalDisplay": {
     "message": "最小ディスプレイ",
     "description": "PingPlugin.Configuration"

@@ -51,6 +51,18 @@
     "message": "Lock plugin windows",
     "description": "PingPlugin.Configuration"
   },
+  "MicroDisplay": {
+    "message": "Micro display",
+    "description": "PingPlugin.Configuration"
+  },
+  "MicroShowAveragePing": {
+    "message": "Show average ping",
+    "description": "PingPlugin.Configuration"
+  },
+  "MicroShowLastPing": {
+    "message": "Show last ping",
+    "description": "PingPlugin.Configuration"
+  },
   "MinimalDisplay": {
     "message": "Minimal display",
     "description": "PingPlugin.Configuration"

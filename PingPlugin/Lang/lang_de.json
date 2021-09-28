@@ -51,6 +51,18 @@
     "message": "Pluginfenster sperren",
     "description": "PingPlugin.Configuration"
   },
+  "MicroDisplay": {
+    "message": "Mikroanzeige",
+    "description": "PingPlugin.Configuration"
+  },
+  "MicroShowAveragePing": {
+    "message": "Durchschnittlichen Ping anzeigen",
+    "description": "PingPlugin.Configuration"
+  },
+  "MicroShowLastPing": {
+    "message": "Vorherigen Ping anzeigen",
+    "description": "PingPlugin.Configuration"
+  },
   "MinimalDisplay": {
     "message": "Kleinere Anzeige",
     "description": "PingPlugin.Configuration"
