@@ -382,7 +382,7 @@ namespace PingPlugin
                 var filePath = Path.Combine(this.pluginInterface.DalamudAssetDirectory.FullName, "UIRes", "NotoSansCJKjp-Medium.otf");
                 if (!File.Exists(filePath)) throw new FileNotFoundException("Font file not found!");
                 
-                var fontPx = Math.Max(8, this.config.FontScale);
+                var fontPx = Math.Min(Math.Max(8, this.config.FontScale), 128);
                 var fontPxMicro = (float)Math.Floor(fontPx * 1.5);
 
                 {
