@@ -29,7 +29,7 @@ namespace PingPlugin.PingTrackers
             this.tokenSource = new CancellationTokenSource();
             this.config = config;
 
-            this.pid = Process.GetProcessesByName("ffxiv_dx11")[0].Id;
+            this.pid = Process.GetCurrentProcess();
 
             UpdateSeAddress();
 
