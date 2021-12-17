@@ -29,7 +29,7 @@ namespace PingPlugin.PingTrackers
             this.tokenSource = new CancellationTokenSource();
             this.config = config;
 
-            this.pid = Process.GetCurrentProcess();
+            this.pid = Process.GetCurrentProcess().Id;
 
             UpdateSeAddress();
 
