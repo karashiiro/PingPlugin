@@ -57,10 +57,10 @@ namespace PingPlugin.PingTrackers
         {
             var bestPing = 0UL;
             PingTracker bestTracker = null;
-            TrampolinePingTracker tpt = null;
+            MemoryPingTracker tpt = null;
             foreach (var tracker in this.pingTrackers)
             {
-                if (tracker is TrampolinePingTracker _tpt)
+                if (tracker is MemoryPingTracker _tpt)
                 {
                     tpt = _tpt;
                     continue;

@@ -43,7 +43,7 @@ namespace PingPlugin
             this.pingTracker = new AggregatePingTracker(this.config,
                 new ComponentModelPingTracker(this.config),
                 new Win32APIPingTracker(this.config),
-                new TrampolinePingTracker(this.config, SigScanner));
+                new MemoryPingTracker(this.config, SigScanner));
 
             InitIpc();
 
