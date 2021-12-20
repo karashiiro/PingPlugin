@@ -47,7 +47,6 @@ namespace PingPlugin.PingTrackers
                     if (lastPing != nextPing)
                     {
                         NextRTTCalculation(nextPing / 2);
-                        PluginLog.Log((nextPing / 2).ToString());
                         lastPing = nextPing;
                     }
                     return this.netFuncHook.Original(a1, a2, a3);
