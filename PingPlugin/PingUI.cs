@@ -61,12 +61,11 @@ namespace PingPlugin
                 return;
             }
 
-            if (this.uiFont.IsLoaded()) ImGui.PushFont(this.uiFont);
-
             if (ConfigVisible) DrawConfigUi();
+
+            if (this.uiFont.IsLoaded()) ImGui.PushFont(this.uiFont);
             if (this.config.GraphIsVisible) DrawGraph();
             if (this.config.MonitorIsVisible) DrawMonitor();
-
             if (this.uiFont.IsLoaded()) ImGui.PopFont();
         }
 
