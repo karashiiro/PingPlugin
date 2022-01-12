@@ -41,8 +41,8 @@ namespace PingPlugin
             this.config.Initialize(PluginInterface);
 
             this.pingTracker = new AggregatePingTracker(this.config,
-                /*new ComponentModelPingTracker(this.config),
-                new Win32APIPingTracker(this.config),*/
+                new ComponentModelPingTracker(this.config),
+                new Win32APIPingTracker(this.config),
                 new MemoryPingTracker(this.config, SigScanner));
 
             InitIpc();
