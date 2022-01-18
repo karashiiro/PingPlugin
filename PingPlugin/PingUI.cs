@@ -27,7 +27,6 @@ namespace PingPlugin
 
         private bool fontLoaded;
         private ImFontPtr uiFont;
-        private ImFontPtr microFont;
 
         public bool CutsceneActive { get; set; }
 
@@ -279,8 +278,6 @@ namespace PingPlugin
 
         private void DrawMicroMonitor()
         {
-            ImGui.PushFont(this.microFont);
-
             var text = "";
 
             if (this.config.MicroDisplayLast)
@@ -298,8 +295,6 @@ namespace PingPlugin
             }
 
             ImGui.TextColored(this.config.MonitorFontColor, text);
-
-            ImGui.PopFont();
         }
 
         private void DrawGraph()
@@ -382,15 +377,12 @@ namespace PingPlugin
                 if (!File.Exists(filePath)) throw new FileNotFoundException("Font file not found!");
                 
                 var fontPx = Math.Min(Math.Max(8, this.config.FontScale), 128);
-                var fontPxMicro = (float)Math.Floor(fontPx * 1.5);
 
                 {
                     var jpRangeHandle = GCHandle.Alloc(GlyphRangesJapanese.GlyphRanges, GCHandleType.Pinned);
                     this.uiFont = ImGui.GetIO().Fonts.AddFontFromFileTTF(filePath, fontPx, null, jpRangeHandle.AddrOfPinnedObject());
                     jpRangeHandle.Free();
                 }
-                
-                this.microFont = ImGui.GetIO().Fonts.AddFontFromFileTTF(filePath, fontPxMicro, null);
             }
             catch (Exception e)
             {
@@ -417,7 +409,6 @@ namespace PingPlugin
             GC.SuppressFinalize(this);
             this.uiBuilder.BuildFonts -= BuildFont;
             this.uiFont.Destroy();
-            this.microFont.Destroy();
             this.uiBuilder.RebuildFonts();
         }
     }
