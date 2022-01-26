@@ -4,6 +4,7 @@ using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.Linq;
 using System.Net;
+using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -83,7 +84,18 @@ namespace PingPlugin.PingTrackers
 
         private void UpdateSeAddress()
         {
-            var address = NetUtils.GetXIVServerAddress(this.pid);
+            IPAddress address;
+            try
+            {
+                address = NetUtils.GetXIVServerAddress(this.pid);
+            }
+            catch (SEHException e)
+            {
+                PluginLog.LogDebug(e, $"Structured exception handling (SEH) error occurred in function ${nameof(NetUtils.GetXIVServerAddress)}.\n" +
+                                        "This is known to occur occasionally in WINE - only report it if you are experiencing memory leaks or crashes.");
+                return;
+            }
+
             SeAddressRaw = BitConverter.ToUInt32(address.GetAddressBytes(), 0);
             PluginLog.LogDebug("Got FFXIV server address {Address}", SeAddressRaw);
             SeAddress = address;
