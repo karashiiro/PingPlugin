@@ -93,7 +93,11 @@ namespace PingPlugin.PingTrackers
 
         private void UpdateSeAddress()
         {
-            if (!this.clientState.IsLoggedIn) return;
+            if (!this.clientState.IsLoggedIn)
+            {
+                SeAddress = null;
+                return;
+            }
 
             var dcId = this.clientState.LocalPlayer!.CurrentWorld.GameData.DataCenter.Row;
             if (dcId == LastDcId) return;

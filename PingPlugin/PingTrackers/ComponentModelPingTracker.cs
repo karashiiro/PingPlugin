@@ -20,10 +20,15 @@ namespace PingPlugin.PingTrackers
             {
                 if (token.IsCancellationRequested)
                     token.ThrowIfCancellationRequested();
-                var pingReply = await this.ping.SendPingAsync(SeAddress);
-                if (pingReply.Status == IPStatus.Success)
-                    NextRTTCalculation(pingReply.RoundtripTime);
-                SendMessage();
+
+                if (SeAddress != null)
+                {
+                    var pingReply = await this.ping.SendPingAsync(SeAddress);
+                    if (pingReply.Status == IPStatus.Success)
+                        NextRTTCalculation(pingReply.RoundtripTime);
+                    SendMessage();
+                }
+
                 await Task.Delay(3000, token);
             }
         }
