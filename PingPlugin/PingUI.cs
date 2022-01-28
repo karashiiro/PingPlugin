@@ -271,9 +271,6 @@ namespace PingPlugin
                 formatParameters.Add(Math.Round(this.pingTracker.AverageRTT, 2));
 
             ImGui.TextColored(this.config.MonitorFontColor, string.Format(CultureInfo.CurrentUICulture, formatString, formatParameters.ToArray()));
-
-            if (!this.config.HideErrors && this.pingTracker.LastError != WinError.NO_ERROR && this.pingTracker.LastError != WinError.ERROR_INVALID_NETNAME)
-                ImGui.TextColored(this.config.MonitorErrorFontColor, string.Format(Loc.Localize("UIError", string.Empty), (Enum.IsDefined(typeof(WinError), this.pingTracker.LastError) ? this.pingTracker.LastError.ToString() : ((int)this.pingTracker.LastError).ToString())));
         }
 
         private void DrawMicroMonitor()

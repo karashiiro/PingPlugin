@@ -1,4 +1,4 @@
-﻿using Dalamud.Game;
+﻿using Dalamud.Game.ClientState;
 using Dalamud.Game.Command;
 using Dalamud.IoC;
 using Dalamud.Logging;
@@ -19,16 +19,16 @@ namespace PingPlugin
 
         [PluginService]
         [RequiredVersion("1.0")]
-        private SigScanner SigScanner { get; init; }
+        private CommandManager Commands { get; init; }
 
         [PluginService]
         [RequiredVersion("1.0")]
-        private CommandManager Commands { get; init; }
+        private ClientState ClientState { get; init; }
 
         private readonly PluginCommandManager<PingPlugin> pluginCommandManager;
         private readonly PingConfiguration config;
 
-        private readonly AggregatePingTracker pingTracker;
+        private readonly PingTracker pingTracker;
         private readonly PingUI ui;
 
         internal ICallGateProvider<object, object> IpcProvider;
@@ -40,10 +40,7 @@ namespace PingPlugin
             this.config = (PingConfiguration)PluginInterface.GetPluginConfig() ?? new PingConfiguration();
             this.config.Initialize(PluginInterface);
 
-            this.pingTracker = new AggregatePingTracker(this.config,
-                new ComponentModelPingTracker(this.config),
-                new Win32APIPingTracker(this.config),
-                new MemoryPingTracker(this.config, SigScanner));
+            this.pingTracker = new ComponentModelPingTracker(this.config, ClientState);
 
             InitIpc();
 

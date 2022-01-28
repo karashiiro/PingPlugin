@@ -1,10 +1,9 @@
-﻿using Dalamud.Logging;
+﻿using Dalamud.Game.ClientState;
+using Dalamud.Logging;
 using System;
 using System.Collections.Concurrent;
-using System.Diagnostics;
 using System.Linq;
 using System.Net;
-using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -12,29 +11,29 @@ namespace PingPlugin.PingTrackers
 {
     public abstract class PingTracker : IDisposable
     {
-        private readonly int pid;
-
         private readonly CancellationTokenSource tokenSource;
+        private readonly ClientState clientState;
         protected readonly PingConfiguration config;
+
+        private uint LastDcId;
 
         public bool Reset { get; set; }
         public double AverageRTT { get; private set; }
         public IPAddress SeAddress { get; protected set; }
-        public long SeAddressRaw { get; protected set; }
-        public WinError LastError { get; protected set; }
         public ulong LastRTT { get; protected set; }
         public ConcurrentQueue<float> RTTTimes { get; private set; }
 
-        protected PingTracker(PingConfiguration config)
+        public delegate void PingUpdatedDelegate(PingStatsPayload payload);
+        public event PingUpdatedDelegate OnPingUpdated;
+
+        protected PingTracker(PingConfiguration config, ClientState clientState)
         {
             this.tokenSource = new CancellationTokenSource();
             this.config = config;
-
-            this.pid = Process.GetCurrentProcess().Id;
+            this.clientState = clientState;
 
             UpdateSeAddress();
 
-            LastError = WinError.NO_ERROR;
             RTTTimes = new ConcurrentQueue<float>();
 
             Task.Run(() => AddressUpdateLoop(this.tokenSource.Token));
@@ -82,23 +81,64 @@ namespace PingPlugin.PingTrackers
             }
         }
 
+        protected void SendMessage()
+        {
+            var del = OnPingUpdated;
+            del?.Invoke(new PingStatsPayload
+            {
+                AverageRTT = Convert.ToUInt64(AverageRTT),
+                LastRTT = LastRTT,
+            });
+        }
+
         private void UpdateSeAddress()
         {
-            IPAddress address;
-            try
-            {
-                address = NetUtils.GetXIVServerAddress(this.pid);
-            }
-            catch (SEHException e)
-            {
-                PluginLog.LogDebug(e, $"Structured exception handling (SEH) error occurred in function ${nameof(NetUtils.GetXIVServerAddress)}.\n" +
-                                        "This is known to occur occasionally in WINE - only report it if you are experiencing memory leaks or crashes.");
-                return;
-            }
+            if (!this.clientState.IsLoggedIn) return;
 
-            SeAddressRaw = BitConverter.ToUInt32(address.GetAddressBytes(), 0);
-            PluginLog.LogDebug("Got FFXIV server address {Address}", SeAddressRaw);
-            SeAddress = address;
+            var dcId = this.clientState.LocalPlayer!.CurrentWorld.GameData.DataCenter.Row;
+            if (dcId == LastDcId) return;
+            LastDcId = dcId;
+
+            /*
+             * We might be able to read these from the game itself, but
+             * I'm tired of maintaining struct offsets that change every
+             * patch. If you know of a function that simply returns the
+             * currently-connected IP address, feel free to PR!
+             *
+             * Historical notes:
+             * Previously, I used the Windows TCP connection table to get
+             * these, but for some reason this doesn't work in Wine or
+             * CrossOver, or with gaming VPNs since these manipulate TCP
+             * connections. To get around this, I used a game function that
+             * sets the Sending/Receiving data in-game to get a struct that
+             * had a value of roughly (2 x ping RTT), but this was annoying
+             * to maintain and was also horribly inaccurate.
+             */
+            SeAddress = dcId switch
+            {
+                // I just copied these from https://is.xivup.com/adv
+                1 => IPAddress.Parse("124.150.157.23"), // Elemental
+                2 => IPAddress.Parse("124.150.157.36"), // Gaia
+                3 => IPAddress.Parse("124.150.157.49"), // Mana
+                4 => IPAddress.Parse("204.2.229.84"),   // Aether
+                5 => IPAddress.Parse("204.2.229.95"),   // Primal
+                6 => IPAddress.Parse("195.82.50.46"),   // Chaos
+                7 => IPAddress.Parse("195.82.50.55"),   // Light
+                8 => IPAddress.Parse("204.2.229.106"),  // Crystal
+                9 => IPAddress.Parse("153.254.80.75"),  // Materia
+
+                // If you have CN/KR DC IDs and IP addresses, feel free to PR them.
+                // World server IP address are fine too, since worlds are hosted
+                // alongside the lobby servers.
+
+                _ => null,
+            };
+
+            if (SeAddress != null)
+            {
+                var dcName = this.clientState.LocalPlayer!.CurrentWorld.GameData.DataCenter.Value?.Name.RawString;
+                PluginLog.Log($"Data center changed to {dcName}, using FFXIV server address {SeAddress}");
+            }
         }
 
         #region IDisposable Support

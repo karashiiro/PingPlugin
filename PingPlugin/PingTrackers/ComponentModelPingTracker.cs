@@ -1,4 +1,5 @@
-﻿using System.Net.NetworkInformation;
+﻿using Dalamud.Game.ClientState;
+using System.Net.NetworkInformation;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -8,7 +9,7 @@ namespace PingPlugin.PingTrackers
     {
         private readonly Ping ping;
 
-        public ComponentModelPingTracker(PingConfiguration config) : base(config)
+        public ComponentModelPingTracker(PingConfiguration config, ClientState clientState) : base(config, clientState)
         {
             this.ping = new Ping();
         }
@@ -22,6 +23,7 @@ namespace PingPlugin.PingTrackers
                 var pingReply = await this.ping.SendPingAsync(SeAddress);
                 if (pingReply.Status == IPStatus.Success)
                     NextRTTCalculation(pingReply.RoundtripTime);
+                SendMessage();
                 await Task.Delay(3000, token);
             }
         }
