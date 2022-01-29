@@ -95,7 +95,7 @@ namespace PingPlugin.PingTrackers
         {
             if (!this.clientState.IsLoggedIn)
             {
-                SeAddress = null;
+                SeAddress = IPAddress.Loopback;
                 return;
             }
 
@@ -135,10 +135,10 @@ namespace PingPlugin.PingTrackers
                 // World server IP address are fine too, since worlds are hosted
                 // alongside the lobby servers.
 
-                _ => null,
+                _ => IPAddress.Loopback,
             };
 
-            if (SeAddress != null)
+            if (!Equals(SeAddress, IPAddress.Loopback))
             {
                 var dcName = this.clientState.LocalPlayer!.CurrentWorld.GameData.DataCenter.Value?.Name.RawString;
                 PluginLog.Log($"Data center changed to {dcName}, using FFXIV server address {SeAddress}");
