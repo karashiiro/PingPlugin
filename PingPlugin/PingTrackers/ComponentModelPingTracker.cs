@@ -16,11 +16,8 @@ namespace PingPlugin.PingTrackers
 
         protected override async Task PingLoop(CancellationToken token)
         {
-            while (true)
+            while (!token.IsCancellationRequested)
             {
-                if (token.IsCancellationRequested)
-                    token.ThrowIfCancellationRequested();
-
                 if (SeAddress != null)
                 {
                     var pingReply = await this.ping.SendPingAsync(SeAddress);
