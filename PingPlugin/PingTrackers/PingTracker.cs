@@ -62,10 +62,8 @@ namespace PingPlugin.PingTrackers
 
         private async Task AddressUpdateLoop(CancellationToken token)
         {
-            while (true)
+            while (!token.IsCancellationRequested)
             {
-                if (token.IsCancellationRequested)
-                    token.ThrowIfCancellationRequested();
                 var lastAddress = SeAddress;
                 UpdateSeAddress();
                 if (!lastAddress.Equals(SeAddress))
