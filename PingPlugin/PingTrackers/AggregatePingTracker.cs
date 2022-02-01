@@ -24,8 +24,8 @@ namespace PingPlugin.PingTrackers
             // Create decision tree to solve tracker selection problem
             this.decisionTree = new DecisionTree<TrackerInfo>(
                 () => this.trackerInfos[COMTrackerKey].LastRTT < this.trackerInfos[IpHlpApiTrackerKey].LastRTT,
-                new DecisionTree<TrackerInfo>(() => TreeResult.Resolve(this.trackerInfos[COMTrackerKey])),
-                new DecisionTree<TrackerInfo>(() => TreeResult.Resolve(this.trackerInfos[IpHlpApiTrackerKey])));
+                pass: new DecisionTree<TrackerInfo>(() => TreeResult.Resolve(this.trackerInfos[COMTrackerKey])),
+                fail: new DecisionTree<TrackerInfo>(() => TreeResult.Resolve(this.trackerInfos[IpHlpApiTrackerKey])));
         }
 
         protected override async Task PingLoop(CancellationToken token)
