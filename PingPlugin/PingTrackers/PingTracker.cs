@@ -17,6 +17,7 @@ namespace PingPlugin.PingTrackers
 
         private uint LastDcId;
 
+        public bool Verbose { get; set; } = true;
         public bool Reset { get; set; }
         public double AverageRTT { get; private set; }
         public IPAddress SeAddress { get; protected set; }
@@ -40,7 +41,7 @@ namespace PingPlugin.PingTrackers
             Task.Run(() => PingLoop(this.tokenSource.Token));
         }
 
-        protected void NextRTTCalculation(long nextRTT)
+        protected void NextRTTCalculation(ulong nextRTT)
         {
             lock (RTTTimes)
             {
@@ -51,7 +52,7 @@ namespace PingPlugin.PingTrackers
             }
             CalcAverage();
 
-            LastRTT = (ulong)nextRTT;
+            LastRTT = nextRTT;
         }
 
         protected void CalcAverage() => AverageRTT = RTTTimes.Average();
@@ -136,7 +137,7 @@ namespace PingPlugin.PingTrackers
                 _ => IPAddress.Loopback,
             };
 
-            if (!Equals(SeAddress, IPAddress.Loopback))
+            if (Verbose && !Equals(SeAddress, IPAddress.Loopback))
             {
                 var dcName = this.clientState.LocalPlayer!.CurrentWorld.GameData.DataCenter.Value?.Name.RawString;
                 PluginLog.Log($"Data center changed to {dcName}, using FFXIV server address {SeAddress}");

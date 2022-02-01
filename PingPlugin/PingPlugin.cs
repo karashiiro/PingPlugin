@@ -40,7 +40,7 @@ namespace PingPlugin
             this.config = (PingConfiguration)PluginInterface.GetPluginConfig() ?? new PingConfiguration();
             this.config.Initialize(PluginInterface);
 
-            this.pingTracker = new ComponentModelPingTracker(this.config, ClientState);
+            this.pingTracker = new AggregatePingTracker(this.config, ClientState);
 
             InitIpc();
 

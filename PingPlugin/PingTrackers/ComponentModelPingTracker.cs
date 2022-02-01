@@ -21,8 +21,8 @@ namespace PingPlugin.PingTrackers
                 if (SeAddress != null)
                 {
                     var pingReply = await this.ping.SendPingAsync(SeAddress);
-                    if (pingReply.Status == IPStatus.Success)
-                        NextRTTCalculation(pingReply.RoundtripTime);
+                    if (pingReply.Status == IPStatus.Success && pingReply.RoundtripTime > 0)
+                        NextRTTCalculation((ulong)pingReply.RoundtripTime);
                     SendMessage();
                 }
 
