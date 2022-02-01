@@ -4,13 +4,13 @@ namespace PingPlugin
 {
     public class DecisionTree<TReturn>
     {
-        private readonly Func<TreeResult<TReturn>> condition;
+        private readonly Func<TreeResult<TReturn>> resultFn;
         private readonly DecisionTree<TReturn> pass;
         private readonly DecisionTree<TReturn> fail;
 
-        public DecisionTree(Func<TreeResult<TReturn>> condition, DecisionTree<TReturn> pass = null, DecisionTree<TReturn> fail = null)
+        public DecisionTree(Func<TreeResult<TReturn>> resultFn, DecisionTree<TReturn> pass = null, DecisionTree<TReturn> fail = null)
         {
-            this.condition = condition ?? throw new ArgumentNullException(nameof(condition));
+            this.resultFn = resultFn ?? throw new ArgumentNullException(nameof(resultFn));
             this.pass = pass;
             this.fail = fail;
         }
@@ -22,7 +22,13 @@ namespace PingPlugin
 
         private TReturn Execute(int level)
         {
-            var result = this.condition();
+            var result = this.resultFn();
+
+            if (result.Completed)
+            {
+                return (TReturn)result.Value;
+            }
+            
             switch (result.Value)
             {
                 case true:
@@ -40,7 +46,7 @@ namespace PingPlugin
 
                     return this.fail.Execute(level);
                 default:
-                    return (TReturn)result.Value;
+                    throw new InvalidOperationException("TreeResult is not completed, but has a non-boolean value.");
             }
         }
     }

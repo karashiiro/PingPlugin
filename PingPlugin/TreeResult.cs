@@ -2,6 +2,8 @@
 {
     public class TreeResult<T>
     {
+        public bool Completed { get; init; }
+
         public object Value { get; init; }
 
         internal TreeResult() { }
@@ -18,7 +20,7 @@
 
         public static TreeResult<T> FromObject(T result)
         {
-            return new TreeResult<T> { Value = result };
+            return new TreeResult<T> { Value = result, Completed = true };
         }
 
         public static implicit operator TreeResult<T>(bool b) => b ? Pass() : Fail();
