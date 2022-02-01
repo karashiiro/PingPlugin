@@ -31,11 +31,12 @@ namespace PingPlugin.PingTrackers
                 {
                     // Use decision tree to select best ping tracker
                     var bestTracker = this.decisionTree.Execute();
-                    if (bestTracker == null) continue;
-                    
-                    // Process result
-                    NextRTTCalculation(bestTracker.LastRTT);
-                    SendMessage();
+                    if (bestTracker != null)
+                    {
+                        // Process result
+                        NextRTTCalculation(bestTracker.LastRTT);
+                        SendMessage();
+                    }
                 }
 
                 await Task.Delay(3000, token);
