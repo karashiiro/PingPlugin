@@ -7,6 +7,9 @@ namespace PingPlugin.PingTrackers
 {
     public class AggregatePingTracker : PingTracker
     {
+        private const string COMTrackerKey = "COM";
+        private const string IpHlpApiTrackerKey = "IpHlpApi";
+
         private readonly IDictionary<string, TrackerInfo> trackerInfos;
         private readonly DecisionTree<TrackerInfo> decisionTree;
 
@@ -14,13 +17,21 @@ namespace PingPlugin.PingTrackers
         {
             // Define trackers
             this.trackerInfos = new Dictionary<string, TrackerInfo>();
-
-            var comPing = new ComponentModelPingTracker(config, clientState) { Verbose = false };
-            RegisterTracker("COM", comPing);
+            
+            RegisterTracker(COMTrackerKey, new ComponentModelPingTracker(config, clientState) { Verbose = false });
+            RegisterTracker(IpHlpApiTrackerKey, new IpHlpApiPingTracker(config, clientState) { Verbose = false });
 
             // Create decision tree to solve tracker selection problem
             this.decisionTree = new DecisionTree<TrackerInfo>(
-                () => TreeResult<TrackerInfo>.FromObject(this.trackerInfos["COM"]));
+                () =>
+                {
+                    if (this.trackerInfos[COMTrackerKey].LastRTT < this.trackerInfos[IpHlpApiTrackerKey].LastRTT)
+                    {
+                        return TreeResult<TrackerInfo>.FromObject(this.trackerInfos[COMTrackerKey]);
+                    }
+
+                    return TreeResult<TrackerInfo>.FromObject(this.trackerInfos[IpHlpApiTrackerKey]);
+                });
         }
 
         protected override async Task PingLoop(CancellationToken token)
@@ -35,7 +46,6 @@ namespace PingPlugin.PingTrackers
                     {
                         // Process result
                         NextRTTCalculation(bestTracker.LastRTT);
-                        SendMessage();
                     }
                 }
 

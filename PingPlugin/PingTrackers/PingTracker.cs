@@ -53,6 +53,7 @@ namespace PingPlugin.PingTrackers
             CalcAverage();
 
             LastRTT = nextRTT;
+            SendMessage();
         }
 
         protected void CalcAverage() => AverageRTT = RTTTimes.Average();
@@ -80,7 +81,7 @@ namespace PingPlugin.PingTrackers
             }
         }
 
-        protected void SendMessage()
+        private void SendMessage()
         {
             var del = OnPingUpdated;
             del?.Invoke(new PingStatsPayload
