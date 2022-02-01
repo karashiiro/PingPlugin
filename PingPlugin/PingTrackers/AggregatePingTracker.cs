@@ -23,7 +23,7 @@ namespace PingPlugin.PingTrackers
 
             // Create decision tree to solve tracker selection problem
             this.decisionTree = new DecisionTree<TrackerInfo>(
-                () => this.trackerInfos[COMTrackerKey].LastRTT < this.trackerInfos[IpHlpApiTrackerKey].LastRTT ? TreeResult<TrackerInfo>.Pass() : TreeResult<TrackerInfo>.Fail(),
+                () => this.trackerInfos[COMTrackerKey].LastRTT < this.trackerInfos[IpHlpApiTrackerKey].LastRTT,
                 new DecisionTree<TrackerInfo>(() => TreeResult<TrackerInfo>.FromObject(this.trackerInfos[COMTrackerKey]),
                 new DecisionTree<TrackerInfo>(() => TreeResult<TrackerInfo>.FromObject(this.trackerInfos[IpHlpApiTrackerKey]))));
         }

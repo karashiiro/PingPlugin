@@ -20,5 +20,7 @@
         {
             return new TreeResult<T> { Value = result };
         }
+
+        public static implicit operator TreeResult<T>(bool b) => b ? Pass() : Fail();
     }
 }
