@@ -1,7 +1,9 @@
-﻿using Dalamud.Game.ClientState;
+﻿using System;
+using Dalamud.Game.ClientState;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using Dalamud.Logging;
 
 namespace PingPlugin.PingTrackers
 {
@@ -35,11 +37,18 @@ namespace PingPlugin.PingTrackers
                 if (SeAddress != null)
                 {
                     // Use decision tree to select best ping tracker
-                    var bestTracker = this.decisionTree.Execute();
-                    if (bestTracker != null)
+                    try
                     {
-                        // Process result
-                        NextRTTCalculation(bestTracker.LastRTT);
+                        var bestTracker = this.decisionTree.Execute();
+                        if (bestTracker != null)
+                        {
+                            // Process result
+                            NextRTTCalculation(bestTracker.LastRTT);
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        PluginLog.LogError(e, "Error in best ping tracker selection.");
                     }
                 }
 
