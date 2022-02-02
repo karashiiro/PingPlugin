@@ -1,11 +1,9 @@
-﻿using System;
-using System.Linq;
+﻿using Dalamud.Game.ClientState;
+using System;
 using System.Net;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
-using Dalamud.Game.ClientState;
-using Dalamud.Logging;
 
 namespace PingPlugin.PingTrackers
 {
