@@ -50,8 +50,12 @@ namespace PingPlugin.PingTrackers
                         var bestTracker = this.decisionTree.Execute();
                         if (bestTracker != null)
                         {
-                            // Process result
-                            NextRTTCalculation(this.trackerInfos[bestTracker].LastRTT);
+                            var trackerInfo = this.trackerInfos[bestTracker];
+                            if (trackerInfo.Ticked)
+                            {
+                                // Process result
+                                NextRTTCalculation(trackerInfo.LastRTT);
+                            }
                         }
                     }
                     catch (Exception e)
@@ -83,7 +87,11 @@ namespace PingPlugin.PingTrackers
             this.trackerInfos.Add(key, new TrackerInfo { Tracker = tracker });
             
             // Event forwarding
-            tracker.OnPingUpdated += payload => this.trackerInfos[key].LastRTT = payload.LastRTT;
+            tracker.OnPingUpdated += payload =>
+            {
+                this.trackerInfos[key].Ticked = true;
+                this.trackerInfos[key].LastRTT = payload.LastRTT;
+            };
         }
 
         private ulong GetTrackerRTT(string key)
@@ -96,6 +104,8 @@ namespace PingPlugin.PingTrackers
             public PingTracker Tracker { get; init; }
 
             public ulong LastRTT { get; set; }
+
+            public bool Ticked { get; set; }
         }
     }
 }

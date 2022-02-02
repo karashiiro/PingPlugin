@@ -33,8 +33,7 @@ namespace PingPlugin.PingTrackers
             this.config = config;
             this.clientState = clientState;
 
-            UpdateSeAddress();
-
+            SeAddress = IPAddress.Loopback;
             RTTTimes = new ConcurrentQueue<float>();
 
             Task.Run(() => AddressUpdateLoop(this.tokenSource.Token));
