@@ -1,8 +1,11 @@
 ﻿using System;
+using System.Linq;
+using System.Net;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Dalamud.Game.ClientState;
+using Dalamud.Logging;
 
 namespace PingPlugin.PingTrackers
 {
@@ -18,8 +21,7 @@ namespace PingPlugin.PingTrackers
             {
                 if (SeAddress != null)
                 {
-                    var addressRaw = BitConverter.ToUInt64(SeAddress.GetAddressBytes());
-                    var rtt = GetAddressLastRTT(addressRaw);
+                    var rtt = GetAddressLastRTT(SeAddress);
                     var error = (WinError)Marshal.GetLastWin32Error();
                     if (error == WinError.NO_ERROR)
                     {
@@ -31,16 +33,19 @@ namespace PingPlugin.PingTrackers
             }
         }
 
-        private static ulong GetAddressLastRTT(ulong address)
+        private static ulong GetAddressLastRTT(IPAddress address)
         {
-            var hopCount = 0UL;
-            var rtt = 0UL;
-            GetRTTAndHopCount(address, ref hopCount, 51, ref rtt);
+            var addressBytes = address.GetAddressBytes();
+            var addressRaw = BitConverter.ToUInt32(addressBytes);
+
+            var hopCount = 0U;
+            var rtt = 0U;
+            GetRTTAndHopCount(addressRaw, ref hopCount, 51, ref rtt);
             return rtt;
         }
 
         [DllImport("Iphlpapi.dll", EntryPoint = "GetRTTAndHopCount", SetLastError = true)]
-        private static extern ulong GetRTTAndHopCount(ulong address, ref ulong hopCount, ulong maxHops, ref ulong rtt);
+        private static extern ulong GetRTTAndHopCount(uint address, ref uint hopCount, uint maxHops, ref uint rtt);
 
         private enum WinError
         {
