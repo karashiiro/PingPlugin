@@ -13,7 +13,7 @@ namespace PingPlugin.PingTrackers
         private const string IpHlpApiTrackerKey = "IpHlpApi";
 
         private readonly IDictionary<string, TrackerInfo> trackerInfos;
-        private readonly DecisionTree<TrackerInfo> decisionTree;
+        private readonly DecisionTree<string> decisionTree;
 
         public AggregatePingTracker(PingConfiguration config, ClientState clientState) : base(config, clientState)
         {
@@ -24,10 +24,18 @@ namespace PingPlugin.PingTrackers
             RegisterTracker(IpHlpApiTrackerKey, new IpHlpApiPingTracker(config, clientState) { Verbose = false });
 
             // Create decision tree to solve tracker selection problem
-            this.decisionTree = new DecisionTree<TrackerInfo>(
-                () => this.trackerInfos[COMTrackerKey].LastRTT < this.trackerInfos[IpHlpApiTrackerKey].LastRTT,
-                pass: new DecisionTree<TrackerInfo>(() => TreeResult.Resolve(this.trackerInfos[COMTrackerKey])),
-                fail: new DecisionTree<TrackerInfo>(() => TreeResult.Resolve(this.trackerInfos[IpHlpApiTrackerKey])));
+            this.decisionTree = new DecisionTree<string>(
+                () => GetTrackerRTT(COMTrackerKey) < GetTrackerRTT(IpHlpApiTrackerKey),
+                pass: new DecisionTree<string>(
+                    () => GetTrackerRTT(COMTrackerKey) == 0,
+                    pass: new DecisionTree<string>(() => TreeResult.Resolve(IpHlpApiTrackerKey)),
+                    fail: new DecisionTree<string>(() => TreeResult.Resolve(COMTrackerKey))),
+                fail: new DecisionTree<string>(
+                    () => GetTrackerRTT(IpHlpApiTrackerKey) == 0,
+                    pass: new DecisionTree<string>(() => TreeResult.Resolve(COMTrackerKey)),
+                    fail: new DecisionTree<string>(() => TreeResult.Resolve(IpHlpApiTrackerKey))
+                    )
+                );
         }
 
         protected override async Task PingLoop(CancellationToken token)
@@ -43,7 +51,7 @@ namespace PingPlugin.PingTrackers
                         if (bestTracker != null)
                         {
                             // Process result
-                            NextRTTCalculation(bestTracker.LastRTT);
+                            NextRTTCalculation(this.trackerInfos[bestTracker].LastRTT);
                         }
                     }
                     catch (Exception e)
@@ -76,6 +84,11 @@ namespace PingPlugin.PingTrackers
             
             // Event forwarding
             tracker.OnPingUpdated += payload => this.trackerInfos[key].LastRTT = payload.LastRTT;
+        }
+
+        private ulong GetTrackerRTT(string key)
+        {
+            return this.trackerInfos[key].LastRTT;
         }
 
         private class TrackerInfo
