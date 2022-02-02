@@ -38,6 +38,17 @@ namespace PingPlugin.PingTrackers
                 );
         }
 
+        protected override void ResetRTT()
+        {
+            foreach (var (_, ti) in this.trackerInfos)
+            {
+                ti.Ticked = false;
+                ti.LastRTT = 0;
+            }
+
+            base.ResetRTT();
+        }
+
         protected override async Task PingLoop(CancellationToken token)
         {
             while (!token.IsCancellationRequested)

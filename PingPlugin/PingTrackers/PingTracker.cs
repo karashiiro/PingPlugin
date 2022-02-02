@@ -57,7 +57,12 @@ namespace PingPlugin.PingTrackers
 
         protected void CalcAverage() => AverageRTT = RTTTimes.Average();
 
-        protected void ResetRTT() => RTTTimes = new ConcurrentQueue<float>();
+        protected virtual void ResetRTT()
+        {
+            RTTTimes = new ConcurrentQueue<float>();
+            AverageRTT = 0;
+            LastRTT = 0;
+        }
 
         protected abstract Task PingLoop(CancellationToken token);
 
