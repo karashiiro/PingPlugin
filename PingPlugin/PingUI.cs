@@ -1,4 +1,5 @@
 ﻿using CheapLoc;
+using Dalamud.Game.Gui.Dtr;
 using Dalamud.Interface;
 using Dalamud.Logging;
 using Dalamud.Plugin;
@@ -11,7 +12,6 @@ using System.IO;
 using System.Linq;
 using System.Numerics;
 using System.Runtime.InteropServices;
-using Dalamud.Game.Gui.Dtr;
 
 namespace PingPlugin
 {
@@ -45,9 +45,35 @@ namespace PingPlugin
             this.pingTracker = pingTracker;
             this.pluginInterface = pluginInterface;
 
-            this.dtrEntry = dtrBar.Get("Ping");
-            this.dtrEntry.Text = "Pinging...";
-            this.dtrEntry.Shown = false;
+            var dtrBarTitle = "Ping";
+            try
+            {
+                this.dtrEntry = dtrBar.Get(dtrBarTitle);
+            }
+            catch (ArgumentException e)
+            {
+                // This usually only runs once after any given plugin reload
+                for (var i = 0; i < 5; i++)
+                {
+                    PluginLog.LogError(e, $"Failed to acquire DtrBarEntry {dtrBarTitle}, trying {dtrBarTitle}{i}");
+                    try
+                    {
+                        this.dtrEntry = dtrBar.Get(dtrBarTitle + i);
+                    }
+                    catch (ArgumentException)
+                    {
+                        continue;
+                    }
+
+                    break;
+                }
+            }
+
+            if (this.dtrEntry != null)
+            {
+                this.dtrEntry.Text = "Pinging...";
+                this.dtrEntry.Shown = false;
+            }
 
             this.uiBuilder.BuildFonts += BuildFont;
 #if DEBUG
@@ -76,7 +102,7 @@ namespace PingPlugin
 
             if (this.uiFont.IsLoaded()) ImGui.PushFont(this.uiFont);
             if (this.config.GraphIsVisible) DrawGraph();
-            if (this.config.MonitorIsVisible) DrawMonitor();
+            if (!serverBarShown && this.config.MonitorIsVisible) DrawMonitor();
             if (this.uiFont.IsLoaded()) ImGui.PopFont();
         }
 
@@ -101,7 +127,7 @@ namespace PingPlugin
             }
 
             ImGui.Spacing();
-            
+
             var displayModes = Enum.GetNames<DisplayMode>();
             var displayModeIndex = (int)this.config.DisplayMode;
             if (ImGui.Combo(Loc.Localize("DisplayMode", string.Empty),
@@ -415,7 +441,7 @@ namespace PingPlugin
             {
                 var filePath = Path.Combine(this.pluginInterface.DalamudAssetDirectory.FullName, "UIRes", "NotoSansCJKjp-Medium.otf");
                 if (!File.Exists(filePath)) throw new FileNotFoundException("Font file not found!");
-                
+
                 var fontPx = Math.Min(Math.Max(8, this.config.FontScale), 128);
 
                 {

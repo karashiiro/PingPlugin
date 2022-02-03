@@ -10,7 +10,6 @@ using PingPlugin.GameAddressDetectors;
 using PingPlugin.PingTrackers;
 using System;
 using System.Dynamic;
-using Dalamud.Game;
 
 namespace PingPlugin
 {
@@ -59,7 +58,7 @@ namespace PingPlugin
 
             this.pluginCommandManager = new PluginCommandManager<PingPlugin>(this, Commands);
         }
-        
+
         private void InitIpc()
         {
             try
@@ -109,7 +108,7 @@ namespace PingPlugin
         {
             this.ui.ConfigVisible = true;
         }
-        
+
         protected virtual void Dispose(bool disposing)
         {
             if (!disposing) return;
@@ -122,9 +121,9 @@ namespace PingPlugin
             this.config.Save();
 
             this.pingTracker.OnPingUpdated -= this.ui.UpdateDtrBarPing;
-            this.pingTracker.Dispose();
-
             this.ui.Dispose();
+
+            this.pingTracker.Dispose();
         }
 
         public void Dispose()

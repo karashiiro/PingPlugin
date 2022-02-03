@@ -92,6 +92,8 @@ namespace PingPlugin
             MonitorFontColor = new Vector4(1, 1, 0, 1); // Yellow, it's ABGR instead of RGBA for some reason.
             MonitorErrorFontColor = new Vector4(1, 0, 0, 1);
             MonitorIsVisible = true;
+            MicroDisplayLast = true;
+            ServerBarDisplayLast = true;
             PingQueueSize = 20;
             Lang = LangKind.en.ToString();
         }
