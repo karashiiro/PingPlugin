@@ -32,6 +32,10 @@ namespace PingPlugin.PingTrackers
                         {
                             NextRTTCalculation((ulong)pingReply.RoundtripTime);
                         }
+                        else
+                        {
+                            PluginLog.LogWarning($"Got bad status {pingReply.Status} when executing ping - this may be temporary and acceptable.");
+                        }
                     }
                     catch (Exception e)
                     {
