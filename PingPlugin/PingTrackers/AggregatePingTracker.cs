@@ -25,13 +25,10 @@ namespace PingPlugin.PingTrackers
 
             // Create decision tree to solve tracker selection problem
             this.decisionTree = new DecisionTree<string>(
-                () => GetTrackerRTT(COMTrackerKey) < GetTrackerRTT(IpHlpApiTrackerKey),
-                pass: new DecisionTree<string>(
-                    () => TrackerIsErrored(COMTrackerKey),
-                    pass: new DecisionTree<string>(() => TreeResult.Resolve(IpHlpApiTrackerKey)),
-                    fail: new DecisionTree<string>(() => TreeResult.Resolve(COMTrackerKey))),
+                () => TrackerIsErrored(COMTrackerKey),
+                pass: new DecisionTree<string>(() => TreeResult.Resolve(IpHlpApiTrackerKey)),
                 fail: new DecisionTree<string>(
-                    () => TrackerIsErrored(IpHlpApiTrackerKey),
+                    () => GetTrackerRTT(COMTrackerKey) < GetTrackerRTT(IpHlpApiTrackerKey),
                     pass: new DecisionTree<string>(() => TreeResult.Resolve(COMTrackerKey)),
                     fail: new DecisionTree<string>(() => TreeResult.Resolve(IpHlpApiTrackerKey))
                     )
