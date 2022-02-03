@@ -93,6 +93,8 @@ namespace PingPlugin.PingTrackers
             }
         }
 
+        public void ForceSendMessage() => SendMessage();
+
         private void SendMessage()
         {
             var del = OnPingUpdated;

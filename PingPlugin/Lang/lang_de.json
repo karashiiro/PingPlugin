@@ -51,6 +51,18 @@
     "message": "Pluginfenster sperren",
     "description": "PingPlugin.Configuration"
   },
+  "DisplayMode": {
+    "message": "Display mode",
+    "description": "PingPlugin.Configuration"
+  },
+  "ServerBarDisplay": {
+    "message": "Serverleiste",
+    "description": "PingPlugin.Configuration"
+  },
+  "DefaultDisplay": {
+    "message": "Standardanzeige",
+    "description": "PingPlugin.Configuration"
+  },
   "MicroDisplay": {
     "message": "Mikroanzeige",
     "description": "PingPlugin.Configuration"

@@ -51,6 +51,18 @@
     "message": "プラグインウインドウを閉ざします",
     "description": "PingPlugin.Configuration"
   },
+  "DisplayMode": {
+    "message": "ディスプレイの種類",
+    "description": "PingPlugin.Configuration"
+  },
+  "ServerBarDisplay": {
+    "message": "サーバー情報",
+    "description": "PingPlugin.Configuration"
+  },
+  "DefaultDisplay": {
+    "message": "デフォディスプレイ",
+    "description": "PingPlugin.Configuration"
+  },
   "MicroDisplay": {
     "message": "マイクロディスプレイ",
     "description": "PingPlugin.Configuration"

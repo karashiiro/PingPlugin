@@ -21,14 +21,16 @@ namespace PingPlugin
         public float MonitorBgAlpha { get; set; }
         public Vector4 MonitorFontColor { get; set; }
         public Vector4 MonitorErrorFontColor { get; set; }
-
+        
         public bool ClickThrough { get; set; }
         public bool GraphIsVisible { get; set; }
         public bool MonitorIsVisible { get; set; }
         public bool LockWindows { get; set; }
-        public bool MinimalDisplay { get; set; }
+        public bool MinimalDisplay => DisplayMode == DisplayMode.Minimal; // As of v2.2.0.2, this is computed.
         public bool MicroDisplayLast { get; set; } = true;
         public bool MicroDisplayAverage { get; set; }
+        public bool ServerBarDisplayLast { get; set; } = true;
+        public bool ServerBarDisplayAverage { get; set; }
         public DisplayMode DisplayMode { get; set; }
         public bool HideErrors { get; set; } // Generally, the errors are just timeouts, so you may want to hide them.
         public bool HideOverlaysDuringCutscenes { get; set; }

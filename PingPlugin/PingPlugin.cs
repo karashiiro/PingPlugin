@@ -1,5 +1,6 @@
 ﻿using Dalamud.Game.ClientState;
 using Dalamud.Game.Command;
+using Dalamud.Game.Gui.Dtr;
 using Dalamud.IoC;
 using Dalamud.Logging;
 using Dalamud.Plugin;
@@ -9,6 +10,7 @@ using PingPlugin.GameAddressDetectors;
 using PingPlugin.PingTrackers;
 using System;
 using System.Dynamic;
+using Dalamud.Game;
 
 namespace PingPlugin
 {
@@ -25,6 +27,10 @@ namespace PingPlugin
         [PluginService]
         [RequiredVersion("1.0")]
         public static ClientState ClientState { get; set; }
+
+        [PluginService]
+        [RequiredVersion("1.0")]
+        public static DtrBar DtrBar { get; set; }
 
         private readonly PluginCommandManager<PingPlugin> pluginCommandManager;
         private readonly PingConfiguration config;
@@ -45,14 +51,15 @@ namespace PingPlugin
 
             InitIpc();
 
-            this.ui = new PingUI(this.pingTracker, PluginInterface, this.config);
+            this.ui = new PingUI(this.pingTracker, PluginInterface, DtrBar, this.config);
+            this.pingTracker.OnPingUpdated += this.ui.UpdateDtrBarPing;
 
             PluginInterface.UiBuilder.OpenConfigUi += OpenConfigUi;
             PluginInterface.UiBuilder.Draw += this.ui.BuildUi;
 
             this.pluginCommandManager = new PluginCommandManager<PingPlugin>(this, Commands);
         }
-
+        
         private void InitIpc()
         {
             try
@@ -102,8 +109,7 @@ namespace PingPlugin
         {
             this.ui.ConfigVisible = true;
         }
-
-        #region IDisposable Support
+        
         protected virtual void Dispose(bool disposing)
         {
             if (!disposing) return;
@@ -115,7 +121,10 @@ namespace PingPlugin
 
             this.config.Save();
 
+            this.pingTracker.OnPingUpdated -= this.ui.UpdateDtrBarPing;
             this.pingTracker.Dispose();
+
+            this.ui.Dispose();
         }
 
         public void Dispose()
@@ -123,6 +132,5 @@ namespace PingPlugin
             Dispose(true);
             GC.SuppressFinalize(this);
         }
-        #endregion
     }
 }

@@ -28,32 +28,32 @@
 
   <ItemGroup>
     <Reference Include="Dalamud">
-      <HintPath Condition="Exists('..\..\Dalamud\bin\Debug')">..\..\Dalamud\bin\Debug\Dalamud.dll</HintPath>
+      <HintPath>$(AppData)\XIVLauncher\addon\Hooks\dev\Dalamud.dll</HintPath>
       <Private>false</Private>
     </Reference>
     <Reference Include="ImGui.NET">
-      <HintPath Condition="Exists('..\..\Dalamud\bin\Debug')">..\..\Dalamud\bin\Debug\ImGui.NET.dll</HintPath>
+      <HintPath>$(AppData)\XIVLauncher\addon\Hooks\dev\ImGui.NET.dll</HintPath>
       <Private>false</Private>
     </Reference>
     <Reference Include="ImGuiScene">
-      <HintPath Condition="Exists('..\..\Dalamud\bin\Debug')">..\..\Dalamud\bin\Debug\ImGuiScene.dll</HintPath>
+      <HintPath>$(AppData)\XIVLauncher\addon\Hooks\dev\ImGuiScene.dll</HintPath>
       <Private>false</Private>
     </Reference>
     <Reference Include="Newtonsoft.Json">
-      <HintPath Condition="Exists('..\..\Dalamud\bin\Debug')">..\..\Dalamud\bin\Debug\Newtonsoft.Json.dll</HintPath>
+      <HintPath>$(AppData)\XIVLauncher\addon\Hooks\dev\Newtonsoft.Json.dll</HintPath>
       <Private>false</Private>
     </Reference>
     <Reference Include="CheapLoc">
-      <HintPath Condition="Exists('..\..\Dalamud\bin\Debug')">..\..\Dalamud\bin\Debug\CheapLoc.dll</HintPath>
+      <HintPath>$(AppData)\XIVLauncher\addon\Hooks\dev\CheapLoc.dll</HintPath>
       <Private>false</Private>
     </Reference>
 	<Reference Include="Lumina">
-	  <HintPath Condition="Exists('..\..\Dalamud\bin\Debug')">..\..\Dalamud\bin\Debug\Lumina.dll</HintPath>
-	  <Private>false</Private>
-	</Reference>
-	<Reference Include="Lumina.Excel">
-	  <HintPath Condition="Exists('..\..\Dalamud\bin\Debug')">..\..\Dalamud\bin\Debug\Lumina.Excel.dll</HintPath>
-	  <Private>false</Private>
+      <HintPath>$(AppData)\XIVLauncher\addon\Hooks\dev\Lumina.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Lumina.Excel">
+      <HintPath>$(AppData)\XIVLauncher\addon\Hooks\dev\Lumina.Excel.dll</HintPath>
+      <Private>False</Private>
 	</Reference>
   </ItemGroup>
 

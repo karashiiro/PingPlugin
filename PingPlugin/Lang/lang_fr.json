@@ -51,6 +51,18 @@
     "message": "Verrouiller la position de la fenêtre",
     "description": "PingPlugin.Configuration"
   },
+  "DisplayMode": {
+    "message": "Display mode",
+    "description": "PingPlugin.Configuration"
+  },
+  "ServerBarDisplay": {
+    "message": "Server bar",
+    "description": "PingPlugin.Configuration"
+  },
+  "DefaultDisplay": {
+    "message": "Affichage défaut",
+    "description": "PingPlugin.Configuration"
+  },
   "MicroDisplay": {
     "message": "Affichage micro",
     "description": "PingPlugin.Configuration"

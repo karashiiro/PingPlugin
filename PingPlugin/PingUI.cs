@@ -11,12 +11,14 @@ using System.IO;
 using System.Linq;
 using System.Numerics;
 using System.Runtime.InteropServices;
+using Dalamud.Game.Gui.Dtr;
 
 namespace PingPlugin
 {
     public class PingUI : IDisposable
     {
         private readonly UiBuilder uiBuilder;
+        private readonly DtrBarEntry dtrEntry;
         private readonly DalamudPluginInterface pluginInterface;
         private readonly PingConfiguration config;
         private readonly PingTracker pingTracker;
@@ -36,12 +38,16 @@ namespace PingPlugin
             set => this.configVisible = value;
         }
 
-        public PingUI(PingTracker pingTracker, DalamudPluginInterface pluginInterface, PingConfiguration config)
+        public PingUI(PingTracker pingTracker, DalamudPluginInterface pluginInterface, DtrBar dtrBar, PingConfiguration config)
         {
             this.config = config;
             this.uiBuilder = pluginInterface.UiBuilder;
             this.pingTracker = pingTracker;
             this.pluginInterface = pluginInterface;
+
+            this.dtrEntry = dtrBar.Get("Ping");
+            this.dtrEntry.Text = "Pinging...";
+            this.dtrEntry.Shown = false;
 
             this.uiBuilder.BuildFonts += BuildFont;
 #if DEBUG
@@ -51,6 +57,12 @@ namespace PingPlugin
 
         public void BuildUi()
         {
+            var serverBarShown = this.config.DisplayMode == DisplayMode.ServerBar;
+            if (this.dtrEntry != null && this.dtrEntry.Shown != serverBarShown)
+            {
+                this.dtrEntry.Shown = serverBarShown;
+            }
+
             if (this.config.HideOverlaysDuringCutscenes && CutsceneActive)
                 return;
 
@@ -89,30 +101,23 @@ namespace PingPlugin
             }
 
             ImGui.Spacing();
-
-            var displayMode = this.config.DisplayMode;
-            var displayMicro = displayMode == DisplayMode.Micro;
-            if (ImGui.Checkbox(Loc.Localize("MicroDisplay", string.Empty), ref displayMicro))
+            
+            var displayModes = Enum.GetNames<DisplayMode>();
+            var displayModeIndex = (int)this.config.DisplayMode;
+            if (ImGui.Combo(Loc.Localize("DisplayMode", string.Empty),
+                    ref displayModeIndex, DisplayModeNames.Names(), displayModes.Length))
             {
-                this.config.DisplayMode = displayMicro ? DisplayMode.Micro : DisplayMode.Default;
+                this.config.DisplayMode = (DisplayMode)displayModeIndex;
                 this.config.Save();
             }
 
-            ImGui.Indent();
             switch (this.config.DisplayMode)
             {
                 case DisplayMode.Default:
-                    var minimalDisplay = this.config.MinimalDisplay;
-                    if (ImGui.Checkbox(Loc.Localize("MinimalDisplay", string.Empty), ref minimalDisplay))
+                    var hideAveragePing = this.config.HideAveragePing;
+                    if (ImGui.Checkbox(Loc.Localize("HideAveragePing", string.Empty), ref hideAveragePing))
                     {
-                        this.config.MinimalDisplay = minimalDisplay;
-                        this.config.Save();
-                    }
-
-                    var hideErrors = this.config.HideErrors;
-                    if (ImGui.Checkbox(Loc.Localize("HideErrors", string.Empty), ref hideErrors))
-                    {
-                        this.config.HideErrors = hideErrors;
+                        this.config.HideAveragePing = hideAveragePing;
                         this.config.Save();
                     }
                     break;
@@ -131,19 +136,31 @@ namespace PingPlugin
                         this.config.Save();
                     }
                     break;
+                case DisplayMode.Minimal:
+                    break;
+                case DisplayMode.ServerBar:
+                    // We're reusing localization keys here since it's all the same text
+                    var serverBarDisplayLast = this.config.ServerBarDisplayLast;
+                    if (ImGui.Checkbox(Loc.Localize("MicroShowLastPing", string.Empty), ref serverBarDisplayLast))
+                    {
+                        this.config.ServerBarDisplayLast = serverBarDisplayLast;
+                        this.pingTracker.ForceSendMessage();
+                        this.config.Save();
+                    }
+
+                    var serverBarDisplayAverage = this.config.ServerBarDisplayAverage;
+                    if (ImGui.Checkbox(Loc.Localize("MicroShowAveragePing", string.Empty), ref serverBarDisplayAverage))
+                    {
+                        this.config.ServerBarDisplayAverage = serverBarDisplayAverage;
+                        this.pingTracker.ForceSendMessage();
+                        this.config.Save();
+                    }
+                    break;
                 default:
                     throw new ArgumentOutOfRangeException();
             }
-            ImGui.Unindent();
 
             ImGui.Spacing();
-
-            var hideAveragePing = this.config.HideAveragePing;
-            if (ImGui.Checkbox(Loc.Localize("HideAveragePing", string.Empty), ref hideAveragePing))
-            {
-                this.config.HideAveragePing = hideAveragePing;
-                this.config.Save();
-            }
 
             var queueSize = this.config.PingQueueSize;
             if (ImGui.InputInt(Loc.Localize("RecordedPings", string.Empty), ref queueSize))
@@ -236,11 +253,14 @@ namespace PingPlugin
 
             switch (this.config.DisplayMode)
             {
+                case DisplayMode.Minimal:
                 case DisplayMode.Default:
                     DrawFullMonitor();
                     break;
                 case DisplayMode.Micro:
                     DrawMicroMonitor();
+                    break;
+                case DisplayMode.ServerBar:
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
@@ -292,6 +312,29 @@ namespace PingPlugin
             }
 
             ImGui.TextColored(this.config.MonitorFontColor, text);
+        }
+
+        public void UpdateDtrBarPing(PingStatsPayload payload)
+        {
+            if (this.dtrEntry is not { Shown: true }) return;
+
+            var text = "";
+
+            if (this.config.ServerBarDisplayLast)
+            {
+                text = $"{payload.LastRTT}ms";
+                if (this.config.ServerBarDisplayAverage)
+                {
+                    text += "/";
+                }
+            }
+
+            if (this.config.ServerBarDisplayAverage)
+            {
+                text += $"{payload.AverageRTT}ms";
+            }
+
+            this.dtrEntry.Text = text;
         }
 
         private void DrawGraph()
@@ -405,8 +448,7 @@ namespace PingPlugin
         {
             GC.SuppressFinalize(this);
             this.uiBuilder.BuildFonts -= BuildFont;
-            this.uiFont.Destroy();
-            this.uiBuilder.RebuildFonts();
+            this.dtrEntry?.Dispose();
         }
     }
 }

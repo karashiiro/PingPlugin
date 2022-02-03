@@ -51,6 +51,18 @@
     "message": "锁定悬浮窗",
     "description": "PingPlugin.Configuration"
   },
+  "DisplayMode": {
+    "message": "Display mode",
+    "description": "PingPlugin.Configuration"
+  },
+  "ServerBarDisplay": {
+    "message": "Server bar",
+    "description": "PingPlugin.Configuration"
+  },
+  "DefaultDisplay": {
+    "message": "缺省显示",
+    "description": "PingPlugin.Configuration"
+  },
   "MicroDisplay": {
     "message": "微型显示",
     "description": "PingPlugin.Configuration"

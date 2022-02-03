@@ -51,6 +51,18 @@
     "message": "Lock plugin windows",
     "description": "PingPlugin.Configuration"
   },
+  "DisplayMode": {
+    "message": "Display mode",
+    "description": "PingPlugin.Configuration"
+  },
+  "ServerBarDisplay": {
+    "message": "Server bar",
+    "description": "PingPlugin.Configuration"
+  },
+  "DefaultDisplay": {
+    "message": "Default",
+    "description": "PingPlugin.Configuration"
+  },
   "MicroDisplay": {
     "message": "Micro display",
     "description": "PingPlugin.Configuration"

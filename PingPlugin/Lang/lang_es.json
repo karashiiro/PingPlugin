@@ -51,6 +51,18 @@
     "message": "Congele los windows de plugin",
     "description": "PingPlugin.Configuration"
   },
+  "DisplayMode": {
+    "message": "Display mode",
+    "description": "PingPlugin.Configuration"
+  },
+  "ServerBarDisplay": {
+    "message": "Server bar",
+    "description": "PingPlugin.Configuration"
+  },
+  "DefaultDisplay": {
+    "message": "Visualizador defecto",
+    "description": "PingPlugin.Configuration"
+  },
   "MicroDisplay": {
     "message": "Visualizador minúsculo",
     "description": "PingPlugin.Configuration"
