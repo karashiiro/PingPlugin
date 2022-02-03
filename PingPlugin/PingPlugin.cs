@@ -8,6 +8,7 @@ using PingPlugin.Attributes;
 using PingPlugin.PingTrackers;
 using System;
 using System.Dynamic;
+using PingPlugin.GameAddressDetectors;
 
 namespace PingPlugin
 {
@@ -40,7 +41,7 @@ namespace PingPlugin
             this.config = (PingConfiguration)PluginInterface.GetPluginConfig() ?? new PingConfiguration();
             this.config.Initialize(PluginInterface);
 
-            this.pingTracker = new AggregatePingTracker(this.config, ClientState);
+            this.pingTracker = new AggregatePingTracker(this.config, new AggregateAddressDetector(ClientState));
 
             InitIpc();
 

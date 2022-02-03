@@ -1,9 +1,9 @@
-﻿using System;
-using Dalamud.Game.ClientState;
+﻿using Dalamud.Logging;
+using PingPlugin.GameAddressDetectors;
+using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using Dalamud.Logging;
 
 namespace PingPlugin.PingTrackers
 {
@@ -15,13 +15,13 @@ namespace PingPlugin.PingTrackers
         private readonly IDictionary<string, TrackerInfo> trackerInfos;
         private readonly DecisionTree<string> decisionTree;
 
-        public AggregatePingTracker(PingConfiguration config, ClientState clientState) : base(config, clientState)
+        public AggregatePingTracker(PingConfiguration config, GameAddressDetector addressDetector) : base(config, addressDetector)
         {
             // Define trackers
             this.trackerInfos = new Dictionary<string, TrackerInfo>();
-            
-            RegisterTracker(COMTrackerKey, new ComponentModelPingTracker(config, clientState) { Verbose = false });
-            RegisterTracker(IpHlpApiTrackerKey, new IpHlpApiPingTracker(config, clientState) { Verbose = false });
+
+            RegisterTracker(COMTrackerKey, new ComponentModelPingTracker(config, addressDetector));
+            RegisterTracker(IpHlpApiTrackerKey, new IpHlpApiPingTracker(config, addressDetector));
 
             // Create decision tree to solve tracker selection problem
             this.decisionTree = new DecisionTree<string>(
@@ -61,6 +61,10 @@ namespace PingPlugin.PingTrackers
         {
             while (!token.IsCancellationRequested)
             {
+                // This can happen because the base PingTracker starts this task in its constructor, so
+                // it can run before we run the child class constructor here.
+                if (this.decisionTree == null) continue;
+
                 if (SeAddress != null)
                 {
                     // Use decision tree to select best ping tracker
@@ -104,7 +108,7 @@ namespace PingPlugin.PingTrackers
         {
             // Info block registration
             this.trackerInfos.Add(key, new TrackerInfo { Tracker = tracker });
-            
+
             // Event forwarding
             tracker.OnPingUpdated += payload =>
             {

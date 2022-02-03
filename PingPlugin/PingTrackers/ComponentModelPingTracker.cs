@@ -1,9 +1,9 @@
-﻿using System;
-using Dalamud.Game.ClientState;
+﻿using Dalamud.Logging;
+using PingPlugin.GameAddressDetectors;
+using System;
 using System.Net.NetworkInformation;
 using System.Threading;
 using System.Threading.Tasks;
-using Dalamud.Logging;
 
 namespace PingPlugin.PingTrackers
 {
@@ -11,7 +11,7 @@ namespace PingPlugin.PingTrackers
     {
         private readonly Ping ping;
 
-        public ComponentModelPingTracker(PingConfiguration config, ClientState clientState) : base(config, clientState)
+        public ComponentModelPingTracker(PingConfiguration config, GameAddressDetector addressDetector) : base(config, addressDetector)
         {
             this.ping = new Ping();
         }

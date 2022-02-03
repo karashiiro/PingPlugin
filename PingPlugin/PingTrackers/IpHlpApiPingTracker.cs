@@ -1,16 +1,16 @@
-﻿using Dalamud.Game.ClientState;
+﻿using Dalamud.Logging;
+using PingPlugin.GameAddressDetectors;
 using System;
 using System.Net;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
-using Dalamud.Logging;
 
 namespace PingPlugin.PingTrackers
 {
     public class IpHlpApiPingTracker : PingTracker
     {
-        public IpHlpApiPingTracker(PingConfiguration config, ClientState clientState) : base(config, clientState)
+        public IpHlpApiPingTracker(PingConfiguration config, GameAddressDetector addressDetector) : base(config, addressDetector)
         {
         }
 
@@ -24,7 +24,7 @@ namespace PingPlugin.PingTrackers
                     {
                         var rtt = GetAddressLastRTT(SeAddress);
                         var error = (WinError)Marshal.GetLastWin32Error();
-                        
+
                         Errored = error != WinError.NO_ERROR;
 
                         if (!Errored)
@@ -60,30 +60,5 @@ namespace PingPlugin.PingTrackers
 
         [DllImport("Iphlpapi.dll", EntryPoint = "GetRTTAndHopCount", SetLastError = true)]
         private static extern int GetRTTAndHopCount(uint address, ref uint hopCount, uint maxHops, ref uint rtt);
-
-        private enum WinError
-        {
-            UNKNOWN = -1,
-            NO_ERROR = 0,
-            ACCESS_DENIED = 5,
-            NOT_ENOUGH_MEMORY = 8,
-            OUTOFMEMORY = 14,
-            NOT_SUPPORTED = 50,
-            INVALID_PARAMETER = 87,
-            ERROR_INVALID_NETNAME = 1214,
-            WSAEINTR = 10004,
-            WSAEACCES = 10013,
-            WSAEFAULT = 10014,
-            WSAEINVAL = 10022,
-            WSAEWOULDBLOCK = 10035,
-            WSAEINPROGRESS = 10036,
-            WSAEALREADY = 10037,
-            WSAENOTSOCK = 10038,
-            WSAENETUNREACH = 10051,
-            WSAENETRESET = 10052,
-            WSAECONNABORTED = 10053,
-            WSAECONNRESET = 10054,
-            IP_REQ_TIMED_OUT = 11010,
-        }
     }
 }
