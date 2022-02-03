@@ -22,7 +22,7 @@ namespace PingPlugin.GameAddressDetectors
         private const ushort XIV_MIN_PORT_4 = 55296;
         private const ushort XIV_MAX_PORT_4 = 55551;
 
-        public override IPAddress GetAddress()
+        public override IPAddress GetAddress(bool verbose = false)
         {
             var bufferLength = 0;
             _ = GetExtendedTcpTable(IntPtr.Zero, ref bufferLength, false, AF_INET, TCP_TABLE_OWNER_PID_CONNECTIONS);
@@ -72,7 +72,7 @@ namespace PingPlugin.GameAddressDetectors
                 Marshal.FreeHGlobal(pTcpTable);
             }
 
-            if (Verbose && !Equals(address, IPAddress.Loopback) && !Equals(address, Address))
+            if (verbose && !Equals(address, IPAddress.Loopback) && !Equals(address, Address))
             {
                 PluginLog.Log($"Detected newly-connected FFXIV server address {address}");
             }

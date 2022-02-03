@@ -15,6 +15,7 @@ namespace PingPlugin.PingTrackers
         private readonly GameAddressDetector addressDetector;
         protected readonly PingConfiguration config;
 
+        public bool Verbose { get; set; } = true;
         public bool Errored { get; set; }
         public bool Reset { get; set; }
         public double AverageRTT { get; private set; }
@@ -72,7 +73,7 @@ namespace PingPlugin.PingTrackers
 
                 try
                 {
-                    SeAddress = this.addressDetector.GetAddress();
+                    SeAddress = this.addressDetector.GetAddress(Verbose);
                 }
                 catch (Exception e)
                 {

@@ -13,11 +13,11 @@ namespace PingPlugin.GameAddressDetectors
 
         public AggregateAddressDetector(ClientState clientState)
         {
-            this.ipHlpApiDetector = new IpHlpApiAddressDetector { Verbose = false };
-            this.clientStateDetector = new ClientStateAddressDetector(clientState) { Verbose = false };
+            this.ipHlpApiDetector = new IpHlpApiAddressDetector();
+            this.clientStateDetector = new ClientStateAddressDetector(clientState);
         }
 
-        public override IPAddress GetAddress()
+        public override IPAddress GetAddress(bool verbose = false)
         {
             var address = IPAddress.Loopback;
 
@@ -27,7 +27,7 @@ namespace PingPlugin.GameAddressDetectors
             {
                 try
                 {
-                    address = this.ipHlpApiDetector.GetAddress();
+                    address = this.ipHlpApiDetector.GetAddress(verbose);
                 }
                 catch (Exception e)
                 {
@@ -42,7 +42,7 @@ namespace PingPlugin.GameAddressDetectors
                 bestDetector = this.clientStateDetector;
                 try
                 {
-                    address = this.clientStateDetector.GetAddress();
+                    address = this.clientStateDetector.GetAddress(verbose);
                 }
                 catch (Exception e)
                 {
@@ -50,7 +50,7 @@ namespace PingPlugin.GameAddressDetectors
                 }
             }
 
-            if (Verbose && !Equals(address, IPAddress.Loopback) && !Equals(address, Address))
+            if (verbose && !Equals(address, IPAddress.Loopback) && !Equals(address, Address))
             {
                 PluginLog.Log($"Got new server address {address} from detector {bestDetector.GetType().Name}");
             }

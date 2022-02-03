@@ -20,8 +20,8 @@ namespace PingPlugin.PingTrackers
             // Define trackers
             this.trackerInfos = new Dictionary<string, TrackerInfo>();
 
-            RegisterTracker(COMTrackerKey, new ComponentModelPingTracker(config, addressDetector));
-            RegisterTracker(IpHlpApiTrackerKey, new IpHlpApiPingTracker(config, addressDetector));
+            RegisterTracker(COMTrackerKey, new ComponentModelPingTracker(config, addressDetector) { Verbose = false });
+            RegisterTracker(IpHlpApiTrackerKey, new IpHlpApiPingTracker(config, addressDetector) { Verbose = false });
 
             // Create decision tree to solve tracker selection problem
             this.decisionTree = new DecisionTree<string>(
