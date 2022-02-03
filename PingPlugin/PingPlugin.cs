@@ -5,10 +5,10 @@ using Dalamud.Logging;
 using Dalamud.Plugin;
 using Dalamud.Plugin.Ipc;
 using PingPlugin.Attributes;
+using PingPlugin.GameAddressDetectors;
 using PingPlugin.PingTrackers;
 using System;
 using System.Dynamic;
-using PingPlugin.GameAddressDetectors;
 
 namespace PingPlugin
 {
@@ -16,15 +16,15 @@ namespace PingPlugin
     {
         [PluginService]
         [RequiredVersion("1.0")]
-        private DalamudPluginInterface PluginInterface { get; init; }
+        public static DalamudPluginInterface PluginInterface { get; set; }
 
         [PluginService]
         [RequiredVersion("1.0")]
-        private CommandManager Commands { get; init; }
+        public static CommandManager Commands { get; set; }
 
         [PluginService]
         [RequiredVersion("1.0")]
-        private ClientState ClientState { get; init; }
+        public static ClientState ClientState { get; set; }
 
         private readonly PluginCommandManager<PingPlugin> pluginCommandManager;
         private readonly PingConfiguration config;
