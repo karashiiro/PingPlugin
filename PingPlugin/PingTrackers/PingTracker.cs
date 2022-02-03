@@ -97,7 +97,7 @@ namespace PingPlugin.PingTrackers
 
         private void UpdateSeAddress()
         {
-            if (!this.clientState.IsLoggedIn)
+            if (!this.clientState.IsLoggedIn || this.clientState.LocalPlayer == null)
             {
                 SeAddress = IPAddress.Loopback;
                 return;

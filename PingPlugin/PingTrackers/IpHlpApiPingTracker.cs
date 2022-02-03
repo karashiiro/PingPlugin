@@ -4,6 +4,7 @@ using System.Net;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
+using Dalamud.Logging;
 
 namespace PingPlugin.PingTrackers
 {
@@ -19,11 +20,18 @@ namespace PingPlugin.PingTrackers
             {
                 if (SeAddress != null)
                 {
-                    var rtt = GetAddressLastRTT(SeAddress);
-                    var error = (WinError)Marshal.GetLastWin32Error();
-                    if (error == WinError.NO_ERROR)
+                    try
                     {
-                        NextRTTCalculation(rtt);
+                        var rtt = GetAddressLastRTT(SeAddress);
+                        var error = (WinError)Marshal.GetLastWin32Error();
+                        if (error == WinError.NO_ERROR)
+                        {
+                            NextRTTCalculation(rtt);
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        PluginLog.LogError(e, "Error occurred when executing ping.");
                     }
                 }
 

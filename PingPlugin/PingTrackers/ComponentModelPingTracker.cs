@@ -1,7 +1,9 @@
-﻿using Dalamud.Game.ClientState;
+﻿using System;
+using Dalamud.Game.ClientState;
 using System.Net.NetworkInformation;
 using System.Threading;
 using System.Threading.Tasks;
+using Dalamud.Logging;
 
 namespace PingPlugin.PingTrackers
 {
@@ -20,10 +22,17 @@ namespace PingPlugin.PingTrackers
             {
                 if (SeAddress != null)
                 {
-                    var pingReply = await this.ping.SendPingAsync(SeAddress);
-                    if (pingReply.Status == IPStatus.Success && pingReply.RoundtripTime > 0)
+                    try
                     {
-                        NextRTTCalculation((ulong)pingReply.RoundtripTime);
+                        var pingReply = await this.ping.SendPingAsync(SeAddress);
+                        if (pingReply.Status == IPStatus.Success && pingReply.RoundtripTime > 0)
+                        {
+                            NextRTTCalculation((ulong)pingReply.RoundtripTime);
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        PluginLog.LogError(e, "Error occurred when executing ping.");
                     }
                 }
 
