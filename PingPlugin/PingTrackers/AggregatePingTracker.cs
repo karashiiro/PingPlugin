@@ -27,11 +27,11 @@ namespace PingPlugin.PingTrackers
             this.decisionTree = new DecisionTree<string>(
                 () => GetTrackerRTT(COMTrackerKey) < GetTrackerRTT(IpHlpApiTrackerKey),
                 pass: new DecisionTree<string>(
-                    () => GetTrackerRTT(COMTrackerKey) == 0,
+                    () => TrackerIsErrored(COMTrackerKey),
                     pass: new DecisionTree<string>(() => TreeResult.Resolve(IpHlpApiTrackerKey)),
                     fail: new DecisionTree<string>(() => TreeResult.Resolve(COMTrackerKey))),
                 fail: new DecisionTree<string>(
-                    () => GetTrackerRTT(IpHlpApiTrackerKey) == 0,
+                    () => TrackerIsErrored(IpHlpApiTrackerKey),
                     pass: new DecisionTree<string>(() => TreeResult.Resolve(COMTrackerKey)),
                     fail: new DecisionTree<string>(() => TreeResult.Resolve(IpHlpApiTrackerKey))
                     )
@@ -108,6 +108,11 @@ namespace PingPlugin.PingTrackers
         private ulong GetTrackerRTT(string key)
         {
             return this.trackerInfos[key].LastRTT;
+        }
+
+        private bool TrackerIsErrored(string key)
+        {
+            return this.trackerInfos[key].Tracker?.Errored ?? true;
         }
 
         private class TrackerInfo

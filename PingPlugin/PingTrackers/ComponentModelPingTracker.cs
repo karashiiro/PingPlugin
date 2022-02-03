@@ -25,13 +25,17 @@ namespace PingPlugin.PingTrackers
                     try
                     {
                         var pingReply = await this.ping.SendPingAsync(SeAddress);
-                        if (pingReply.Status == IPStatus.Success && pingReply.RoundtripTime > 0)
+
+                        Errored = pingReply.Status != IPStatus.Success;
+
+                        if (!Errored)
                         {
                             NextRTTCalculation((ulong)pingReply.RoundtripTime);
                         }
                     }
                     catch (Exception e)
                     {
+                        Errored = true;
                         PluginLog.LogError(e, "Error occurred when executing ping.");
                     }
                 }

@@ -24,13 +24,21 @@ namespace PingPlugin.PingTrackers
                     {
                         var rtt = GetAddressLastRTT(SeAddress);
                         var error = (WinError)Marshal.GetLastWin32Error();
-                        if (error == WinError.NO_ERROR)
+                        
+                        Errored = error != WinError.NO_ERROR;
+
+                        if (!Errored)
                         {
                             NextRTTCalculation(rtt);
+                        }
+                        else
+                        {
+                            PluginLog.LogWarning($"Got Win32 error {error} when executing ping - this may be temporary and acceptable.");
                         }
                     }
                     catch (Exception e)
                     {
+                        Errored = true;
                         PluginLog.LogError(e, "Error occurred when executing ping.");
                     }
                 }

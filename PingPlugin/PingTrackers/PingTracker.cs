@@ -18,6 +18,7 @@ namespace PingPlugin.PingTrackers
         private uint LastDcId;
 
         public bool Verbose { get; set; } = true;
+        public bool Errored { get; set; }
         public bool Reset { get; set; }
         public double AverageRTT { get; private set; }
         public IPAddress SeAddress { get; protected set; }
