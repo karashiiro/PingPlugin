@@ -46,12 +46,12 @@ namespace PingPlugin.PingTrackers
 
             var hopCount = 0U;
             var rtt = 0U;
-            GetRTTAndHopCount(addressRaw, ref hopCount, 51, ref rtt);
-            return rtt;
+
+            return GetRTTAndHopCount(addressRaw, ref hopCount, 51, ref rtt) == 1 ? rtt : 0;
         }
 
         [DllImport("Iphlpapi.dll", EntryPoint = "GetRTTAndHopCount", SetLastError = true)]
-        private static extern ulong GetRTTAndHopCount(uint address, ref uint hopCount, uint maxHops, ref uint rtt);
+        private static extern int GetRTTAndHopCount(uint address, ref uint hopCount, uint maxHops, ref uint rtt);
 
         private enum WinError
         {
