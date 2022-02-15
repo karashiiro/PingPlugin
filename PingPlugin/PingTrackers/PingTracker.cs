@@ -1,11 +1,11 @@
-﻿using PingPlugin.GameAddressDetectors;
+﻿using Dalamud.Logging;
+using PingPlugin.GameAddressDetectors;
 using System;
 using System.Collections.Concurrent;
 using System.Linq;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
-using Dalamud.Logging;
 
 namespace PingPlugin.PingTrackers
 {
@@ -54,7 +54,7 @@ namespace PingPlugin.PingTrackers
             SendMessage();
         }
 
-        protected void CalcAverage() => AverageRTT = RTTTimes.Average();
+        protected void CalcAverage() => AverageRTT = RTTTimes.Count > 1 ? RTTTimes.Average() : 0;
 
         protected virtual void ResetRTT()
         {
