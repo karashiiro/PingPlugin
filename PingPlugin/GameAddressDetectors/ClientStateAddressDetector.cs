@@ -1,5 +1,6 @@
 ﻿using Dalamud.Game.ClientState;
 using Dalamud.Logging;
+using System;
 using System.Net;
 
 namespace PingPlugin.GameAddressDetectors
@@ -23,9 +24,17 @@ namespace PingPlugin.GameAddressDetectors
                 return Address;
             }
 
-            var dcId = this.clientState.LocalPlayer!.CurrentWorld.GameData.DataCenter.Row;
-            if (dcId == this.lastDcId) return Address;
-            this.lastDcId = dcId;
+            uint? dcId;
+            try
+            {
+                dcId = this.clientState.LocalPlayer!.CurrentWorld.GameData?.DataCenter.Row;
+                if (dcId == null || dcId == this.lastDcId) return Address;
+                this.lastDcId = (uint)dcId;
+            }
+            catch (InvalidOperationException)
+            {
+                return Address;
+            }
 
             /*
              * We might be able to read these from the game itself, but
