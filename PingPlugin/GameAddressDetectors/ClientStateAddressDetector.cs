@@ -50,6 +50,11 @@ namespace PingPlugin.GameAddressDetectors
              * sets the Sending/Receiving data in-game to get a struct that
              * had a value of roughly (2 x ping RTT), but this was annoying
              * to maintain and was also horribly inaccurate.
+             *
+             * Historical notes (updated):
+             * I re-added support for reading the Windows TCP connection table,
+             * but I'm keeping this function in order to fall back when
+             * accessing the TCP table fails.
              */
             var address = dcId switch
             {
