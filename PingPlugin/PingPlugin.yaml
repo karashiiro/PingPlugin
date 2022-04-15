@@ -5,4 +5,3 @@ repo_url: https://github.com/karashiiro/PingPlugin
 tags: [ "ping", "monitor", "utility", "tool" ]
 icon_url: https://raw.githubusercontent.com/karashiiro/PingPlugin/main/Assets/icon.png
 image_urls: [ "https://raw.githubusercontent.com/karashiiro/PingPlugin/main/Assets/image1.png" ]
-dalamud_api_level: 5
