@@ -84,7 +84,7 @@ namespace PingPlugin
         public void PingCommand(string command, string args)
         {
             this.config.MonitorIsVisible = !this.config.MonitorIsVisible;
-            this.config.Save(); // If you kill the game, nothing is disposed. So, we save changes after they're made.
+            this.config.Save();
         }
 
         [Command("/pinggraph")]
