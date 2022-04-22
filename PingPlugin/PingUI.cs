@@ -109,7 +109,7 @@ namespace PingPlugin
         private bool fontScaleTooSmall;
         private void DrawConfigUi()
         {
-            ImGui.Begin($"{Loc.Localize("ConfigurationWindowTitle", string.Empty)}##PingPlugin Configuration",
+            ImGui.Begin($"{Loc.Localize("ConfigurationWindowTitle", string.Empty)}###PingPluginConfiguration",
                             ref this.configVisible,
                             ImGuiWindowFlags.NoResize | ImGuiWindowFlags.AlwaysAutoResize);
             var lockWindows = this.config.LockWindows;
