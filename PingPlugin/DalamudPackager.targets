@@ -1,12 +1,22 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project>
-  <Target Name="PackagePlugin" AfterTargets="Build">
-    <DalamudPackager
-      ProjectDir="$(ProjectDir)"
-      OutputPath="$(OutputPath)"
-      AssemblyName="$(AssemblyName)"
-      MakeZip="true"
-      HandleImages="true"
-      ManifestType="yaml"/>
-  </Target>
+	<Target Name="PackagePlugin" AfterTargets="Build" Condition="'$(Configuration)' == 'Debug'">
+		<DalamudPackager
+			ProjectDir="$(ProjectDir)"
+			OutputPath="$(OutputPath)"
+			AssemblyName="$(AssemblyName)"
+			MakeZip="false"
+			HandleImages="true"
+			ManifestType="yaml"/>
+	</Target>
+
+	<Target Name="PackagePlugin" AfterTargets="Build" Condition="'$(Configuration)' == 'Release'">
+		<DalamudPackager
+			ProjectDir="$(ProjectDir)"
+			OutputPath="$(OutputPath)"
+			AssemblyName="$(AssemblyName)"
+			MakeZip="true"
+			HandleImages="true"
+			ManifestType="yaml"/>
+	</Target>
 </Project>
