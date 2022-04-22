@@ -445,9 +445,7 @@ namespace PingPlugin
                 var fontPx = Math.Min(Math.Max(8, this.config.FontScale), 128);
 
                 {
-                    var jpRangeHandle = GCHandle.Alloc(GlyphRangesJapanese.GlyphRanges, GCHandleType.Pinned);
-                    this.uiFont = ImGui.GetIO().Fonts.AddFontFromFileTTF(filePath, fontPx, null, jpRangeHandle.AddrOfPinnedObject());
-                    jpRangeHandle.Free();
+                    this.uiFont = ImGui.GetIO().Fonts.AddFontFromFileTTF(filePath, fontPx, null, ImGui.GetIO().Fonts.GetGlyphRangesJapanese());
                 }
             }
             catch (Exception e)
