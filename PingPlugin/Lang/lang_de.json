@@ -1,28 +1,4 @@
 ﻿{
-  "Chinese": {
-    "message": "Chinesisch",
-    "description": "PingPlugin.LangKind"
-  },
-  "English": {
-    "message": "Englisch",
-    "description": "PingPlugin.LangKind"
-  },
-  "French": {
-    "message": "Französisch",
-    "description": "PingPlugin.LangKind"
-  },
-  "German": {
-    "message": "Deutsch",
-    "description": "PingPlugin.LangKind"
-  },
-  "Japanese": {
-    "message": "Japanisch",
-    "description": "PingPlugin.LangKind"
-  },
-  "Spanish": {
-    "message": "Spanisch",
-    "description": "PingPlugin.LangKind"
-  },
   "ClickThrough": {
     "message": "Anzeige durchklicken",
     "description": "PingPlugin.Configuration"

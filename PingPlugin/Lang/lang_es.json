@@ -1,28 +1,4 @@
 ﻿{
-  "Chinese": {
-    "message": "Chino",
-    "description": "PingPlugin.LangKind"
-  },
-  "English": {
-    "message": "Inglés",
-    "description": "PingPlugin.LangKind"
-  },
-  "French": {
-    "message": "Francés",
-    "description": "PingPlugin.LangKind"
-  },
-  "German": {
-    "message": "Alemán",
-    "description": "PingPlugin.LangKind"
-  },
-  "Japanese": {
-    "message": "Japones",
-    "description": "PingPlugin.LangKind"
-  },
-  "Spanish": {
-    "message": "Español",
-    "description": "PingPlugin.LangKind"
-  },
   "ClickThrough": {
     "message": "Haga clic en los windows de plugin",
     "description": "PingPlugin.Configuration"
