@@ -12,6 +12,7 @@ using System.IO;
 using System.Linq;
 using System.Numerics;
 using System.Runtime.InteropServices;
+using Dalamud.Interface.Windowing;
 
 namespace PingPlugin
 {
@@ -81,7 +82,7 @@ namespace PingPlugin
 #endif
         }
 
-        public void BuildUi()
+        public void Draw()
         {
             var serverBarShown = this.config.DisplayMode == DisplayMode.ServerBar;
             if (this.dtrEntry != null && this.dtrEntry.Shown != serverBarShown)

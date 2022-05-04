@@ -1,7 +1,6 @@
 ﻿using Dalamud.Game.ClientState;
 using Dalamud.Game.Command;
 using Dalamud.Game.Gui.Dtr;
-using Dalamud.IoC;
 using Dalamud.Logging;
 using Dalamud.Plugin;
 using Dalamud.Plugin.Ipc;
@@ -16,9 +15,6 @@ namespace PingPlugin
     public class PingPlugin : IDalamudPlugin
     {
         private readonly DalamudPluginInterface pluginInterface;
-        private readonly CommandManager commands;
-        private readonly ClientState clientState;
-        private readonly DtrBar dtrBar;
 
         private readonly PluginCommandManager<PingPlugin> pluginCommandManager;
         private readonly PingConfiguration config;
@@ -37,24 +33,21 @@ namespace PingPlugin
             DtrBar dtrBar)
         {
             this.pluginInterface = pluginInterface;
-            this.commands = commands;
-            this.clientState = clientState;
-            this.dtrBar = dtrBar;
             
             this.config = (PingConfiguration)this.pluginInterface.GetPluginConfig() ?? new PingConfiguration();
             this.config.Initialize(this.pluginInterface);
 
-            this.pingTracker = new AggregatePingTracker(this.config, new AggregateAddressDetector(this.clientState));
+            this.pingTracker = new AggregatePingTracker(this.config, new AggregateAddressDetector(clientState));
 
             InitIpc();
 
-            this.ui = new PingUI(this.pingTracker, this.pluginInterface, this.dtrBar, this.config);
+            this.ui = new PingUI(this.pingTracker, this.pluginInterface, dtrBar, this.config);
             this.pingTracker.OnPingUpdated += this.ui.UpdateDtrBarPing;
 
             this.pluginInterface.UiBuilder.OpenConfigUi += OpenConfigUi;
-            this.pluginInterface.UiBuilder.Draw += this.ui.BuildUi;
+            this.pluginInterface.UiBuilder.Draw += this.ui.Draw;
 
-            this.pluginCommandManager = new PluginCommandManager<PingPlugin>(this, this.commands);
+            this.pluginCommandManager = new PluginCommandManager<PingPlugin>(this, commands);
         }
 
         private void InitIpc()
@@ -114,7 +107,7 @@ namespace PingPlugin
             this.pluginCommandManager.Dispose();
 
             this.pluginInterface.UiBuilder.OpenConfigUi -= OpenConfigUi;
-            this.pluginInterface.UiBuilder.Draw -= this.ui.BuildUi;
+            this.pluginInterface.UiBuilder.Draw -= this.ui.Draw;
 
             this.config.Save();
 
