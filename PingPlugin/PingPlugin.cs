@@ -15,21 +15,10 @@ namespace PingPlugin
 {
     public class PingPlugin : IDalamudPlugin
     {
-        [PluginService]
-        [RequiredVersion("1.0")]
-        public static DalamudPluginInterface PluginInterface { get; set; }
-
-        [PluginService]
-        [RequiredVersion("1.0")]
-        public static CommandManager Commands { get; set; }
-
-        [PluginService]
-        [RequiredVersion("1.0")]
-        public static ClientState ClientState { get; set; }
-
-        [PluginService]
-        [RequiredVersion("1.0")]
-        public static DtrBar DtrBar { get; set; }
+        private readonly DalamudPluginInterface pluginInterface;
+        private readonly CommandManager commands;
+        private readonly ClientState clientState;
+        private readonly DtrBar dtrBar;
 
         private readonly PluginCommandManager<PingPlugin> pluginCommandManager;
         private readonly PingConfiguration config;
@@ -41,29 +30,38 @@ namespace PingPlugin
 
         public string Name => "PingPlugin";
 
-        public PingPlugin()
+        public PingPlugin(
+            DalamudPluginInterface pluginInterface,
+            CommandManager commands,
+            ClientState clientState,
+            DtrBar dtrBar)
         {
-            this.config = (PingConfiguration)PluginInterface.GetPluginConfig() ?? new PingConfiguration();
-            this.config.Initialize(PluginInterface);
+            this.pluginInterface = pluginInterface;
+            this.commands = commands;
+            this.clientState = clientState;
+            this.dtrBar = dtrBar;
+            
+            this.config = (PingConfiguration)this.pluginInterface.GetPluginConfig() ?? new PingConfiguration();
+            this.config.Initialize(this.pluginInterface);
 
-            this.pingTracker = new AggregatePingTracker(this.config, new AggregateAddressDetector(ClientState));
+            this.pingTracker = new AggregatePingTracker(this.config, new AggregateAddressDetector(this.clientState));
 
             InitIpc();
 
-            this.ui = new PingUI(this.pingTracker, PluginInterface, DtrBar, this.config);
+            this.ui = new PingUI(this.pingTracker, this.pluginInterface, this.dtrBar, this.config);
             this.pingTracker.OnPingUpdated += this.ui.UpdateDtrBarPing;
 
-            PluginInterface.UiBuilder.OpenConfigUi += OpenConfigUi;
-            PluginInterface.UiBuilder.Draw += this.ui.BuildUi;
+            this.pluginInterface.UiBuilder.OpenConfigUi += OpenConfigUi;
+            this.pluginInterface.UiBuilder.Draw += this.ui.BuildUi;
 
-            this.pluginCommandManager = new PluginCommandManager<PingPlugin>(this, Commands);
+            this.pluginCommandManager = new PluginCommandManager<PingPlugin>(this, this.commands);
         }
 
         private void InitIpc()
         {
             try
             {
-                IpcProvider = PluginInterface.GetIpcProvider<object, object>("PingPlugin.Ipc");
+                IpcProvider = this.pluginInterface.GetIpcProvider<object, object>("PingPlugin.Ipc");
                 this.pingTracker.OnPingUpdated += payload =>
                 {
                     dynamic obj = new ExpandoObject();
@@ -115,8 +113,8 @@ namespace PingPlugin
 
             this.pluginCommandManager.Dispose();
 
-            PluginInterface.UiBuilder.OpenConfigUi -= OpenConfigUi;
-            PluginInterface.UiBuilder.Draw -= this.ui.BuildUi;
+            this.pluginInterface.UiBuilder.OpenConfigUi -= OpenConfigUi;
+            this.pluginInterface.UiBuilder.Draw -= this.ui.BuildUi;
 
             this.config.Save();
 
