@@ -271,7 +271,7 @@ namespace PingPlugin
 
             ImGui.SetNextWindowBgAlpha(this.config.MonitorBgAlpha);
 
-            ImGui.Begin("PingMonitor", windowFlags);
+            ImGui.Begin("PingMonitor###PingPluginMonitor", windowFlags);
             if (this.resettingMonitorPos)
             {
                 ImGui.SetWindowPos(this.config.MonitorPosition);
@@ -374,7 +374,7 @@ namespace PingPlugin
             ImGui.SetNextWindowSize(new Vector2(350 + this.config.FontScale * (1.5f / positionScaleFactor), 185 + this.config.FontScale * positionScaleFactor), ImGuiCond.Always);
 
             ImGui.PushStyleVar(ImGuiStyleVar.WindowTitleAlign, new Vector2(0.5f, 0.5f));
-            ImGui.Begin($"{Loc.Localize("UIGraphTitle", string.Empty)}##Ping Graph", windowFlags);
+            ImGui.Begin($"{Loc.Localize("UIGraphTitle", string.Empty)}###PingPluginGraph", windowFlags);
             ImGui.PopStyleVar();
 
             if (this.resettingGraphPos)
