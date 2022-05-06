@@ -9,6 +9,7 @@ using PingPlugin.GameAddressDetectors;
 using PingPlugin.PingTrackers;
 using System;
 using System.Dynamic;
+using Dalamud.Game.Network;
 
 namespace PingPlugin
 {
@@ -30,14 +31,16 @@ namespace PingPlugin
             DalamudPluginInterface pluginInterface,
             CommandManager commands,
             ClientState clientState,
-            DtrBar dtrBar)
+            DtrBar dtrBar,
+            GameNetwork network)
         {
             this.pluginInterface = pluginInterface;
             
             this.config = (PingConfiguration)this.pluginInterface.GetPluginConfig() ?? new PingConfiguration();
             this.config.Initialize(this.pluginInterface);
 
-            this.pingTracker = new AggregatePingTracker(this.config, new AggregateAddressDetector(clientState));
+            this.pingTracker = new AggregatePingTracker(this.config, new AggregateAddressDetector(clientState), network);
+            this.pingTracker.Start();
 
             InitIpc();
 
@@ -103,7 +106,7 @@ namespace PingPlugin
         protected virtual void Dispose(bool disposing)
         {
             if (!disposing) return;
-
+            
             this.pluginCommandManager.Dispose();
 
             this.pluginInterface.UiBuilder.OpenConfigUi -= OpenConfigUi;

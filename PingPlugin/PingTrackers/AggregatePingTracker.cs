@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using Dalamud.Game.Network;
 
 namespace PingPlugin.PingTrackers
 {
@@ -11,17 +12,21 @@ namespace PingPlugin.PingTrackers
     {
         private const string COMTrackerKey = "COM";
         private const string IpHlpApiTrackerKey = "IpHlpApi";
+        private const string PacketTrackerKey = "Packets";
 
         private readonly IDictionary<string, TrackerInfo> trackerInfos;
         private readonly DecisionTree<string> decisionTree;
 
-        public AggregatePingTracker(PingConfiguration config, GameAddressDetector addressDetector) : base(config, addressDetector)
+        private string currentTracker = "";
+
+        public AggregatePingTracker(PingConfiguration config, GameAddressDetector addressDetector, GameNetwork network) : base(config, addressDetector)
         {
             // Define trackers
             this.trackerInfos = new Dictionary<string, TrackerInfo>();
 
             RegisterTracker(COMTrackerKey, new ComponentModelPingTracker(config, addressDetector) { Verbose = false });
             RegisterTracker(IpHlpApiTrackerKey, new IpHlpApiPingTracker(config, addressDetector) { Verbose = false });
+            RegisterTracker(PacketTrackerKey, new PacketPingTracker(config, addressDetector, network) { Verbose = false });
 
             // Create decision tree to solve tracker selection problem
             this.decisionTree = new DecisionTree<string>(
@@ -36,14 +41,32 @@ namespace PingPlugin.PingTrackers
                         // Use greater ping value, something's probably subtly broken
                         () => GetTrackerRTT(COMTrackerKey) < GetTrackerRTT(IpHlpApiTrackerKey),
                         pass: new DecisionTree<string>(() => TreeResult.Resolve(IpHlpApiTrackerKey)),
-                        fail: new DecisionTree<string>(() => TreeResult.Resolve(COMTrackerKey))),
+                        fail: new DecisionTree<string>(() => TreeResult.Resolve(COMTrackerKey))
+                        ),
                     fail: new DecisionTree<string>(
-                        // Otherwise use the lower ping value, we'll assume it's more accurate
-                        () => GetTrackerRTT(COMTrackerKey) < GetTrackerRTT(IpHlpApiTrackerKey),
-                        pass: new DecisionTree<string>(() => TreeResult.Resolve(COMTrackerKey)),
-                        fail: new DecisionTree<string>(() => TreeResult.Resolve(IpHlpApiTrackerKey)))
+                        // If both of these trackers report a ping of 0
+                        () => GetTrackerRTT(COMTrackerKey) == 0 && GetTrackerRTT(IpHlpApiTrackerKey) == 0,
+                        // Just use packets (inaccurate)
+                        pass: new DecisionTree<string>(() => TreeResult.Resolve(PacketTrackerKey)),
+                        fail: new DecisionTree<string>(
+                            // Otherwise use the lower ping value, we'll assume it's more accurate
+                            () => GetTrackerRTT(COMTrackerKey) < GetTrackerRTT(IpHlpApiTrackerKey),
+                            pass: new DecisionTree<string>(() => TreeResult.Resolve(COMTrackerKey)),
+                            fail: new DecisionTree<string>(() => TreeResult.Resolve(IpHlpApiTrackerKey))
+                            )
+                        )
                     )
                 );
+        }
+
+        public override void Start()
+        {
+            foreach (var (_, ti) in this.trackerInfos)
+            {
+                ti.Tracker.Start();
+            }
+            
+            base.Start();
         }
 
         protected override void ResetRTT()
@@ -61,33 +84,55 @@ namespace PingPlugin.PingTrackers
         {
             while (!token.IsCancellationRequested)
             {
-                // This can happen because the base PingTracker starts this task in its constructor, so
-                // it can run before we run the child class constructor here.
-                if (this.decisionTree == null) continue;
-
-                if (SeAddress != null)
+                // Use decision tree to select best ping tracker
+                try
                 {
-                    // Use decision tree to select best ping tracker
-                    try
-                    {
-                        var bestTracker = this.decisionTree.Execute();
-                        if (bestTracker != null)
-                        {
-                            var trackerInfo = this.trackerInfos[bestTracker];
-                            if (trackerInfo.Ticked)
-                            {
-                                // Process result
-                                NextRTTCalculation(trackerInfo.LastRTT);
-                            }
-                        }
-                    }
-                    catch (Exception e)
-                    {
-                        PluginLog.LogError(e, "Error in best ping tracker selection.");
-                    }
+                    ProcessBestResult(PacketTrackerKey);
+                    //var bestTracker = this.decisionTree.Execute();
+                    //if (!string.IsNullOrEmpty(bestTracker))
+                    //{
+                    //    ProcessBestResult(bestTracker);
+                    //}
+                    //else if (!string.IsNullOrEmpty(this.currentTracker))
+                    //{
+                    //    ProcessBestResult(this.currentTracker);
+                    //}
+                }
+                catch (Exception e)
+                {
+                    PluginLog.LogError(e, "Error in best ping tracker selection.");
                 }
 
                 await Task.Delay(3000, token);
+            }
+        }
+
+        private void ProcessBestResult(string bestTracker)
+        {
+            var trackerInfo = this.trackerInfos[bestTracker];
+            if (trackerInfo.Ticked)
+            {
+                // Process result
+                NextRTTCalculation(trackerInfo.LastRTT);
+                trackerInfo.Ticked = false;
+
+                if (this.currentTracker != bestTracker)
+                {
+                    // Swap logging priorities
+                    trackerInfo.Tracker.Verbose = true;
+                    if (!string.IsNullOrEmpty(this.currentTracker))
+                    {
+                        this.trackerInfos[this.currentTracker].Tracker.Verbose = false;
+                    }
+                    
+                    // Update the current tracker
+                    this.currentTracker = bestTracker;
+
+                    if (Verbose)
+                    {
+                        PluginLog.LogDebug("Retrieving ping from tracker {PingTrackerKey}", bestTracker);
+                    }
+                }
             }
         }
 

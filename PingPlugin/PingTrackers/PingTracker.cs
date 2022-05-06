@@ -34,7 +34,10 @@ namespace PingPlugin.PingTrackers
 
             SeAddress = IPAddress.Loopback;
             RTTTimes = new ConcurrentQueue<float>();
+        }
 
+        public virtual void Start()
+        {
             Task.Run(() => AddressUpdateLoop(this.tokenSource.Token));
             Task.Run(() => PingLoop(this.tokenSource.Token));
         }
