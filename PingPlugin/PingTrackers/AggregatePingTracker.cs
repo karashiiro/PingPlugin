@@ -87,16 +87,15 @@ namespace PingPlugin.PingTrackers
                 // Use decision tree to select best ping tracker
                 try
                 {
-                    ProcessBestResult(PacketTrackerKey);
-                    //var bestTracker = this.decisionTree.Execute();
-                    //if (!string.IsNullOrEmpty(bestTracker))
-                    //{
-                    //    ProcessBestResult(bestTracker);
-                    //}
-                    //else if (!string.IsNullOrEmpty(this.currentTracker))
-                    //{
-                    //    ProcessBestResult(this.currentTracker);
-                    //}
+                    var bestTracker = this.decisionTree.Execute();
+                    if (!string.IsNullOrEmpty(bestTracker))
+                    {
+                        ProcessBestResult(bestTracker);
+                    }
+                    else if (!string.IsNullOrEmpty(this.currentTracker))
+                    {
+                        ProcessBestResult(this.currentTracker);
+                    }
                 }
                 catch (Exception e)
                 {
