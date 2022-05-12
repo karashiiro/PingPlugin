@@ -51,13 +51,15 @@ namespace PingPlugin.PingTrackers
             // ping calculation.
             
             // Predict the up/down Ping opcodes
-            if (this.predictedUpOpcodeSet && !this.predictedDownOpcodeSet && direction == NetworkMessageDirection.ZoneDown)
+            if (!this.predictedUpOpcodeSet && direction == NetworkMessageDirection.ZoneUp)
             {
-                CheckPredictedPingDown(dataPtr, opcode);
-            }
-            else if (!this.predictedUpOpcodeSet && direction == NetworkMessageDirection.ZoneUp)
-            {
+                // Client send, executes first
                 TrackPredictedPingUp(dataPtr, opcode);
+            }
+            else if (this.predictedUpOpcodeSet && !this.predictedDownOpcodeSet && direction == NetworkMessageDirection.ZoneDown)
+            {
+                // Server send, executes last
+                CheckPredictedPingDown(dataPtr, opcode);
             }
 
             // Calculate ping
