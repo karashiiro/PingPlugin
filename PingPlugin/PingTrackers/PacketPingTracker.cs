@@ -98,7 +98,7 @@ namespace PingPlugin.PingTrackers
             this.pingTimer.Reset();
             this.pingTimer.Start();
 
-            // Set a timer for 15 seconds, after which we go back to checking PingUp opcodes
+            // Set a timer for 3 seconds, after which we go back to checking PingUp opcodes
             this.predictionTimeout?.Dispose();
             this.predictionTimeout = new Timer(_ =>
             {
@@ -112,7 +112,7 @@ namespace PingPlugin.PingTrackers
                     }
                 }
             });
-            this.predictionTimeout.Change(Timeout.InfiniteTimeSpan, new TimeSpan(0, 0, 15));
+            this.predictionTimeout.Change(TimeSpan.FromSeconds(3), Timeout.InfiniteTimeSpan);
 
             if (Verbose)
             {
