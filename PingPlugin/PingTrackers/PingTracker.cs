@@ -15,8 +15,9 @@ namespace PingPlugin.PingTrackers
         private readonly GameAddressDetector addressDetector;
         protected readonly PingConfiguration config;
 
+        public PingTrackerKind Kind { get; }
         public bool Verbose { get; set; } = true;
-        public bool Errored { get; set; }
+        public bool Errored { get; protected set; }
         public bool Reset { get; set; }
         public double AverageRTT { get; private set; }
         public IPAddress SeAddress { get; protected set; }
@@ -26,7 +27,7 @@ namespace PingPlugin.PingTrackers
         public delegate void PingUpdatedDelegate(PingStatsPayload payload);
         public event PingUpdatedDelegate OnPingUpdated;
 
-        protected PingTracker(PingConfiguration config, GameAddressDetector addressDetector)
+        protected PingTracker(PingConfiguration config, GameAddressDetector addressDetector, PingTrackerKind kind)
         {
             this.tokenSource = new CancellationTokenSource();
             this.config = config;
@@ -34,6 +35,7 @@ namespace PingPlugin.PingTrackers
 
             SeAddress = IPAddress.Loopback;
             RTTTimes = new ConcurrentQueue<float>();
+            Kind = kind;
         }
 
         public virtual void Start()

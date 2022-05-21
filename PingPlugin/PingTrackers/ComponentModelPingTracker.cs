@@ -11,7 +11,7 @@ namespace PingPlugin.PingTrackers
     {
         private readonly Ping ping;
 
-        public ComponentModelPingTracker(PingConfiguration config, GameAddressDetector addressDetector) : base(config, addressDetector)
+        public ComponentModelPingTracker(PingConfiguration config, GameAddressDetector addressDetector) : base(config, addressDetector, PingTrackerKind.COM)
         {
             this.ping = new Ping();
         }

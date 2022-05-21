@@ -4,6 +4,7 @@ namespace PingPlugin.PingTrackers
 {
     public enum PingTrackerKind
     {
+        Aggregate,
         COM,
         IpHlpApi,
         Packets,
@@ -15,6 +16,7 @@ namespace PingPlugin.PingTrackers
         {
             return kind switch
             {
+                PingTrackerKind.Aggregate => "Autodetect (Default)",
                 PingTrackerKind.COM => "COM",
                 PingTrackerKind.IpHlpApi => "Win32 API",
                 PingTrackerKind.Packets => "Game packets",

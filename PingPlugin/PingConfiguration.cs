@@ -7,6 +7,7 @@ using System;
 using System.IO;
 using System.Numerics;
 using System.Reflection;
+using PingPlugin.PingTrackers;
 
 namespace PingPlugin
 {
@@ -36,6 +37,8 @@ namespace PingPlugin
         public bool HideOverlaysDuringCutscenes { get; set; }
         public bool HideAveragePing { get; set; }
         public string Lang { get; set; }
+
+        public PingTrackerKind TrackingMode { get; set; } = PingTrackerKind.Aggregate;
 
         [JsonProperty]
         private bool PingPlugin17 { get; set; }
