@@ -6,13 +6,16 @@ using PingPlugin.GameAddressDetectors;
 using PingPlugin.PingTrackers;
 using System;
 using System.Dynamic;
-using System.Linq;
+using Dalamud.Game.Command;
+using Dalamud.Game.Gui.Dtr;
+using Dalamud.Game.Network;
 
 namespace PingPlugin
 {
     public class PingPlugin : IDalamudPlugin
     {
         private readonly DalamudPluginInterface pluginInterface;
+        private readonly GameNetwork network;
 
         private readonly PluginCommandManager<PingPlugin> pluginCommandManager;
         private readonly PingConfiguration config;
@@ -26,9 +29,10 @@ namespace PingPlugin
 
         public string Name => "PingPlugin";
 
-        public PingPlugin(DalamudPluginInterface pluginInterface)
+        public PingPlugin(DalamudPluginInterface pluginInterface, CommandManager commands, DtrBar dtrBar, GameNetwork network)
         {
             this.pluginInterface = pluginInterface;
+            this.network = network;
             
             this.config = (PingConfiguration)this.pluginInterface.GetPluginConfig() ?? new PingConfiguration();
             this.config.Initialize(this.pluginInterface);
@@ -44,40 +48,31 @@ namespace PingPlugin
 
             InitIpc();
 
-            this.ui = this.pluginInterface.Create<PingUI>(this.pingTracker, this.config, (Func<PingTrackerKind, PingTracker>)RequestNewPingTracker);
-            if (this.ui == null)
-            {
-                throw new InvalidOperationException("Failed to create UI object. The provided arguments may be incorrect.");
-            }
-            
+            // Most of these can't be created using service injection because the service container only checks ctors for
+            // exact types.
+            this.ui = new PingUI(this.pingTracker, this.pluginInterface, dtrBar, this.config, RequestNewPingTracker);
             this.pingTracker.OnPingUpdated += this.ui.UpdateDtrBarPing;
 
             this.pluginInterface.UiBuilder.OpenConfigUi += OpenConfigUi;
             this.pluginInterface.UiBuilder.Draw += this.ui.Draw;
 
-            this.pluginCommandManager = this.pluginInterface.Create<PluginCommandManager<PingPlugin>>(this);
-            if (this.pluginCommandManager == null)
-            {
-                throw new InvalidOperationException("Failed to create command manager. The provided arguments may be incorrect.");
-            }
+            this.pluginCommandManager = new PluginCommandManager<PingPlugin>(this, commands);
         }
-        
-        private PingTracker CreatePingTracker<T>(params object[] scopedObjects) where T : PingTracker
-            => this.pluginInterface.Create<T>(scopedObjects
-                .Concat(new object[] { this.config, this.addressDetector })
-                .ToArray());
 
         private PingTracker RequestNewPingTracker(PingTrackerKind kind)
         {
-            this.pingTracker = kind switch
+            this.pingTracker?.Dispose();
+            
+            PingTracker newTracker = kind switch
             {
-                PingTrackerKind.Aggregate => CreatePingTracker<AggregatePingTracker>(),
-                PingTrackerKind.COM => CreatePingTracker<ComponentModelPingTracker>(),
-                PingTrackerKind.IpHlpApi => CreatePingTracker<IpHlpApiPingTracker>(),
-                PingTrackerKind.Packets => CreatePingTracker<PacketPingTracker>(),
+                PingTrackerKind.Aggregate => new AggregatePingTracker(this.config, this.addressDetector, this.network),
+                PingTrackerKind.COM => new ComponentModelPingTracker(this.config, this.addressDetector),
+                PingTrackerKind.IpHlpApi => new IpHlpApiPingTracker(this.config, this.addressDetector),
+                PingTrackerKind.Packets => new PacketPingTracker(this.config, this.addressDetector, this.network),
                 _ => throw new ArgumentOutOfRangeException(nameof(kind)),
             };
-            
+
+            this.pingTracker = newTracker;
             if (this.pingTracker == null)
             {
                 throw new InvalidOperationException($"Failed to create ping tracker \"{kind}\". The provided arguments may be incorrect.");
@@ -85,7 +80,7 @@ namespace PingPlugin
             
             this.pingTracker.Start();
             
-            return this.pingTracker;
+            return newTracker;
         }
 
         private void InitIpc()

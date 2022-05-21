@@ -34,8 +34,13 @@ namespace PingPlugin.PingTrackers
                         }
                         else if (pingReply.Status != IPStatus.TimedOut)
                         {
-                            PluginLog.LogWarning($"Got bad status {pingReply.Status} when executing ping - this may be temporary and acceptable.");
+                            PluginLog.LogWarning(
+                                $"Got bad status {pingReply.Status} when executing ping - this may be temporary and acceptable.");
                         }
+                    }
+                    catch (InvalidOperationException)
+                    {
+                        // ignored
                     }
                     catch (Exception e)
                     {

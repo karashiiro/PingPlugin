@@ -135,7 +135,7 @@ namespace PingPlugin
             var trackerKinds = Enum.GetValues<PingTrackerKind>();
             var trackerNames = trackerKinds.Select(t => t.FormatName()).ToArray();
             var tracker = (int)this.pingTracker.Kind;
-            if (ImGui.Combo("Tracker", ref tracker, trackerNames, trackerNames.Length))
+            if (ImGui.Combo("Ping Tracker", ref tracker, trackerNames, trackerNames.Length))
             {
                 var trackerKind = (PingTrackerKind)tracker;
                 
