@@ -51,6 +51,10 @@
     "message": "Lock plugin windows",
     "description": "PingPlugin.Configuration"
   },
+  "PingTracker": {
+    "message": "Ping Tracker",
+    "description": "PingPlugin.Configuration"
+  },
   "DisplayMode": {
     "message": "Display mode",
     "description": "PingPlugin.Configuration"
