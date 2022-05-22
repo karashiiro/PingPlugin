@@ -1,4 +1,20 @@
 {
+  "PingTrackerKindAutodetect": {
+    "message": "Autodetect (Default)",
+    "description": "PingPlugin.Kind"
+  },
+  "PingTrackerKindCOM": {
+    "message": "COM",
+    "description": "PingPlugin.Kind"
+  },
+  "PingTrackerKindWin32API": {
+    "message": "Win32 API",
+    "description": "PingPlugin.Kind"
+  },
+  "PingTrackerKindPackets": {
+    "message": "Game packets",
+    "description": "PingPlugin.Kind"
+  },
   "ClickThrough": {
     "message": "Clic passe à travers",
     "description": "PingPlugin.Configuration"

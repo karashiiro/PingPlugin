@@ -1,4 +1,5 @@
 ﻿using System;
+using CheapLoc;
 
 namespace PingPlugin.PingTrackers
 {
@@ -16,10 +17,10 @@ namespace PingPlugin.PingTrackers
         {
             return kind switch
             {
-                PingTrackerKind.Aggregate => "Autodetect (Default)",
-                PingTrackerKind.COM => "COM",
-                PingTrackerKind.IpHlpApi => "Win32 API",
-                PingTrackerKind.Packets => "Game packets",
+                PingTrackerKind.Aggregate => Loc.Localize("PingTrackerKindAutodetect", string.Empty),
+                PingTrackerKind.COM => Loc.Localize("PingTrackerKindCOM", string.Empty),
+                PingTrackerKind.IpHlpApi => Loc.Localize("PingTrackerKindWin32API", string.Empty),
+                PingTrackerKind.Packets => Loc.Localize("PingTrackerKindPackets", string.Empty),
                 _ => throw new ArgumentOutOfRangeException(nameof(kind)),
             };
         }
