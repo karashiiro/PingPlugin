@@ -1,7 +1,4 @@
-﻿using Dalamud.Game.ClientState;
-using Dalamud.Game.Command;
-using Dalamud.Game.Gui.Dtr;
-using Dalamud.Logging;
+﻿using Dalamud.Logging;
 using Dalamud.Plugin;
 using Dalamud.Plugin.Ipc;
 using PingPlugin.Attributes;
@@ -9,6 +6,8 @@ using PingPlugin.GameAddressDetectors;
 using PingPlugin.PingTrackers;
 using System;
 using System.Dynamic;
+using Dalamud.Game.Command;
+using Dalamud.Game.Gui.Dtr;
 using Dalamud.Game.Network;
 
 namespace PingPlugin
@@ -16,41 +15,72 @@ namespace PingPlugin
     public class PingPlugin : IDalamudPlugin
     {
         private readonly DalamudPluginInterface pluginInterface;
+        private readonly GameNetwork network;
 
         private readonly PluginCommandManager<PingPlugin> pluginCommandManager;
         private readonly PingConfiguration config;
 
-        private readonly PingTracker pingTracker;
+        private readonly GameAddressDetector addressDetector;
         private readonly PingUI ui;
+        
+        private PingTracker pingTracker;
 
         internal ICallGateProvider<object, object> IpcProvider;
 
         public string Name => "PingPlugin";
 
-        public PingPlugin(
-            DalamudPluginInterface pluginInterface,
-            CommandManager commands,
-            ClientState clientState,
-            DtrBar dtrBar,
-            GameNetwork network)
+        public PingPlugin(DalamudPluginInterface pluginInterface, CommandManager commands, DtrBar dtrBar, GameNetwork network)
         {
             this.pluginInterface = pluginInterface;
+            this.network = network;
             
             this.config = (PingConfiguration)this.pluginInterface.GetPluginConfig() ?? new PingConfiguration();
             this.config.Initialize(this.pluginInterface);
 
-            this.pingTracker = new AggregatePingTracker(this.config, new AggregateAddressDetector(clientState), network);
+            this.addressDetector = this.pluginInterface.Create<AggregateAddressDetector>();
+            if (this.addressDetector == null)
+            {
+                throw new InvalidOperationException("Failed to create game address detector. The provided arguments may be incorrect.");
+            }
+            
+            this.pingTracker = RequestNewPingTracker(this.config.TrackingMode);
             this.pingTracker.Start();
 
             InitIpc();
 
-            this.ui = new PingUI(this.pingTracker, this.pluginInterface, dtrBar, this.config);
+            // Most of these can't be created using service injection because the service container only checks ctors for
+            // exact types.
+            this.ui = new PingUI(this.pingTracker, this.pluginInterface, dtrBar, this.config, RequestNewPingTracker);
             this.pingTracker.OnPingUpdated += this.ui.UpdateDtrBarPing;
 
             this.pluginInterface.UiBuilder.OpenConfigUi += OpenConfigUi;
             this.pluginInterface.UiBuilder.Draw += this.ui.Draw;
 
             this.pluginCommandManager = new PluginCommandManager<PingPlugin>(this, commands);
+        }
+
+        private PingTracker RequestNewPingTracker(PingTrackerKind kind)
+        {
+            this.pingTracker?.Dispose();
+            
+            PingTracker newTracker = kind switch
+            {
+                PingTrackerKind.Aggregate => new AggregatePingTracker(this.config, this.addressDetector, this.network),
+                PingTrackerKind.COM => new ComponentModelPingTracker(this.config, this.addressDetector),
+                PingTrackerKind.IpHlpApi => new IpHlpApiPingTracker(this.config, this.addressDetector),
+                PingTrackerKind.Packets => new PacketPingTracker(this.config, this.addressDetector, this.network),
+                _ => throw new ArgumentOutOfRangeException(nameof(kind)),
+            };
+
+            this.pingTracker = newTracker;
+            if (this.pingTracker == null)
+            {
+                throw new InvalidOperationException($"Failed to create ping tracker \"{kind}\". The provided arguments may be incorrect.");
+            }
+            
+            this.pingTracker.Start();
+            
+            return newTracker;
         }
 
         private void InitIpc()

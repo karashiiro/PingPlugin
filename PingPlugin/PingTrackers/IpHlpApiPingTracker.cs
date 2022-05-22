@@ -10,7 +10,7 @@ namespace PingPlugin.PingTrackers
 {
     public class IpHlpApiPingTracker : PingTracker
     {
-        public IpHlpApiPingTracker(PingConfiguration config, GameAddressDetector addressDetector) : base(config, addressDetector)
+        public IpHlpApiPingTracker(PingConfiguration config, GameAddressDetector addressDetector) : base(config, addressDetector, PingTrackerKind.IpHlpApi)
         {
         }
 

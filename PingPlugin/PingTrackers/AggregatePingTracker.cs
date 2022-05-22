@@ -19,7 +19,7 @@ namespace PingPlugin.PingTrackers
 
         private string currentTracker = "";
 
-        public AggregatePingTracker(PingConfiguration config, GameAddressDetector addressDetector, GameNetwork network) : base(config, addressDetector)
+        public AggregatePingTracker(PingConfiguration config, GameAddressDetector addressDetector, GameNetwork network) : base(config, addressDetector, PingTrackerKind.Aggregate)
         {
             // Define trackers
             this.trackerInfos = new Dictionary<string, TrackerInfo>();

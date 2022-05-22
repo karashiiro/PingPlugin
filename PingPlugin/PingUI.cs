@@ -11,8 +11,6 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Numerics;
-using System.Runtime.InteropServices;
-using Dalamud.Interface.Windowing;
 
 namespace PingPlugin
 {
@@ -22,7 +20,10 @@ namespace PingPlugin
         private readonly DtrBarEntry dtrEntry;
         private readonly DalamudPluginInterface pluginInterface;
         private readonly PingConfiguration config;
-        private readonly PingTracker pingTracker;
+
+        private readonly Func<PingTrackerKind, PingTracker> requestPingTracker;
+        
+        private PingTracker pingTracker;
 
         private bool resettingGraphPos;
         private bool resettingMonitorPos;
@@ -39,12 +40,14 @@ namespace PingPlugin
             set => this.configVisible = value;
         }
 
-        public PingUI(PingTracker pingTracker, DalamudPluginInterface pluginInterface, DtrBar dtrBar, PingConfiguration config)
+        public PingUI(PingTracker pingTracker, DalamudPluginInterface pluginInterface, DtrBar dtrBar, PingConfiguration config, Func<PingTrackerKind, PingTracker> requestPingTracker)
         {
             this.config = config;
             this.uiBuilder = pluginInterface.UiBuilder;
             this.pingTracker = pingTracker;
             this.pluginInterface = pluginInterface;
+
+            this.requestPingTracker = requestPingTracker;
 
             var dtrBarTitle = "Ping";
             try
@@ -127,6 +130,21 @@ namespace PingPlugin
                 this.config.Save();
             }
 
+            ImGui.Spacing();
+
+            var trackerKinds = Enum.GetValues<PingTrackerKind>();
+            var trackerNames = trackerKinds.Select(t => t.FormatName()).ToArray();
+            var tracker = (int)this.pingTracker.Kind;
+            if (ImGui.Combo(Loc.Localize("PingTracker", "Ping Tracker"), ref tracker, trackerNames, trackerNames.Length))
+            {
+                var trackerKind = (PingTrackerKind)tracker;
+                
+                this.config.TrackingMode = trackerKind;
+                this.config.Save();
+                
+                this.pingTracker = this.requestPingTracker(trackerKind);
+            }
+            
             ImGui.Spacing();
 
             var displayModes = Enum.GetNames<DisplayMode>();

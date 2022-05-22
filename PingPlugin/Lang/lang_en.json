@@ -1,27 +1,19 @@
 ﻿{
-  "Chinese": {
-    "message": "Chinese",
-    "description": "PingPlugin.LangKind"
+  "PingTrackerKindAutodetect": {
+    "message": "Autodetect (Default)",
+    "description": "PingPlugin.Kind"
   },
-  "English": {
-    "message": "English",
-    "description": "PingPlugin.LangKind"
+  "PingTrackerKindCOM": {
+    "message": "COM",
+    "description": "PingPlugin.Kind"
   },
-  "French": {
-    "message": "French",
-    "description": "PingPlugin.LangKind"
+  "PingTrackerKindWin32API": {
+    "message": "Win32 API",
+    "description": "PingPlugin.Kind"
   },
-  "German": {
-    "message": "German",
-    "description": "PingPlugin.LangKind"
-  },
-  "Japanese": {
-    "message": "Japanese",
-    "description": "PingPlugin.LangKind"
-  },
-  "Spanish": {
-    "message": "Spanish",
-    "description": "PingPlugin.LangKind"
+  "PingTrackerKindPackets": {
+    "message": "Game packets",
+    "description": "PingPlugin.Kind"
   },
   "ClickThrough": {
     "message": "Click through plugin windows",
@@ -49,6 +41,10 @@
   },
   "LockPluginWindows": {
     "message": "Lock plugin windows",
+    "description": "PingPlugin.Configuration"
+  },
+  "PingTracker": {
+    "message": "Ping Tracker",
     "description": "PingPlugin.Configuration"
   },
   "DisplayMode": {

@@ -31,7 +31,7 @@ namespace PingPlugin.PingTrackers
         private long pingMs;
         private bool gotPing;
 
-        public PacketPingTracker(PingConfiguration config, GameAddressDetector addressDetector, GameNetwork network) : base(config, addressDetector)
+        public PacketPingTracker(PingConfiguration config, GameAddressDetector addressDetector, GameNetwork network) : base(config, addressDetector, PingTrackerKind.Packets)
         {
             this.network = network;
             this.network.NetworkMessage += OnNetworkMessage;
