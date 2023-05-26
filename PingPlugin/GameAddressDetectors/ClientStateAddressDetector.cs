@@ -68,6 +68,8 @@ namespace PingPlugin.GameAddressDetectors
                 7 => IPAddress.Parse("80.239.145.91"),   // Light
                 8 => IPAddress.Parse("204.2.29.94"),  // Crystal
                 9 => IPAddress.Parse("153.254.80.75"),  // Materia
+                10 => IPAddress.Parse("202.67.52.205"), // Meteor
+                11 => IPAddress.Parse("204.2.29.106"), // Dynamis
 
                 // If you have CN/KR DC IDs and IP addresses, feel free to PR them.
                 // World server IP address are fine too, since worlds are hosted
