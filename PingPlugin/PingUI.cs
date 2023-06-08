@@ -79,10 +79,11 @@ namespace PingPlugin
 
             if (ConfigVisible) DrawConfigUi();
 
-            if (this.uiFont.IsLoaded()) ImGui.PushFont(this.uiFont);
+            var uiFontLoaded = this.uiFont.IsLoaded();
+            if (uiFontLoaded) ImGui.PushFont(this.uiFont);
             if (this.config.GraphIsVisible) DrawGraph();
             if (!serverBarShown && this.config.MonitorIsVisible) DrawMonitor();
-            if (this.uiFont.IsLoaded()) ImGui.PopFont();
+            if (uiFontLoaded) ImGui.PopFont();
         }
 
         private void InitializeDtrBar(DtrBar dtrBar)
