@@ -28,7 +28,7 @@ namespace PingPlugin.GameAddressDetectors
             try
             {
                 dcId = this.clientState.LocalPlayer!.CurrentWorld.GameData?.DataCenter.Row;
-                if (dcId == null || dcId == this.lastDcId) return Address;
+                if ((dcId == null || dcId == this.lastDcId) && !IPAddress.IsLoopback(Address)) return Address;
                 this.lastDcId = (uint)dcId;
             }
             catch (InvalidOperationException)
