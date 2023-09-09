@@ -1,4 +1,4 @@
-[![Download count](https://img.shields.io/endpoint?url=https://vz32sgcoal.execute-api.us-east-1.amazonaws.com/PingPlugin)](https://github.com/karashiiro/PingPlugin)
+[![Download count](https://img.shields.io/endpoint?url=https://qzysathwfhebdai6xgauhz4q7m0mzmrf.lambda-url.us-east-1.on.aws/PingPlugin)](https://github.com/karashiiro/PingPlugin)
 
 # PingPlugin
 A ping display plugin for [Dalamud](https://github.com/goatcorp/Dalamud).
