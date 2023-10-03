@@ -46,7 +46,6 @@ namespace PingPlugin
             
             this.pingTracker = RequestNewPingTracker(this.config.TrackingMode);
             this.pingTracker.Verbose = false;
-            this.pingTracker.Start();
 
             InitIpc();
 
