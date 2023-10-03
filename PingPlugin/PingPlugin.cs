@@ -9,13 +9,14 @@ using System.Dynamic;
 using Dalamud.Game.Command;
 using Dalamud.Game.Gui.Dtr;
 using Dalamud.Game.Network;
+using Dalamud.Plugin.Services;
 
 namespace PingPlugin
 {
     public class PingPlugin : IDalamudPlugin
     {
         private readonly DalamudPluginInterface pluginInterface;
-        private readonly GameNetwork network;
+        private readonly IGameNetwork network;
 
         private readonly PluginCommandManager<PingPlugin> pluginCommandManager;
         private readonly PingConfiguration config;
@@ -29,7 +30,7 @@ namespace PingPlugin
 
         public string Name => "PingPlugin";
 
-        public PingPlugin(DalamudPluginInterface pluginInterface, CommandManager commands, DtrBar dtrBar, GameNetwork network)
+        public PingPlugin(DalamudPluginInterface pluginInterface, ICommandManager commands, IDtrBar dtrBar, IGameNetwork network)
         {
             this.pluginInterface = pluginInterface;
             this.network = network;

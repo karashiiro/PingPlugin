@@ -1,10 +1,10 @@
 ﻿using Dalamud.Logging;
+using Dalamud.Plugin.Services;
 using PingPlugin.GameAddressDetectors;
 using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using Dalamud.Game.Network;
 
 namespace PingPlugin.PingTrackers
 {
@@ -19,14 +19,16 @@ namespace PingPlugin.PingTrackers
 
         private string currentTracker = "";
 
-        public AggregatePingTracker(PingConfiguration config, GameAddressDetector addressDetector, GameNetwork network) : base(config, addressDetector, PingTrackerKind.Aggregate)
+        public AggregatePingTracker(PingConfiguration config, GameAddressDetector addressDetector, IGameNetwork network)
+            : base(config, addressDetector, PingTrackerKind.Aggregate)
         {
             // Define trackers
             this.trackerInfos = new Dictionary<string, TrackerInfo>();
 
             RegisterTracker(COMTrackerKey, new ComponentModelPingTracker(config, addressDetector) { Verbose = false });
             RegisterTracker(IpHlpApiTrackerKey, new IpHlpApiPingTracker(config, addressDetector) { Verbose = false });
-            RegisterTracker(PacketTrackerKey, new PacketPingTracker(config, addressDetector, network) { Verbose = false });
+            RegisterTracker(PacketTrackerKey,
+                new PacketPingTracker(config, addressDetector, network) { Verbose = false });
 
             // Create decision tree to solve tracker selection problem
             this.decisionTree = new DecisionTree<string>(
@@ -42,7 +44,7 @@ namespace PingPlugin.PingTrackers
                         () => GetTrackerRTT(COMTrackerKey) < GetTrackerRTT(IpHlpApiTrackerKey),
                         pass: new DecisionTree<string>(() => TreeResult.Resolve(IpHlpApiTrackerKey)),
                         fail: new DecisionTree<string>(() => TreeResult.Resolve(COMTrackerKey))
-                        ),
+                    ),
                     fail: new DecisionTree<string>(
                         // If both of these trackers report a ping of 0
                         () => GetTrackerRTT(COMTrackerKey) == 0 && GetTrackerRTT(IpHlpApiTrackerKey) == 0,
@@ -53,10 +55,10 @@ namespace PingPlugin.PingTrackers
                             () => GetTrackerRTT(COMTrackerKey) < GetTrackerRTT(IpHlpApiTrackerKey),
                             pass: new DecisionTree<string>(() => TreeResult.Resolve(COMTrackerKey)),
                             fail: new DecisionTree<string>(() => TreeResult.Resolve(IpHlpApiTrackerKey))
-                            )
                         )
                     )
-                );
+                )
+            );
         }
 
         public override void Start()
@@ -65,7 +67,7 @@ namespace PingPlugin.PingTrackers
             {
                 ti.Tracker.Start();
             }
-            
+
             base.Start();
         }
 
@@ -123,7 +125,7 @@ namespace PingPlugin.PingTrackers
                     {
                         this.trackerInfos[this.currentTracker].Tracker.Verbose = false;
                     }
-                    
+
                     // Update the current tracker
                     this.currentTracker = bestTracker;
 

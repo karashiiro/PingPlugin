@@ -1,5 +1,5 @@
-﻿using Dalamud.Game.ClientState;
-using Dalamud.Logging;
+﻿using Dalamud.Logging;
+using Dalamud.Plugin.Services;
 using System;
 using System.Net;
 
@@ -11,7 +11,7 @@ namespace PingPlugin.GameAddressDetectors
         private readonly IpHlpApiAddressDetector ipHlpApiDetector;
         private readonly ClientStateAddressDetector clientStateDetector;
 
-        public AggregateAddressDetector(ClientState clientState)
+        public AggregateAddressDetector(IClientState clientState)
         {
             this.ipHlpApiDetector = new IpHlpApiAddressDetector();
             this.clientStateDetector = new ClientStateAddressDetector(clientState);
@@ -32,7 +32,8 @@ namespace PingPlugin.GameAddressDetectors
                 catch (Exception e)
                 {
                     this.ipHlpDidError = true;
-                    PluginLog.LogError(e, "Exception occurred in TCP table reading. Falling back to client state detection.");
+                    PluginLog.LogError(e,
+                        "Exception occurred in TCP table reading. Falling back to client state detection.");
                 }
             }
 
@@ -46,7 +47,8 @@ namespace PingPlugin.GameAddressDetectors
                 }
                 catch (Exception e)
                 {
-                    PluginLog.LogError(e, "Exception occurred in client state IP address detection. This should never happen!");
+                    PluginLog.LogError(e,
+                        "Exception occurred in client state IP address detection. This should never happen!");
                 }
             }
 

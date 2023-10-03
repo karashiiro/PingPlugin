@@ -3,6 +3,7 @@ using Dalamud.Game.Gui.Dtr;
 using Dalamud.Interface;
 using Dalamud.Logging;
 using Dalamud.Plugin;
+using Dalamud.Plugin.Services;
 using ImGuiNET;
 using PingPlugin.PingTrackers;
 using System;
@@ -42,7 +43,7 @@ namespace PingPlugin
             set => this.configVisible = value;
         }
 
-        public PingUI(PingTracker pingTracker, DalamudPluginInterface pluginInterface, DtrBar dtrBar,
+        public PingUI(PingTracker pingTracker, DalamudPluginInterface pluginInterface, IDtrBar dtrBar,
             PingConfiguration config, Func<PingTrackerKind, PingTracker> requestPingTracker)
         {
             this.config = config;
@@ -86,7 +87,7 @@ namespace PingPlugin
             if (uiFontLoaded) ImGui.PopFont();
         }
 
-        private void InitializeDtrBar(DtrBar dtrBar)
+        private void InitializeDtrBar(IDtrBar dtrBar)
         {
             this.dtrEntryLoadThread = new Thread(() =>
             {

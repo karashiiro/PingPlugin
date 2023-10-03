@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Dalamud.Game.Network;
 using Dalamud.Logging;
+using Dalamud.Plugin.Services;
 using PingPlugin.GameAddressDetectors;
 
 namespace PingPlugin.PingTrackers
@@ -16,22 +17,23 @@ namespace PingPlugin.PingTrackers
     /// </summary>
     public class PacketPingTracker : PingTracker
     {
-        private readonly GameNetwork network;
-        
+        private readonly IGameNetwork network;
+
         // Various fields used for opcode prediction
         private Timer predictionTimeout;
-        
+
         private bool predictedUpOpcodeSet;
         private ushort predictedUpOpcode;
         private uint predictedUpOpcodeTimestamp;
-        
+
         private bool predictedDownOpcodeSet;
         private ushort predictedDownOpcode;
 
         private long pingMs;
         private bool gotPing;
 
-        public PacketPingTracker(PingConfiguration config, GameAddressDetector addressDetector, GameNetwork network) : base(config, addressDetector, PingTrackerKind.Packets)
+        public PacketPingTracker(PingConfiguration config, GameAddressDetector addressDetector, IGameNetwork network) :
+            base(config, addressDetector, PingTrackerKind.Packets)
         {
             this.network = network;
             this.network.NetworkMessage += OnNetworkMessage;
@@ -46,27 +48,29 @@ namespace PingPlugin.PingTrackers
                     NextRTTCalculation((ulong)this.pingMs);
                     this.gotPing = false;
                 }
-                
+
                 // This pair of packets arrives every 10 seconds
                 await Task.Delay(TimeSpan.FromSeconds(10), token);
             }
         }
 
-        private void OnNetworkMessage(IntPtr dataPtr, ushort opcode, uint sourceId, uint targetId, NetworkMessageDirection direction)
+        private void OnNetworkMessage(IntPtr dataPtr, ushort opcode, uint sourceId, uint targetId,
+            NetworkMessageDirection direction)
         {
             // Tracking ping using ping packets is unreliable, because we can't confirm that the server
             // responds to the ping immediately. With ICMP, we know that this is true, but using packets,
             // messages on both the client and server are restrained by TCP ordering requirements. That
             // said, considering TCP-related latency in calculations is arguably more useful than a real
             // ping calculation.
-            
+
             // Predict the up/down Ping opcodes
             if (!this.predictedUpOpcodeSet && direction == NetworkMessageDirection.ZoneUp)
             {
                 // Client send, executes first
                 TrackPredictedPingUp(dataPtr, opcode);
             }
-            else if (this.predictedUpOpcodeSet && !this.predictedDownOpcodeSet && direction == NetworkMessageDirection.ZoneDown)
+            else if (this.predictedUpOpcodeSet && !this.predictedDownOpcodeSet &&
+                     direction == NetworkMessageDirection.ZoneDown)
             {
                 // Server send, executes last
                 CheckPredictedPingDown(dataPtr, opcode);
@@ -81,12 +85,12 @@ namespace PingPlugin.PingTrackers
 
         private void CheckPredictedPingDown(IntPtr dataPtr, ushort opcode)
         {
-            var timestamp = (uint) Marshal.ReadInt32(dataPtr);
+            var timestamp = (uint)Marshal.ReadInt32(dataPtr);
             if (timestamp == this.predictedUpOpcodeTimestamp)
             {
                 this.predictedDownOpcode = opcode;
                 this.predictedDownOpcodeSet = true;
-                
+
                 this.predictionTimeout?.Dispose();
                 this.predictionTimeout = null;
 
@@ -100,11 +104,11 @@ namespace PingPlugin.PingTrackers
 
         private void TrackPredictedPingUp(IntPtr dataPtr, ushort opcode)
         {
-            this.predictedUpOpcodeTimestamp = (uint) Marshal.ReadInt32(dataPtr);
-            
+            this.predictedUpOpcodeTimestamp = (uint)Marshal.ReadInt32(dataPtr);
+
             this.predictedUpOpcode = opcode;
             this.predictedUpOpcodeSet = true;
-            
+
             // Set a timer for 2 seconds, after which we go back to checking PingUp opcodes
             this.predictionTimeout?.Dispose();
             this.predictionTimeout = new Timer(_ =>
@@ -133,8 +137,8 @@ namespace PingPlugin.PingTrackers
             {
                 // The response packet has the same timestamp as the request packet, so we can just
                 // take it from here instead of keeping state.
-                var prevMs = (uint) Marshal.ReadInt32(dataPtr);
-                
+                var prevMs = (uint)Marshal.ReadInt32(dataPtr);
+
                 if (QueryPerformanceCounter(out var nextNs))
                 {
                     var nextMs = nextNs / 10000;
@@ -160,10 +164,10 @@ namespace PingPlugin.PingTrackers
                 this.network.NetworkMessage -= OnNetworkMessage;
                 this.predictionTimeout?.Dispose();
             }
-            
+
             base.Dispose(disposing);
         }
-        
+
         // http://pinvoke.net/default.aspx/kernel32.QueryPerformanceCounter
         // "For this particular method, execution time is often critical. ... This will prevent the
         // runtime from doing a security stack walk at runtime."

@@ -1,5 +1,5 @@
-﻿using Dalamud.Game.ClientState;
-using Dalamud.Logging;
+﻿using Dalamud.Logging;
+using Dalamud.Plugin.Services;
 using System;
 using System.Net;
 
@@ -9,9 +9,9 @@ namespace PingPlugin.GameAddressDetectors
     {
         private uint lastDcId;
 
-        private readonly ClientState clientState;
+        private readonly IClientState clientState;
 
-        public ClientStateAddressDetector(ClientState clientState)
+        public ClientStateAddressDetector(IClientState clientState)
         {
             this.clientState = clientState;
         }
