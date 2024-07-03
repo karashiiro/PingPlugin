@@ -10,10 +10,12 @@ namespace PingPlugin.GameAddressDetectors
         private uint lastDcId;
 
         private readonly IClientState clientState;
+        private readonly IPluginLog pluginLog;
 
-        public ClientStateAddressDetector(IClientState clientState)
+        public ClientStateAddressDetector(IClientState clientState, IPluginLog pluginLog)
         {
             this.clientState = clientState;
+            this.pluginLog = pluginLog;
         }
 
         public override IPAddress GetAddress(bool verbose = false)
@@ -81,7 +83,7 @@ namespace PingPlugin.GameAddressDetectors
             if (verbose && !Equals(address, IPAddress.Loopback) && !Equals(address, Address))
             {
                 var dcName = this.clientState.LocalPlayer!.CurrentWorld.GameData.DataCenter.Value?.Name.RawString;
-                PluginLog.Log($"Data center changed to {dcName}, using FFXIV server address {address}");
+                pluginLog.Verbose($"Data center changed to {dcName}, using FFXIV server address {address}");
             }
 
             Address = address;

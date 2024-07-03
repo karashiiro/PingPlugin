@@ -7,6 +7,7 @@ using System;
 using System.IO;
 using System.Numerics;
 using System.Reflection;
+using Dalamud.Plugin.Services;
 using PingPlugin.PingTrackers;
 
 namespace PingPlugin
@@ -67,11 +68,15 @@ namespace PingPlugin
         }
 
         [NonSerialized]
-        private DalamudPluginInterface pluginInterface;
+        private IDalamudPluginInterface pluginInterface;
+        [NonSerialized]
+        private IPluginLog pluginLog;
 
-        public void Initialize(DalamudPluginInterface pluginInterface)
+        public void Initialize(IDalamudPluginInterface pluginInterface, IPluginLog logger)
         {
             this.pluginInterface = pluginInterface;
+            this.pluginLog = logger;
+
             LoadLang();
 
             if (!PingPlugin17)
@@ -108,7 +113,7 @@ namespace PingPlugin
 
         private void LoadLang()
         {
-            PluginLog.Log($"Loading lang data from PingPlugin.Lang.lang_{Lang}.json");
+            pluginLog.Verbose($"Loading lang data from PingPlugin.Lang.lang_{Lang}.json");
             using var langStream = Assembly.GetExecutingAssembly().GetManifestResourceStream($"PingPlugin.Lang.lang_{Lang}.json");
             // ReSharper disable once AssignNullToNotNullAttribute
             using var langStreamReader = new StreamReader(langStream);

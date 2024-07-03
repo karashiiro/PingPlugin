@@ -18,6 +18,7 @@ namespace PingPlugin.PingTrackers
     public class PacketPingTracker : PingTracker
     {
         private readonly IGameNetwork network;
+        private readonly IPluginLog pluginLog;
 
         // Various fields used for opcode prediction
         private Timer predictionTimeout;
@@ -32,11 +33,12 @@ namespace PingPlugin.PingTrackers
         private long pingMs;
         private bool gotPing;
 
-        public PacketPingTracker(PingConfiguration config, GameAddressDetector addressDetector, IGameNetwork network) :
-            base(config, addressDetector, PingTrackerKind.Packets)
+        public PacketPingTracker(PingConfiguration config, GameAddressDetector addressDetector, IGameNetwork network, IPluginLog pluginLog) :
+            base(config, addressDetector, PingTrackerKind.Packets, pluginLog)
         {
             this.network = network;
             this.network.NetworkMessage += OnNetworkMessage;
+            this.pluginLog = pluginLog;
         }
 
         protected override async Task PingLoop(CancellationToken token)
@@ -96,7 +98,7 @@ namespace PingPlugin.PingTrackers
 
                 if (Verbose)
                 {
-                    PluginLog.Log("Confirmed PingUp:{OpcodeUp} with PingDown:{OpcodeDown}",
+                    pluginLog.Verbose("Confirmed PingUp:{OpcodeUp} with PingDown:{OpcodeDown}",
                         "0x" + this.predictedUpOpcode.ToString("X"), "0x" + opcode.ToString("X"));
                 }
             }
@@ -119,7 +121,7 @@ namespace PingPlugin.PingTrackers
 
                     if (Verbose)
                     {
-                        PluginLog.Log("No match found, resetting.");
+                        pluginLog.Verbose("No match found, resetting.");
                     }
                 }
             });
@@ -127,7 +129,7 @@ namespace PingPlugin.PingTrackers
 
             if (Verbose)
             {
-                PluginLog.Log("Testing PingUp:{OpcodeUp}", "0x" + opcode.ToString("X"));
+                pluginLog.Verbose("Testing PingUp:{OpcodeUp}", "0x" + opcode.ToString("X"));
             }
         }
 
@@ -147,12 +149,12 @@ namespace PingPlugin.PingTrackers
 
                     if (Verbose)
                     {
-                        PluginLog.LogDebug("Packet ping: {LastPing}ms", this.pingMs);
+                        pluginLog.Debug("Packet ping: {LastPing}ms", this.pingMs);
                     }
                 }
                 else
                 {
-                    PluginLog.LogError("Failed to call QueryPerformanceCounter! (How can this happen?)");
+                    pluginLog.Error("Failed to call QueryPerformanceCounter! (How can this happen?)");
                 }
             }
         }

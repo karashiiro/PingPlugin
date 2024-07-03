@@ -13,14 +13,17 @@ using System.IO;
 using System.Linq;
 using System.Numerics;
 using System.Threading;
+using Dalamud;
+using Dalamud.Interface.ManagedFontAtlas;
 
 namespace PingPlugin
 {
     public class PingUI : IDisposable
     {
-        private readonly UiBuilder uiBuilder;
-        private readonly DalamudPluginInterface pluginInterface;
+        private readonly IUiBuilder uiBuilder;
+        private readonly IDalamudPluginInterface pluginInterface;
         private readonly PingConfiguration config;
+        private readonly IPluginLog pluginLog;
 
         private readonly Func<PingTrackerKind, PingTracker> requestPingTracker;
 
@@ -30,9 +33,9 @@ namespace PingPlugin
         private bool resettingMonitorPos;
         private bool configVisible;
         private Thread dtrEntryLoadThread;
-        private DtrBarEntry dtrEntry;
+        private IDtrBarEntry dtrEntry;
         private bool fontLoaded;
-        private ImFontPtr uiFont;
+        private IFontHandle uiFont;
         private bool disposing;
 
         public bool CutsceneActive { get; set; }
@@ -43,19 +46,20 @@ namespace PingPlugin
             set => this.configVisible = value;
         }
 
-        public PingUI(PingTracker pingTracker, DalamudPluginInterface pluginInterface, IDtrBar dtrBar,
-            PingConfiguration config, Func<PingTrackerKind, PingTracker> requestPingTracker)
+        public PingUI(PingTracker pingTracker, IDalamudPluginInterface pluginInterface, IDtrBar dtrBar,
+            PingConfiguration config, Func<PingTrackerKind, PingTracker> requestPingTracker, IPluginLog pluginLog)
         {
             this.config = config;
             this.uiBuilder = pluginInterface.UiBuilder;
             this.pingTracker = pingTracker;
             this.pluginInterface = pluginInterface;
+            this.pluginLog = pluginLog;
 
             this.requestPingTracker = requestPingTracker;
 
             InitializeDtrBar(dtrBar);
 
-            this.uiBuilder.BuildFonts += BuildFont;
+            this.BuildFont();
 #if DEBUG
             ConfigVisible = true;
 #endif
@@ -74,17 +78,17 @@ namespace PingPlugin
 
             if (!this.fontLoaded)
             {
-                this.uiBuilder.RebuildFonts();
+                this.BuildFont();
                 return;
             }
 
             if (ConfigVisible) DrawConfigUi();
 
-            var uiFontLoaded = this.uiFont.IsLoaded();
-            if (uiFontLoaded) ImGui.PushFont(this.uiFont);
-            if (this.config.GraphIsVisible) DrawGraph();
-            if (!serverBarShown && this.config.MonitorIsVisible) DrawMonitor();
-            if (uiFontLoaded) ImGui.PopFont();
+            using (this.uiFont.Push())
+            {
+                if (this.config.GraphIsVisible) DrawGraph();
+                if (!serverBarShown && this.config.MonitorIsVisible) DrawMonitor();
+            }
         }
 
         private void InitializeDtrBar(IDtrBar dtrBar)
@@ -106,7 +110,7 @@ namespace PingPlugin
                     }
                     catch (Exception e)
                     {
-                        PluginLog.LogError(e,
+                        pluginLog.Error(e,
                             $"Failed to acquire DtrBarEntry {dtrBarTitle}, trying {dtrBarTitle}{i + 1}");
                         Thread.Sleep(100);
                     }
@@ -226,7 +230,7 @@ namespace PingPlugin
 
             if (this.fontScaleTooSmall)
             {
-                this.uiBuilder.RebuildFonts();
+                this.uiBuilder.FontAtlas.BuildFontsAsync();
                 this.fontScaleTooSmall = false;
             }
 
@@ -237,7 +241,7 @@ namespace PingPlugin
                 this.config.Save();
                 if (this.config.FontScale >= 8)
                 {
-                    this.uiBuilder.RebuildFonts();
+                    this.uiBuilder.FontAtlas.BuildFontsAsync();
                 }
                 else
                 {
@@ -478,24 +482,14 @@ namespace PingPlugin
 
         private void BuildFont()
         {
-            try
+            this.uiFont = this.uiBuilder.FontAtlas.NewDelegateFontHandle(e => e.OnPreBuild(tk =>
             {
-                var filePath = Path.Combine(this.pluginInterface.DalamudAssetDirectory.FullName, "UIRes",
-                    "NotoSansCJKjp-Medium.otf");
-                if (!File.Exists(filePath)) throw new FileNotFoundException("Font file not found!");
-
                 var fontPx = Math.Min(Math.Max(8, this.config.FontScale), 128);
-
-                {
-                    this.uiFont = ImGui.GetIO().Fonts.AddFontFromFileTTF(filePath, fontPx, null,
-                        ImGui.GetIO().Fonts.GetGlyphRangesJapanese());
-                }
-            }
-            catch (Exception e)
-            {
-                PluginLog.LogError(e.Message);
-            }
-
+                var safeFontConfig = new SafeFontConfig() { SizePx = fontPx };
+                tk.AddDalamudAssetFont(DalamudAsset.NotoSansJpMedium, safeFontConfig);
+                tk.AttachExtraGlyphsForDalamudLanguage(safeFontConfig);
+            }));
+            
             this.fontLoaded = true;
         }
 
@@ -518,10 +512,8 @@ namespace PingPlugin
 
             this.disposing = true;
 
-            this.uiBuilder.BuildFonts -= BuildFont;
-
             this.dtrEntryLoadThread?.Join();
-            this.dtrEntry?.Dispose();
+            this.dtrEntry?.Remove();
         }
     }
 }
