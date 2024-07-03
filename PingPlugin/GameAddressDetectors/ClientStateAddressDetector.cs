@@ -61,16 +61,16 @@ namespace PingPlugin.GameAddressDetectors
             var address = dcId switch
             {
                 // I just copied these from https://is.xivup.com/adv
-                1 => IPAddress.Parse("124.150.157.23"), // Elemental
-                2 => IPAddress.Parse("124.150.157.38"), // Gaia
-                3 => IPAddress.Parse("124.150.157.49"), // Mana
+                1 => IPAddress.Parse("119.252.37.6"), // Elemental
+                2 => IPAddress.Parse("119.252.37.19"), // Gaia
+                3 => IPAddress.Parse("119.252.37.32"), // Mana
                 4 => IPAddress.Parse("204.2.29.70"),   // Aether
                 5 => IPAddress.Parse("204.2.29.82"),   // Primal
                 6 => IPAddress.Parse("80.239.145.79"),   // Chaos
                 7 => IPAddress.Parse("80.239.145.91"),   // Light
                 8 => IPAddress.Parse("204.2.29.94"),  // Crystal
                 9 => IPAddress.Parse("153.254.80.75"),  // Materia
-                10 => IPAddress.Parse("202.67.52.205"), // Meteor
+                10 => IPAddress.Parse("119.252.37.45"), // Meteor
                 11 => IPAddress.Parse("204.2.29.106"), // Dynamis
                 12 => IPAddress.Parse("80.239.145.100"), // Shadow
 
