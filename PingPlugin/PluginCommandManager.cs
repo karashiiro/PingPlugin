@@ -53,7 +53,7 @@ namespace PingPlugin
 
         private IEnumerable<(string, CommandInfo)> GetCommandInfoTuple(MethodInfo method)
         {
-            var handlerDelegate = (HandlerDelegate)Delegate.CreateDelegate(typeof(HandlerDelegate), this.host, method);
+            var handlerDelegate = (IReadOnlyCommandInfo.HandlerDelegate)Delegate.CreateDelegate(typeof(IReadOnlyCommandInfo.HandlerDelegate), this.host, method);
 
             var command = handlerDelegate.Method.GetCustomAttribute<CommandAttribute>();
             var aliases = handlerDelegate.Method.GetCustomAttribute<AliasesAttribute>();

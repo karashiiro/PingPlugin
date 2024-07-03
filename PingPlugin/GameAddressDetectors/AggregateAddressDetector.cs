@@ -10,11 +10,13 @@ namespace PingPlugin.GameAddressDetectors
         private bool ipHlpDidError;
         private readonly IpHlpApiAddressDetector ipHlpApiDetector;
         private readonly ClientStateAddressDetector clientStateDetector;
+        private readonly IPluginLog pluginLog;
 
-        public AggregateAddressDetector(IClientState clientState)
+        public AggregateAddressDetector(IClientState clientState, IPluginLog pluginLog)
         {
-            this.ipHlpApiDetector = new IpHlpApiAddressDetector();
-            this.clientStateDetector = new ClientStateAddressDetector(clientState);
+            this.ipHlpApiDetector = new IpHlpApiAddressDetector(pluginLog);
+            this.clientStateDetector = new ClientStateAddressDetector(clientState, pluginLog);
+            this.pluginLog = pluginLog;
         }
 
         public override IPAddress GetAddress(bool verbose = false)
@@ -32,7 +34,7 @@ namespace PingPlugin.GameAddressDetectors
                 catch (Exception e)
                 {
                     this.ipHlpDidError = true;
-                    PluginLog.LogError(e,
+                    pluginLog.Error(e,
                         "Exception occurred in TCP table reading. Falling back to client state detection.");
                 }
             }
@@ -47,14 +49,14 @@ namespace PingPlugin.GameAddressDetectors
                 }
                 catch (Exception e)
                 {
-                    PluginLog.LogError(e,
+                    pluginLog.Error(e,
                         "Exception occurred in client state IP address detection. This should never happen!");
                 }
             }
 
             if (verbose && !Equals(address, IPAddress.Loopback) && !Equals(address, Address))
             {
-                PluginLog.Log($"Got new server address {address} from detector {bestDetector.GetType().Name}");
+                pluginLog.Verbose($"Got new server address {address} from detector {bestDetector.GetType().Name}");
             }
 
             Address = address;

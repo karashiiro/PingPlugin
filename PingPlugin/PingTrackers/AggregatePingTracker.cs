@@ -16,19 +16,21 @@ namespace PingPlugin.PingTrackers
 
         private readonly IDictionary<string, TrackerInfo> trackerInfos;
         private readonly DecisionTree<string> decisionTree;
-
+        private readonly IPluginLog pluginLog;
         private string currentTracker = "";
 
-        public AggregatePingTracker(PingConfiguration config, GameAddressDetector addressDetector, IGameNetwork network)
-            : base(config, addressDetector, PingTrackerKind.Aggregate)
+        public AggregatePingTracker(PingConfiguration config, GameAddressDetector addressDetector, IGameNetwork network, IPluginLog pluginLog)
+            : base(config, addressDetector, PingTrackerKind.Aggregate, pluginLog)
         {
+            this.pluginLog = pluginLog;
+
             // Define trackers
             this.trackerInfos = new Dictionary<string, TrackerInfo>();
 
-            RegisterTracker(COMTrackerKey, new ComponentModelPingTracker(config, addressDetector) { Verbose = false });
-            RegisterTracker(IpHlpApiTrackerKey, new IpHlpApiPingTracker(config, addressDetector) { Verbose = false });
+            RegisterTracker(COMTrackerKey, new ComponentModelPingTracker(config, addressDetector, pluginLog) { Verbose = false });
+            RegisterTracker(IpHlpApiTrackerKey, new IpHlpApiPingTracker(config, addressDetector, pluginLog) { Verbose = false });
             RegisterTracker(PacketTrackerKey,
-                new PacketPingTracker(config, addressDetector, network) { Verbose = false });
+                new PacketPingTracker(config, addressDetector, network, pluginLog) { Verbose = false });
 
             // Create decision tree to solve tracker selection problem
             this.decisionTree = new DecisionTree<string>(
@@ -101,7 +103,7 @@ namespace PingPlugin.PingTrackers
                 }
                 catch (Exception e)
                 {
-                    PluginLog.LogError(e, "Error in best ping tracker selection.");
+                    pluginLog.Error(e, "Error in best ping tracker selection.");
                 }
 
                 await Task.Delay(3000, token);
@@ -131,7 +133,7 @@ namespace PingPlugin.PingTrackers
 
                     if (Verbose)
                     {
-                        PluginLog.LogDebug("Retrieving ping from tracker {PingTrackerKey}", bestTracker);
+                        pluginLog.Debug("Retrieving ping from tracker {PingTrackerKey}", bestTracker);
                     }
                 }
             }

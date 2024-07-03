@@ -5,13 +5,17 @@ using System.Net;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
+using Dalamud.Plugin.Services;
 
 namespace PingPlugin.PingTrackers
 {
     public class IpHlpApiPingTracker : PingTracker
     {
-        public IpHlpApiPingTracker(PingConfiguration config, GameAddressDetector addressDetector) : base(config, addressDetector, PingTrackerKind.IpHlpApi)
+        private readonly IPluginLog pluginLog;
+
+        public IpHlpApiPingTracker(PingConfiguration config, GameAddressDetector addressDetector, IPluginLog pluginLog) : base(config, addressDetector, PingTrackerKind.IpHlpApi, pluginLog)
         {
+            this.pluginLog = pluginLog;
         }
 
         protected override async Task PingLoop(CancellationToken token)
@@ -33,13 +37,13 @@ namespace PingPlugin.PingTrackers
                         }
                         else
                         {
-                            PluginLog.LogWarning($"Got Win32 error {error} when executing ping - this may be temporary and acceptable.");
+                            pluginLog.Warning($"Got Win32 error {error} when executing ping - this may be temporary and acceptable.");
                         }
                     }
                     catch (Exception e)
                     {
                         Errored = true;
-                        PluginLog.LogError(e, "Error occurred when executing ping.");
+                        pluginLog.Error(e, "Error occurred when executing ping.");
                     }
                 }
 

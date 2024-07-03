@@ -4,16 +4,19 @@ using System;
 using System.Net.NetworkInformation;
 using System.Threading;
 using System.Threading.Tasks;
+using Dalamud.Plugin.Services;
 
 namespace PingPlugin.PingTrackers
 {
     public class ComponentModelPingTracker : PingTracker
     {
         private readonly Ping ping;
+        private readonly IPluginLog pluginLog;
 
-        public ComponentModelPingTracker(PingConfiguration config, GameAddressDetector addressDetector) : base(config, addressDetector, PingTrackerKind.COM)
+        public ComponentModelPingTracker(PingConfiguration config, GameAddressDetector addressDetector, IPluginLog pluginLog) : base(config, addressDetector, PingTrackerKind.COM, pluginLog)
         {
             this.ping = new Ping();
+            this.pluginLog = pluginLog;
         }
 
         protected override async Task PingLoop(CancellationToken token)
@@ -34,7 +37,7 @@ namespace PingPlugin.PingTrackers
                         }
                         else if (pingReply.Status != IPStatus.TimedOut)
                         {
-                            PluginLog.LogWarning(
+                            pluginLog.Warning(
                                 $"Got bad status {pingReply.Status} when executing ping - this may be temporary and acceptable.");
                         }
                     }
@@ -45,7 +48,7 @@ namespace PingPlugin.PingTrackers
                     catch (Exception e)
                     {
                         Errored = true;
-                        PluginLog.LogError(e, "Error occurred when executing ping.");
+                        pluginLog.Error(e, "Error occurred when executing ping.");
                     }
                 }
 

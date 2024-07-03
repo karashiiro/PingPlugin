@@ -6,6 +6,7 @@ using System.Linq;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
+using Dalamud.Plugin.Services;
 
 namespace PingPlugin.PingTrackers
 {
@@ -14,6 +15,7 @@ namespace PingPlugin.PingTrackers
         private readonly CancellationTokenSource tokenSource;
         private readonly GameAddressDetector addressDetector;
         protected readonly PingConfiguration config;
+        private readonly IPluginLog pluginLog;
 
         public PingTrackerKind Kind { get; }
         public bool Verbose { get; set; } = true;
@@ -27,11 +29,12 @@ namespace PingPlugin.PingTrackers
         public delegate void PingUpdatedDelegate(PingStatsPayload payload);
         public event PingUpdatedDelegate OnPingUpdated;
 
-        protected PingTracker(PingConfiguration config, GameAddressDetector addressDetector, PingTrackerKind kind)
+        protected PingTracker(PingConfiguration config, GameAddressDetector addressDetector, PingTrackerKind kind, IPluginLog pluginLog)
         {
             this.tokenSource = new CancellationTokenSource();
             this.config = config;
             this.addressDetector = addressDetector;
+            this.pluginLog = pluginLog;
 
             SeAddress = IPAddress.Loopback;
             RTTTimes = new ConcurrentQueue<float>();
@@ -82,7 +85,7 @@ namespace PingPlugin.PingTrackers
                 }
                 catch (Exception e)
                 {
-                    PluginLog.LogError(e, "Exception thrown in address detection function.");
+                    pluginLog.Error(e, "Exception thrown in address detection function.");
                 }
 
                 if (!Equals(lastAddress, SeAddress))
