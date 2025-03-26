@@ -28,7 +28,7 @@ namespace PingPlugin.GameAddressDetectors
             uint? dcId;
             try
             {
-                dcId = this.clientState.LocalPlayer!.CurrentWorld.GameData?.DataCenter.Row;
+                dcId = this.clientState.LocalPlayer!.CurrentWorld.ValueNullable?.DataCenter.RowId;
                 if ((dcId == null || dcId == this.lastDcId) && !IPAddress.IsLoopback(Address)) return Address;
                 this.lastDcId = (uint)dcId;
             }
@@ -82,7 +82,7 @@ namespace PingPlugin.GameAddressDetectors
 
             if (verbose && !Equals(address, IPAddress.Loopback) && !Equals(address, Address))
             {
-                var dcName = this.clientState.LocalPlayer!.CurrentWorld.GameData?.DataCenter.Value?.Name;
+                var dcName = this.clientState.LocalPlayer!.CurrentWorld.ValueNullable?.DataCenter.ValueNullable?.Name;
                 pluginLog.Verbose($"Data center changed to {dcName}, using FFXIV server address {address}");
             }
 
