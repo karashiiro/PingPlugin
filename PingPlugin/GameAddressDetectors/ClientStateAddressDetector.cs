@@ -1,5 +1,4 @@
-﻿using Dalamud.Logging;
-using Dalamud.Plugin.Services;
+﻿using Dalamud.Plugin.Services;
 using System;
 using System.Net;
 
@@ -29,7 +28,7 @@ namespace PingPlugin.GameAddressDetectors
             uint? dcId;
             try
             {
-                dcId = this.clientState.LocalPlayer!.CurrentWorld.ValueNullable?.DataCenter.RowId;
+                dcId = this.clientState.LocalPlayer!.CurrentWorld.GameData?.DataCenter.Row;
                 if ((dcId == null || dcId == this.lastDcId) && !IPAddress.IsLoopback(Address)) return Address;
                 this.lastDcId = (uint)dcId;
             }
@@ -60,7 +59,7 @@ namespace PingPlugin.GameAddressDetectors
              */
             var address = dcId switch
             {
-                // updated to use lobby IP as fallback IP addressess, copied from https://arrstatus.com
+                // updated to use lobby IP as fallback IP addresses, copied from https://arrstatus.com
                 1 => IPAddress.Parse("119.252.36.6"), // Elemental
                 2 => IPAddress.Parse("119.252.36.7"), // Gaia
                 3 => IPAddress.Parse("119.252.36.8"), // Mana
@@ -83,7 +82,7 @@ namespace PingPlugin.GameAddressDetectors
 
             if (verbose && !Equals(address, IPAddress.Loopback) && !Equals(address, Address))
             {
-                var dcName = this.clientState.LocalPlayer!.CurrentWorld.ValueNullable?.DataCenter.ValueNullable?.Name;
+                var dcName = this.clientState.LocalPlayer!.CurrentWorld.GameData?.DataCenter.Value?.Name;
                 pluginLog.Verbose($"Data center changed to {dcName}, using FFXIV server address {address}");
             }
 
