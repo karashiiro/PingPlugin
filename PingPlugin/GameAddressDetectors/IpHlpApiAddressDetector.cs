@@ -31,6 +31,8 @@ namespace PingPlugin.GameAddressDetectors
 
         public override Task<IPAddress> GetAddress(bool verbose = false)
         {
+            if (verbose) pluginLog.Verbose("Reading server IP from TCP table");
+
             var bufferLength = 0;
             _ = GetExtendedTcpTable(IntPtr.Zero, ref bufferLength, false, AF_INET, TCP_TABLE_OWNER_PID_CONNECTIONS);
             var pTcpTable = Marshal.AllocHGlobal(bufferLength);

@@ -22,6 +22,7 @@ namespace PingPlugin.GameAddressDetectors
 
         public override Task<IPAddress> GetAddress(bool verbose = false)
         {
+            if (verbose) pluginLog.Verbose("Reading server IP from client state");
             return framework.Run(() => GetAddressCore(verbose));
         }
 
