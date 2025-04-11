@@ -1,9 +1,9 @@
-﻿using Dalamud.Logging;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Runtime.InteropServices;
+using System.Threading.Tasks;
 using Dalamud.Plugin.Services;
 
 namespace PingPlugin.GameAddressDetectors
@@ -29,7 +29,7 @@ namespace PingPlugin.GameAddressDetectors
             this.pluginLog = pluginLog;
         }
 
-        public override IPAddress GetAddress(bool verbose = false)
+        public override Task<IPAddress> GetAddress(bool verbose = false)
         {
             var bufferLength = 0;
             _ = GetExtendedTcpTable(IntPtr.Zero, ref bufferLength, false, AF_INET, TCP_TABLE_OWNER_PID_CONNECTIONS);
@@ -38,10 +38,11 @@ namespace PingPlugin.GameAddressDetectors
             var address = IPAddress.Loopback;
             try
             {
-                var error = GetExtendedTcpTable(pTcpTable, ref bufferLength, false, AF_INET, TCP_TABLE_OWNER_PID_CONNECTIONS);
+                var error = GetExtendedTcpTable(pTcpTable, ref bufferLength, false, AF_INET,
+                    TCP_TABLE_OWNER_PID_CONNECTIONS);
                 if (error != (uint)WinError.NO_ERROR)
                 {
-                    return IPAddress.Loopback;
+                    return Task.FromResult(IPAddress.Loopback);
                 }
 
                 var table = new List<TcpRow>();
@@ -85,7 +86,7 @@ namespace PingPlugin.GameAddressDetectors
             }
 
             Address = address;
-            return address;
+            return Task.FromResult(Address);
         }
 
         private static bool InXIVPortRange1(ushort port)
@@ -114,7 +115,8 @@ namespace PingPlugin.GameAddressDetectors
         }
 
         [DllImport("Iphlpapi.dll", SetLastError = true)]
-        private static extern uint GetExtendedTcpTable(IntPtr pTcpTable, ref int dwOutBufLen, bool sort, int ipVersion, int tblClass, uint reserved = 0);
+        private static extern uint GetExtendedTcpTable(IntPtr pTcpTable, ref int dwOutBufLen, bool sort, int ipVersion,
+            int tblClass, uint reserved = 0);
 
         [StructLayout(LayoutKind.Sequential)]
         private struct TcpRow

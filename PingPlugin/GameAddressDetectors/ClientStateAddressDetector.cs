@@ -1,6 +1,7 @@
 ﻿using Dalamud.Plugin.Services;
 using System;
 using System.Net;
+using System.Threading.Tasks;
 
 namespace PingPlugin.GameAddressDetectors
 {
@@ -8,16 +9,23 @@ namespace PingPlugin.GameAddressDetectors
     {
         private uint lastDcId;
 
+        private readonly IFramework framework;
         private readonly IClientState clientState;
         private readonly IPluginLog pluginLog;
 
-        public ClientStateAddressDetector(IClientState clientState, IPluginLog pluginLog)
+        public ClientStateAddressDetector(IFramework framework, IClientState clientState, IPluginLog pluginLog)
         {
+            this.framework = framework;
             this.clientState = clientState;
             this.pluginLog = pluginLog;
         }
 
-        public override IPAddress GetAddress(bool verbose = false)
+        public override Task<IPAddress> GetAddress(bool verbose = false)
+        {
+            return framework.Run(() => GetAddressCore(verbose));
+        }
+
+        private IPAddress GetAddressCore(bool verbose)
         {
             if (!this.clientState.IsLoggedIn || this.clientState.LocalPlayer == null)
             {
@@ -63,12 +71,12 @@ namespace PingPlugin.GameAddressDetectors
                 1 => IPAddress.Parse("119.252.36.6"), // Elemental
                 2 => IPAddress.Parse("119.252.36.7"), // Gaia
                 3 => IPAddress.Parse("119.252.36.8"), // Mana
-                4 => IPAddress.Parse("204.2.29.6"),   // Aether
-                5 => IPAddress.Parse("204.2.29.7"),   // Primal
-                6 => IPAddress.Parse("80.239.145.6"),   // Chaos
-                7 => IPAddress.Parse("80.239.145.7"),   // Light
-                8 => IPAddress.Parse("204.2.29.8"),  // Crystal
-                9 => IPAddress.Parse("153.254.80.103"),  // Materia
+                4 => IPAddress.Parse("204.2.29.6"), // Aether
+                5 => IPAddress.Parse("204.2.29.7"), // Primal
+                6 => IPAddress.Parse("80.239.145.6"), // Chaos
+                7 => IPAddress.Parse("80.239.145.7"), // Light
+                8 => IPAddress.Parse("204.2.29.8"), // Crystal
+                9 => IPAddress.Parse("153.254.80.103"), // Materia
                 10 => IPAddress.Parse("119.252.36.9"), // Meteor
                 11 => IPAddress.Parse("204.2.29.9"), // Dynamis
                 12 => IPAddress.Parse("80.239.145.8"), // Shadow

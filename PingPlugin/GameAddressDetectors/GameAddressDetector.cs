@@ -1,4 +1,5 @@
 ﻿using System.Net;
+using System.Threading.Tasks;
 
 namespace PingPlugin.GameAddressDetectors
 {
@@ -6,6 +7,6 @@ namespace PingPlugin.GameAddressDetectors
     {
         protected IPAddress Address { get; set; }
 
-        public abstract IPAddress GetAddress(bool verbose = false);
+        public abstract Task<IPAddress> GetAddress(bool verbose = false);
     }
 }

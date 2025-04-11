@@ -81,7 +81,7 @@ namespace PingPlugin.PingTrackers
 
                 try
                 {
-                    SeAddress = this.addressDetector.GetAddress(Verbose);
+                    SeAddress = await this.addressDetector.GetAddress(Verbose);
                 }
                 catch (Exception e)
                 {

@@ -1,7 +1,7 @@
-﻿using Dalamud.Logging;
-using Dalamud.Plugin.Services;
+﻿using Dalamud.Plugin.Services;
 using System;
 using System.Net;
+using System.Threading.Tasks;
 
 namespace PingPlugin.GameAddressDetectors
 {
@@ -12,14 +12,14 @@ namespace PingPlugin.GameAddressDetectors
         private readonly ClientStateAddressDetector clientStateDetector;
         private readonly IPluginLog pluginLog;
 
-        public AggregateAddressDetector(IClientState clientState, IPluginLog pluginLog)
+        public AggregateAddressDetector(IFramework framework, IClientState clientState, IPluginLog pluginLog)
         {
             this.ipHlpApiDetector = new IpHlpApiAddressDetector(pluginLog);
-            this.clientStateDetector = new ClientStateAddressDetector(clientState, pluginLog);
+            this.clientStateDetector = new ClientStateAddressDetector(framework, clientState, pluginLog);
             this.pluginLog = pluginLog;
         }
 
-        public override IPAddress GetAddress(bool verbose = false)
+        public override async Task<IPAddress> GetAddress(bool verbose = false)
         {
             var address = IPAddress.Loopback;
 
@@ -29,7 +29,7 @@ namespace PingPlugin.GameAddressDetectors
             {
                 try
                 {
-                    address = this.ipHlpApiDetector.GetAddress(verbose);
+                    address = await this.ipHlpApiDetector.GetAddress(verbose);
                 }
                 catch (Exception e)
                 {
@@ -45,7 +45,7 @@ namespace PingPlugin.GameAddressDetectors
                 bestDetector = this.clientStateDetector;
                 try
                 {
-                    address = this.clientStateDetector.GetAddress(verbose);
+                    address = await this.clientStateDetector.GetAddress(verbose);
                 }
                 catch (Exception e)
                 {
