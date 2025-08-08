@@ -1,5 +1,4 @@
-﻿using Dalamud.Logging;
-using Dalamud.Plugin.Services;
+﻿using Dalamud.Plugin.Services;
 using PingPlugin.GameAddressDetectors;
 using System;
 using System.Collections.Generic;
@@ -12,14 +11,13 @@ namespace PingPlugin.PingTrackers
     {
         private const string COMTrackerKey = "COM";
         private const string IpHlpApiTrackerKey = "IpHlpApi";
-        private const string PacketTrackerKey = "Packets";
 
         private readonly IDictionary<string, TrackerInfo> trackerInfos;
         private readonly DecisionTree<string> decisionTree;
         private readonly IPluginLog pluginLog;
         private string currentTracker = "";
 
-        public AggregatePingTracker(PingConfiguration config, GameAddressDetector addressDetector, IGameNetwork network, IPluginLog pluginLog)
+        public AggregatePingTracker(PingConfiguration config, GameAddressDetector addressDetector, IPluginLog pluginLog)
             : base(config, addressDetector, PingTrackerKind.Aggregate, pluginLog)
         {
             this.pluginLog = pluginLog;
@@ -29,8 +27,6 @@ namespace PingPlugin.PingTrackers
 
             RegisterTracker(COMTrackerKey, new ComponentModelPingTracker(config, addressDetector, pluginLog) { Verbose = false });
             RegisterTracker(IpHlpApiTrackerKey, new IpHlpApiPingTracker(config, addressDetector, pluginLog) { Verbose = false });
-            RegisterTracker(PacketTrackerKey,
-                new PacketPingTracker(config, addressDetector, network, pluginLog) { Verbose = false });
 
             // Create decision tree to solve tracker selection problem
             this.decisionTree = new DecisionTree<string>(
@@ -47,18 +43,8 @@ namespace PingPlugin.PingTrackers
                         pass: new DecisionTree<string>(() => TreeResult.Resolve(IpHlpApiTrackerKey)),
                         fail: new DecisionTree<string>(() => TreeResult.Resolve(COMTrackerKey))
                     ),
-                    fail: new DecisionTree<string>(
-                        // If both of these trackers report a ping of 0
-                        () => GetTrackerRTT(COMTrackerKey) == 0 && GetTrackerRTT(IpHlpApiTrackerKey) == 0,
-                        // Just use packets (inaccurate)
-                        pass: new DecisionTree<string>(() => TreeResult.Resolve(PacketTrackerKey)),
-                        fail: new DecisionTree<string>(
-                            // Otherwise use the lower ping value, we'll assume it's more accurate
-                            () => GetTrackerRTT(COMTrackerKey) < GetTrackerRTT(IpHlpApiTrackerKey),
-                            pass: new DecisionTree<string>(() => TreeResult.Resolve(COMTrackerKey)),
-                            fail: new DecisionTree<string>(() => TreeResult.Resolve(IpHlpApiTrackerKey))
-                        )
-                    )
+                    // Otherwise, default to IpHlpApi
+                    fail: new DecisionTree<string>(() => TreeResult.Resolve(IpHlpApiTrackerKey))
                 )
             );
         }

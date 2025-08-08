@@ -1,14 +1,10 @@
-﻿using Dalamud.Logging;
-using Dalamud.Plugin;
+﻿using Dalamud.Plugin;
 using Dalamud.Plugin.Ipc;
 using PingPlugin.Attributes;
 using PingPlugin.GameAddressDetectors;
 using PingPlugin.PingTrackers;
 using System;
 using System.Dynamic;
-using Dalamud.Game.Command;
-using Dalamud.Game.Gui.Dtr;
-using Dalamud.Game.Network;
 using Dalamud.Plugin.Services;
 
 namespace PingPlugin
@@ -16,7 +12,6 @@ namespace PingPlugin
     public class PingPlugin : IDalamudPlugin
     {
         private readonly IDalamudPluginInterface pluginInterface;
-        private readonly IGameNetwork network;
         private readonly IPluginLog pluginLog;
 
         private readonly PluginCommandManager<PingPlugin> pluginCommandManager;
@@ -31,10 +26,9 @@ namespace PingPlugin
 
         public string Name => "PingPlugin";
 
-        public PingPlugin(IDalamudPluginInterface pluginInterface, ICommandManager commands, IDtrBar dtrBar, IGameNetwork network, IPluginLog pluginLog)
+        public PingPlugin(IDalamudPluginInterface pluginInterface, ICommandManager commands, IDtrBar dtrBar, IPluginLog pluginLog)
         {
             this.pluginInterface = pluginInterface;
-            this.network = network;
             this.pluginLog = pluginLog;
             
             this.config = (PingConfiguration)this.pluginInterface.GetPluginConfig() ?? new PingConfiguration();
@@ -68,10 +62,9 @@ namespace PingPlugin
             
             PingTracker newTracker = kind switch
             {
-                PingTrackerKind.Aggregate => new AggregatePingTracker(this.config, this.addressDetector, this.network, this.pluginLog),
+                PingTrackerKind.Aggregate or PingTrackerKind.Packets => new AggregatePingTracker(this.config, this.addressDetector, this.pluginLog),
                 PingTrackerKind.COM => new ComponentModelPingTracker(this.config, this.addressDetector, this.pluginLog),
                 PingTrackerKind.IpHlpApi => new IpHlpApiPingTracker(this.config, this.addressDetector, this.pluginLog),
-                PingTrackerKind.Packets => new PacketPingTracker(this.config, this.addressDetector, this.network, this.pluginLog),
                 _ => throw new ArgumentOutOfRangeException(nameof(kind)),
             };
 

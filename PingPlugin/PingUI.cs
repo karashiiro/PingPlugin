@@ -1,15 +1,13 @@
 ﻿using CheapLoc;
 using Dalamud.Game.Gui.Dtr;
 using Dalamud.Interface;
-using Dalamud.Logging;
 using Dalamud.Plugin;
 using Dalamud.Plugin.Services;
-using ImGuiNET;
+using Dalamud.Bindings.ImGui;
 using PingPlugin.PingTrackers;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.IO;
 using System.Linq;
 using System.Numerics;
 using System.Threading;
@@ -21,7 +19,6 @@ namespace PingPlugin
     public class PingUI : IDisposable
     {
         private readonly IUiBuilder uiBuilder;
-        private readonly IDalamudPluginInterface pluginInterface;
         private readonly PingConfiguration config;
         private readonly IPluginLog pluginLog;
 
@@ -52,7 +49,6 @@ namespace PingPlugin
             this.config = config;
             this.uiBuilder = pluginInterface.UiBuilder;
             this.pingTracker = pingTracker;
-            this.pluginInterface = pluginInterface;
             this.pluginLog = pluginLog;
 
             this.requestPingTracker = requestPingTracker;
@@ -143,7 +139,8 @@ namespace PingPlugin
             ImGui.Spacing();
 
             var trackerKinds = Enum.GetValues<PingTrackerKind>();
-            var trackerNames = trackerKinds.Select(t => t.FormatName()).ToArray();
+            var trackerNames = trackerKinds.Where(t => t != PingTrackerKind.Packets).Select(t => t.FormatName())
+                .ToArray();
             var tracker = (int)this.pingTracker.Kind;
             if (ImGui.Combo(Loc.Localize("PingTracker", "Ping Tracker"), ref tracker, trackerNames,
                     trackerNames.Length))
@@ -438,8 +435,7 @@ namespace PingPlugin
                 var highY = 22 + this.config.FontScale * positionScaleFactor;
                 var avgY = lowY - Rescale((float)this.pingTracker.AverageRTT, max, min, graphSize.Y);
 
-                ImGui.PlotLines(string.Empty, ref pingArray[0], pingArray.Length, 0, null,
-                    float.MaxValue, float.MaxValue, graphSize);
+                ImGui.PlotLines(string.Empty, pingArray, graphSize: graphSize);
 
                 if (!ImGui.IsWindowCollapsed())
                 {
@@ -489,7 +485,7 @@ namespace PingPlugin
                 tk.AddDalamudAssetFont(DalamudAsset.NotoSansJpMedium, safeFontConfig);
                 tk.AttachExtraGlyphsForDalamudLanguage(safeFontConfig);
             }));
-            
+
             this.fontLoaded = true;
         }
 
