@@ -10,7 +10,6 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Numerics;
-using System.Text;
 using System.Threading;
 using Dalamud;
 using Dalamud.Interface.ManagedFontAtlas;
@@ -401,28 +400,7 @@ namespace PingPlugin
 
             // Pad to fit 3 digits for each displayed value (5 chars for one, 11 for both)
             var targetLength = this.config is { ServerBarDisplayLast: true, ServerBarDisplayAverage: true } ? 11 : 5;
-            this.dtrEntry.Text = ToFullWidth(text.PadLeft(targetLength));
-        }
-
-        private static string ToFullWidth(string s)
-        {
-            var result = new StringBuilder(s.Length);
-            foreach (var c in s)
-            {
-                switch (c)
-                {
-                    case ' ':
-                        result.Append('　'); // U+3000 ideographic space
-                        break;
-                    case >= '0' and <= '9':
-                        result.Append((char)(c + 0xFEE0));
-                        break;
-                    default:
-                        result.Append(c);
-                        break;
-                }
-            }
-            return result.ToString();
+            this.dtrEntry.Text = text.PadLeft(targetLength);
         }
 
         private void DrawGraph()
