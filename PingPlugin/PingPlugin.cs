@@ -63,9 +63,9 @@ namespace PingPlugin
             PingTracker newTracker = kind switch
             {
                 PingTrackerKind.Aggregate or PingTrackerKind.Packets => new AggregatePingTracker(this.config, this.addressDetector, this.pluginLog),
-                PingTrackerKind.COM => new ComponentModelPingTracker(this.config, this.addressDetector, this.pluginLog),
+                PingTrackerKind.COM when !WineDetector.IsWINE() => new ComponentModelPingTracker(this.config, this.addressDetector, this.pluginLog),
                 PingTrackerKind.IpHlpApi => new IpHlpApiPingTracker(this.config, this.addressDetector, this.pluginLog),
-                _ => throw new ArgumentOutOfRangeException(nameof(kind)),
+                _ => RequestFallbackPingTracker(kind),
             };
 
             this.pingTracker = newTracker;
@@ -77,6 +77,12 @@ namespace PingPlugin
             this.pingTracker.Start();
             
             return newTracker;
+        }
+
+        private AggregatePingTracker RequestFallbackPingTracker(PingTrackerKind kind)
+        {
+            this.pluginLog.Warning($"No valid ping tracker exists for \"{kind}\". Falling back to aggregate tracker.");
+            return new AggregatePingTracker(this.config, this.addressDetector, this.pluginLog);
         }
 
         private void InitIpc()

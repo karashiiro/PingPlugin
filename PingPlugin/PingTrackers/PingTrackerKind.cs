@@ -8,7 +8,7 @@ namespace PingPlugin.PingTrackers
         Aggregate,
         COM,
         IpHlpApi,
-        Packets,
+        Packets, // No longer supported
     }
 
     public static class PingTrackerKindExtensions

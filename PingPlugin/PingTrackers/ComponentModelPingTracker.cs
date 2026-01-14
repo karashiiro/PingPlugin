@@ -1,5 +1,4 @@
-﻿using Dalamud.Logging;
-using PingPlugin.GameAddressDetectors;
+﻿using PingPlugin.GameAddressDetectors;
 using System;
 using System.Net.NetworkInformation;
 using System.Threading;

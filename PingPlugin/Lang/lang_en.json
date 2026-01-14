@@ -1,10 +1,14 @@
 ﻿{
+  "NotSupportedOnThisPlatform": {
+    "message": "Not supported on this platform",
+    "description": "PingPlugin.NotSupportedOnThisPlatform"
+  },
   "PingTrackerKindAutodetect": {
     "message": "Autodetect (Default)",
     "description": "PingPlugin.Kind"
   },
   "PingTrackerKindCOM": {
-    "message": "COM",
+    "message": "COM (Windows Only)",
     "description": "PingPlugin.Kind"
   },
   "PingTrackerKindWin32API": {

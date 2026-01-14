@@ -18,6 +18,8 @@ namespace PingPlugin
 {
     public class PingUI : IDisposable
     {
+        private static readonly Vector4 Red = ImGui.ColorConvertU32ToFloat4(0xFF0000FF);
+        
         private readonly IUiBuilder uiBuilder;
         private readonly PingConfiguration config;
         private readonly IPluginLog pluginLog;
@@ -151,6 +153,11 @@ namespace PingPlugin
                 this.config.Save();
 
                 this.pingTracker = this.requestPingTracker(trackerKind);
+            }
+
+            if (tracker == (int)PingTrackerKind.COM && WineDetector.IsWINE())
+            {
+                ImGui.TextColored(Red, Loc.Localize("NotSupportedOnThisPlatform", string.Empty));
             }
 
             ImGui.Spacing();

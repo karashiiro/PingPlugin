@@ -25,8 +25,15 @@ namespace PingPlugin.PingTrackers
             // Define trackers
             this.trackerInfos = new Dictionary<string, TrackerInfo>();
 
-            RegisterTracker(COMTrackerKey, new ComponentModelPingTracker(config, addressDetector, pluginLog) { Verbose = false });
-            RegisterTracker(IpHlpApiTrackerKey, new IpHlpApiPingTracker(config, addressDetector, pluginLog) { Verbose = false });
+            if (!WineDetector.IsWINE())
+            {
+                // Causes crashes in WINE
+                RegisterTracker(COMTrackerKey,
+                    new ComponentModelPingTracker(config, addressDetector, pluginLog) { Verbose = false });
+            }
+
+            RegisterTracker(IpHlpApiTrackerKey,
+                new IpHlpApiPingTracker(config, addressDetector, pluginLog) { Verbose = false });
 
             // Create decision tree to solve tracker selection problem
             this.decisionTree = new DecisionTree<string>(
