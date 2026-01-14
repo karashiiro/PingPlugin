@@ -31,6 +31,12 @@ namespace PingPlugin.PingTrackers
                 RegisterTracker(COMTrackerKey,
                     new ComponentModelPingTracker(config, addressDetector, pluginLog) { Verbose = false });
             }
+            else
+            {
+                // Dummy always-errored tracker
+                RegisterTracker(COMTrackerKey,
+                    new ErrorPingTracker(config, addressDetector, PingTrackerKind.COM, pluginLog));
+            }
 
             RegisterTracker(IpHlpApiTrackerKey,
                 new IpHlpApiPingTracker(config, addressDetector, pluginLog) { Verbose = false });
