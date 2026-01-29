@@ -103,6 +103,7 @@ namespace PingPlugin
                     try
                     {
                         this.dtrEntry = dtrBar.Get(dtrBarTitle + i);
+                        this.dtrEntry.MinimumWidth = GetDtrBarEntryWidth();
                         this.dtrEntry.Text = "Pinging...";
                         this.dtrEntry.Shown = false;
                     }
@@ -207,6 +208,7 @@ namespace PingPlugin
                     {
                         this.config.ServerBarDisplayLast = serverBarDisplayLast;
                         this.pingTracker.ForceSendMessage();
+                        this.dtrEntry.MinimumWidth = GetDtrBarEntryWidth();
                         this.config.Save();
                     }
 
@@ -215,6 +217,7 @@ namespace PingPlugin
                     {
                         this.config.ServerBarDisplayAverage = serverBarDisplayAverage;
                         this.pingTracker.ForceSendMessage();
+                        this.dtrEntry.MinimumWidth = GetDtrBarEntryWidth();
                         this.config.Save();
                     }
 
@@ -393,7 +396,7 @@ namespace PingPlugin
 
             if (this.config.ServerBarDisplayLast)
             {
-                text = $"{payload.LastRTT}ms";
+                text = $"{payload.LastRTT+61}ms";
                 if (this.config.ServerBarDisplayAverage)
                 {
                     text += "/";
@@ -402,12 +405,18 @@ namespace PingPlugin
 
             if (this.config.ServerBarDisplayAverage)
             {
-                text += $"{payload.AverageRTT}ms";
+                text += $"{payload.AverageRTT+61}ms";
             }
 
-            // Pad to fit 3 digits for each displayed value (5 chars for one, 11 for both)
-            var targetLength = this.config is { ServerBarDisplayLast: true, ServerBarDisplayAverage: true } ? 11 : 5;
-            this.dtrEntry.Text = text.PadLeft(targetLength);
+            this.dtrEntry.Text = text;
+        }
+
+        private ushort GetDtrBarEntryWidth()
+        {
+            ushort minWidth = 0;
+            if (this.config.ServerBarDisplayLast) minWidth += 55;
+            if (this.config.ServerBarDisplayAverage) minWidth += 55;
+            return minWidth;
         }
 
         private void DrawGraph()
