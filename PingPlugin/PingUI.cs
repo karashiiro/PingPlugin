@@ -396,7 +396,7 @@ namespace PingPlugin
 
             if (this.config.ServerBarDisplayLast)
             {
-                text = $"{payload.LastRTT+61}ms";
+                text = $"{payload.LastRTT}ms";
                 if (this.config.ServerBarDisplayAverage)
                 {
                     text += "/";
@@ -405,7 +405,7 @@ namespace PingPlugin
 
             if (this.config.ServerBarDisplayAverage)
             {
-                text += $"{payload.AverageRTT+61}ms";
+                text += $"{payload.AverageRTT}ms";
             }
 
             this.dtrEntry.Text = text;
