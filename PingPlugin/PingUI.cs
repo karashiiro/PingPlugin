@@ -142,29 +142,30 @@ namespace PingPlugin
 
             ImGui.Spacing();
 
-            var trackerKinds = Enum.GetValues<PingTrackerKind>();
-            var trackerNames = trackerKinds.Where(t => t != PingTrackerKind.Packets).Select(t => t.FormatName())
+            var isWine = WineDetector.IsWINE();
+            var trackerKinds = Enum.GetValues<PingTrackerKind>()
+                .Where(t => !isWine || t is PingTrackerKind.IpHlpApi or PingTrackerKind.Packets)
                 .ToArray();
-            var tracker = (int)this.pingTracker.Kind;
+            var trackerNames = trackerKinds
+                .Select(t => t.FormatName())
+                .ToArray();
+            var trackerIndex = Array.IndexOf(trackerKinds, this.pingTracker.Kind);
 
-            using (var _ = ImRaii.Disabled(WineDetector.IsWINE()))
+            if (ImGui.Combo(Loc.Localize("PingTracker", "Ping Tracker"), ref trackerIndex, trackerNames,
+                    trackerNames.Length))
             {
-                if (ImGui.Combo(Loc.Localize("PingTracker", "Ping Tracker"), ref tracker, trackerNames,
-                        trackerNames.Length))
-                {
-                    var trackerKind = (PingTrackerKind)tracker;
+                var trackerKind = trackerKinds[trackerIndex];
 
-                    this.config.TrackingMode = trackerKind;
-                    this.config.Save();
+                this.config.TrackingMode = trackerKind;
+                this.config.Save();
 
-                    this.pingTracker = this.requestPingTracker(trackerKind);
-                }
+                this.pingTracker = this.requestPingTracker(trackerKind);
             }
 
-            if (WineDetector.IsWINE() && ImGui.IsItemHovered(ImGuiHoveredFlags.AllowWhenDisabled))
-            {
-                ImGui.SetTooltip(Loc.Localize("WineDetected", "Locked to Win32 tracker under Wine for compatibility."));
-            }
+            // if (WineDetector.IsWINE() && ImGui.IsItemHovered(ImGuiHoveredFlags.AllowWhenDisabled))
+            // {
+            //     ImGui.SetTooltip(Loc.Localize("WineDetected", "Locked to Win32 tracker under Wine for compatibility."));
+            // }
 
             ImGui.Spacing();
 

@@ -13,6 +13,7 @@ namespace PingPlugin
     {
         private readonly IDalamudPluginInterface pluginInterface;
         private readonly IPluginLog pluginLog;
+        private readonly IGameInteropProvider gameInteropProvider;
 
         private readonly PluginCommandManager<PingPlugin> pluginCommandManager;
         private readonly PingConfiguration config;
@@ -26,10 +27,16 @@ namespace PingPlugin
 
         public string Name => "PingPlugin";
 
-        public PingPlugin(IDalamudPluginInterface pluginInterface, ICommandManager commands, IDtrBar dtrBar, IPluginLog pluginLog)
+        public PingPlugin(
+            IDalamudPluginInterface pluginInterface,
+            ICommandManager commands,
+            IDtrBar dtrBar,
+            IPluginLog pluginLog,
+            IGameInteropProvider gameInteropProvider)
         {
             this.pluginInterface = pluginInterface;
             this.pluginLog = pluginLog;
+            this.gameInteropProvider = gameInteropProvider;
             
             this.config = (PingConfiguration)this.pluginInterface.GetPluginConfig() ?? new PingConfiguration();
             this.config.Initialize(this.pluginInterface, this.pluginLog);
@@ -77,15 +84,22 @@ namespace PingPlugin
         {
             if (WineDetector.IsWINE())
             {
-                // Only reliable tracker under WINE
-                return new IpHlpApiPingTracker(this.config, this.addressDetector, this.pluginLog);
+                return kind switch
+                {
+                    PingTrackerKind.Packets => new PacketPingTracker(
+                        this.config, this.addressDetector, this.pluginLog, this.gameInteropProvider),
+                    _ => new IpHlpApiPingTracker(this.config, this.addressDetector, this.pluginLog),
+                };
             }
             
             return kind switch
             {
-                PingTrackerKind.Aggregate or PingTrackerKind.Packets => new AggregatePingTracker(this.config, this.addressDetector, this.pluginLog),
+                PingTrackerKind.Aggregate => new AggregatePingTracker(
+                    this.config, this.addressDetector, this.pluginLog, this.gameInteropProvider),
                 PingTrackerKind.COM => new ComponentModelPingTracker(this.config, this.addressDetector, this.pluginLog),
                 PingTrackerKind.IpHlpApi => new IpHlpApiPingTracker(this.config, this.addressDetector, this.pluginLog),
+                PingTrackerKind.Packets => new PacketPingTracker(
+                    this.config, this.addressDetector, this.pluginLog, this.gameInteropProvider),
                 _ => RequestFallbackPingTracker(kind),
             };
         }
@@ -93,7 +107,7 @@ namespace PingPlugin
         private AggregatePingTracker RequestFallbackPingTracker(PingTrackerKind kind)
         {
             this.pluginLog.Warning($"No valid ping tracker exists for \"{kind}\". Falling back to aggregate tracker.");
-            return new AggregatePingTracker(this.config, this.addressDetector, this.pluginLog);
+            return new AggregatePingTracker(this.config, this.addressDetector, this.pluginLog, this.gameInteropProvider);
         }
 
         private void InitIpc()
